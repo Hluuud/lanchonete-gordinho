@@ -21,7 +21,7 @@ export function CartButton() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 96, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 28 }}
-          className="fixed inset-x-4 bottom-4 z-40 sm:inset-x-auto sm:right-6 sm:bottom-6"
+          className="fixed inset-x-4 bottom-4 z-40 sm:inset-x-auto sm:right-6 sm:bottom-6 lg:hidden"
         >
           <button
             type="button"

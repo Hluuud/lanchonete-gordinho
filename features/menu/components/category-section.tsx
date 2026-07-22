@@ -7,7 +7,9 @@ export function CategorySection({ category }: { category: MenuCategory }) {
     <section
       id={`categoria-${category.slug}`}
       aria-labelledby={`titulo-${category.slug}`}
-      className="scroll-mt-24"
+      // scroll-mt deve ficar ≤ linha de detecção do ScrollSpy (sidebar: 84px;
+      // CategoryNav mobile: 130px) para a seção clicada ativar no destino.
+      className="scroll-mt-32 lg:scroll-mt-20"
     >
       <h2
         id={`titulo-${category.slug}`}
