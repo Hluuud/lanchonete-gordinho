@@ -23,6 +23,14 @@ export type KitchenOrdersContextValue = {
     nextStatus: OrderStatus,
     cancelledReason?: string,
   ) => Promise<void>;
+  /**
+   * Aplica uma sequência de transições reais em ordem (ex.: arrastar de
+   * "Novo" para "Em preparo" no board industrial = `[accepted, preparing]`,
+   * dois PATCHes). Cada passo faz seu próprio patch otimista; se um passo
+   * falhar, reverte só aquele passo (o pedido fica no último status
+   * confirmado, não volta ao início) e avisa via toast.
+   */
+  changeStatusPath: (orderId: string, path: OrderStatus[]) => Promise<void>;
   setPriority: (orderId: string, isPriority: boolean) => Promise<void>;
 };
 
@@ -114,6 +122,50 @@ export function KitchenOrdersProvider({
     [state.orders],
   );
 
+  const changeStatusPath = useCallback(
+    async (orderId: string, path: OrderStatus[]) => {
+      let confirmedStatus = state.orders.find(
+        (order) => order.id === orderId,
+      )?.status;
+      if (confirmedStatus === undefined) return;
+
+      for (const nextStatus of path) {
+        const stepPrevious = confirmedStatus;
+        dispatch({
+          type: "PATCH_ORDER",
+          orderId,
+          patch: { status: nextStatus },
+        });
+
+        try {
+          const response = await fetch(
+            `/api/kitchen/orders/${orderId}/status`,
+            {
+              method: "PATCH",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ status: nextStatus }),
+            },
+          );
+          if (!response.ok) throw new Error("status update failed");
+          const updated = (await response.json()) as Order;
+          dispatch({ type: "UPSERT_ORDER", order: updated });
+          confirmedStatus = nextStatus;
+        } catch {
+          dispatch({
+            type: "PATCH_ORDER",
+            orderId,
+            patch: { status: stepPrevious },
+          });
+          toast.error(
+            "Não foi possível concluir o movimento — o pedido ficou no último status confirmado.",
+          );
+          return;
+        }
+      }
+    },
+    [state.orders],
+  );
+
   const setPriority = useCallback(
     async (orderId: string, isPriority: boolean) => {
       const previous = state.orders.find((order) => order.id === orderId);
@@ -148,6 +200,7 @@ export function KitchenOrdersProvider({
       upsertOrder,
       patchOrder,
       changeStatus,
+      changeStatusPath,
       setPriority,
     }),
     [
@@ -156,6 +209,7 @@ export function KitchenOrdersProvider({
       upsertOrder,
       patchOrder,
       changeStatus,
+      changeStatusPath,
       setPriority,
     ],
   );

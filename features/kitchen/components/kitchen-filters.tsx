@@ -12,6 +12,7 @@ const FILTERS: { value: KitchenFilter; label: string }[] = [
   { value: "delivery", label: "Entrega" },
   { value: "late", label: "Em atraso" },
   { value: "priority", label: "Prioridade" },
+  { value: "cancelled", label: "Cancelados" },
 ];
 
 export function KitchenFilters({

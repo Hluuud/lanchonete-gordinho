@@ -1,7 +1,13 @@
 import { isOrderLate } from "@/lib/kitchen/order-status";
 import type { Order } from "@/types/domain";
 
-export type KitchenFilter = "all" | "pickup" | "delivery" | "late" | "priority";
+export type KitchenFilter =
+  | "all"
+  | "pickup"
+  | "delivery"
+  | "late"
+  | "priority"
+  | "cancelled";
 
 export function matchesKitchenFilter(
   order: Order,
@@ -10,6 +16,8 @@ export function matchesKitchenFilter(
 ): boolean {
   switch (filter) {
     case "all":
+      // O board (4 colunas) já não tem para onde mapear "cancelled" — fica
+      // fora naturalmente. Ver `columnOfStatus` em `lib/kitchen/board-columns.ts`.
       return true;
     case "pickup":
       return order.orderType === "pickup";
@@ -19,6 +27,8 @@ export function matchesKitchenFilter(
       return isOrderLate(order, now);
     case "priority":
       return order.isPriority;
+    case "cancelled":
+      return order.status === "cancelled";
   }
 }
 
