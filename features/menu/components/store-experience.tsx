@@ -89,6 +89,10 @@ export function StoreExperience({ menu }: { menu: Menu }) {
         <StoreTopbar
           tenantName={menu.tenant.name}
           avgPrepMinutes={avgPrepMinutes}
+          sections={sections}
+          isFiltering={isFiltering}
+          query={rawQuery}
+          onQueryChange={setRawQuery}
         />
 
         <div id="cardapio" className="mx-auto w-full max-w-6xl px-4 py-4 pb-24">
