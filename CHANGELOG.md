@@ -4,6 +4,34 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 0): Fundação dos CRUDs administrativos
+
+Primeira fase da Sprint 5 ("Painel Administrativo como Sistema de Gestão")
+— instala as peças de design system e a infraestrutura que todo módulo de
+gestão (Categorias, Produtos, Adicionais, Combos, Configuração, Usuários,
+Impressoras) vai reusar, sem ainda implementar nenhum CRUD.
+
+- Componentes shadcn/ui novos: `dialog`, `alert-dialog`, `select`,
+  `textarea`, `checkbox`, `switch`, `table`, `pagination` — traduzidos para
+  pt-BR e ajustados às variantes/tamanhos do `Button` já existente no
+  projeto (`primary|secondary|accent|outline|ghost` / `sm|md|lg|icon`, sem
+  `"default"`).
+- **Supabase Storage**: bucket público `store-assets`
+  (`0011_store_assets_bucket.sql`) com RLS reusando `is_tenant_manager`/
+  `is_super_admin` — primeira vez que o projeto usa Storage. Ver
+  [ADR 0008](docs/adr/0008-supabase-storage-for-media.md).
+- `components/image-upload.tsx`: upload direto do browser, preview,
+  validação de tipo (PNG/JPEG/WebP) e tamanho (5 MB).
+- `components/confirm-dialog.tsx`: confirmação genérica de ações
+  destrutivas (`AlertDialog`).
+- `features/admin/pagination.ts`: paginação/busca/ordenação server-side
+  (`parseListParams`, `sort` com allowlist), testado (12 testes novos).
+- `getAdminApiUser()` (`lib/admin/roles.ts`), espelhando
+  `getKitchenApiUser()` — guarda de autorização para as futuras rotas
+  `/api/admin/*`.
+- Padrões de formulário/mutação/paginação/exclusão para todo CRUD
+  administrativo documentados em `docs/frontend.md`.
+
 ### Added — Sprint 4: Redesign UX/UI — Cardápio de Autoatendimento
 
 Sprint exclusivamente de frontend (nenhum schema, migration, repository,

@@ -106,3 +106,46 @@ Ver detalhe de domínio nas próprias páginas (`app/(admin)/admin/`). Shell:
 
 Ver `docs/kitchen-panel.md` (atualizado nesta sprint) para o detalhe
 completo do board de 4 colunas visuais, `resolveDropPath` e auto-hide.
+
+## Padrões de CRUD administrativo (Sprint 5)
+
+Fixados na Fase 0 e replicados por todo módulo de gestão (Categorias,
+Produtos, Adicionais, Combos, Configuração, Usuários, Impressoras) — ver
+[ADR 0008](./adr/0008-supabase-storage-for-media.md) para a decisão de
+Storage.
+
+- **Formulário**: `useForm<T>({ resolver: zodResolver(schema) })` com
+  `register` — mesmo idioma "cru" do checkout
+  (`features/checkout/components/checkout-page.tsx`), não o wrapper `Form`
+  do shadcn (não instalado, de propósito, para não ter dois idiomas de
+  formulário convivendo). Um único `Dialog` alterna entre criar/editar via
+  `mode: "create" | "edit"`.
+- **Mutação**: `useMutation` do TanStack Query fazendo `fetch` para a rota
+  de API (mesmo padrão de `features/checkout/use-checkout.ts`) — **sem** o
+  reducer otimista da cozinha, que existe para UI em tempo real, não para
+  telas de gestão. Em `onSuccess`, `router.refresh()` (Next App Router) em
+  vez de invalidar cache do TanStack Query: as listas continuam sendo
+  Server Components (SSR), `router.refresh()` só re-executa a busca no
+  servidor.
+- **Paginação/busca/ordenação**: sempre server-side via `searchParams` da
+  própria página, nunca client-side. `features/admin/pagination.ts`
+  (`parseListParams`, puro e testado) é o único parser de
+  `page`/`pageSize`/`q`/`sort`/`order` do admin inteiro — `sort` só aceita
+  valores de uma allowlist por chamada, nunca vira SQL arbitrário.
+- **Exclusão**: `components/confirm-dialog.tsx` (wrapper de `AlertDialog`)
+  é o único componente de confirmação do admin.
+- **Autorização em rota de API**: `getAdminApiUser()`
+  (`lib/admin/roles.ts`), espelhando `getKitchenApiUser()` — retorna `null`
+  para o handler decidir 401/403 (rotas não redirecionam, diferente de
+  `requireRole` nas páginas).
+- **Upload de imagem**: `components/image-upload.tsx` — upload direto do
+  browser para o bucket `store-assets` (Supabase Storage), preview,
+  validação de tipo/tamanho no client. Convenção de path documentada em
+  `docs/database.md`.
+- **Camadas**: `services/admin/<módulo>.service.ts` (namespace separado dos
+  services públicos da loja, que têm regra de apresentação — filtrar
+  publicado/disponível — que não se aplica a uma tela de gestão) →
+  funções novas em `repositories/menu.repository.ts`/`orders.repository.ts`
+  (categorias/produtos estendem os repositories existentes; módulos com
+  tabelas totalmente novas, como Adicionais/Combos, ganham arquivo de
+  repository próprio).

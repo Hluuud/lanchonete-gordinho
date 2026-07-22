@@ -79,6 +79,18 @@ RLS por linha inteira (não por coluna) — uma policy pública direto em
 `orders` vazaria PII de todos os pedidos. Ver
 [ADR 0006](./adr/0006-transactional-checkout-rpc.md) e `docs/security.md`.
 
+### Storage (Sprint 5)
+
+Bucket público `store-assets` (`storage.buckets`), primeira vez que o
+projeto usa Supabase Storage — ver
+[ADR 0008](./adr/0008-supabase-storage-for-media.md). Convenção de path:
+`{tenant_id}/products/{uuid}.{ext}`, `{tenant_id}/branding/{uuid}.{ext}`.
+RLS em `storage.objects`: leitura pública; escrita (`insert`/`update`/
+`delete`) restrita a `is_tenant_manager` do tenant dono do primeiro
+segmento do path (`(storage.foldername(name))[1]`), ou `is_super_admin()`
+— mesmo formato de `categories_write`/`products_write`, só que o
+`tenant_id` vem do path em vez de uma coluna.
+
 ### Integridade multi-tenant
 
 `products` referencia `categories` por **FK composta** `(category_id, tenant_id)`
@@ -109,6 +121,8 @@ pertencem ao **mesmo tenant** no nível do banco.
 - `0010_realtime_publication` — adiciona `orders` e `order_tracking_status`
   à publicação `supabase_realtime` (nenhuma tabela estava publicada até
   então — ver `docs/checkout.md`, "Lacuna crítica").
+- `0011_store_assets_bucket` — cria o bucket `store-assets` e as policies de
+  Storage (Sprint 5, Fase 0 — ver ADR 0008).
 
 ## Seed
 
