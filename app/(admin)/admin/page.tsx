@@ -1,22 +1,19 @@
-import { requireRole } from "@/lib/auth/session";
+import { ComingSoon } from "@/features/admin/components/coming-soon";
+import { LayoutDashboard } from "lucide-react";
 
-export const metadata = { title: "Administração" };
+export const metadata = { title: "Dashboard" };
 
 /**
- * Stub do Painel Administrativo (Fase 5). Estabelece o route group protegido:
- * `requireRole` bloqueia acesso sem sessão/papel adequado. As telas reais
- * (dashboards, relatórios) entram na Fase 5.
+ * Placeholder do Dashboard — o guard de acesso (`requireRole`) já vive no
+ * layout do grupo `(admin)`. Métricas reais entram na próxima etapa da
+ * sprint (services já existentes, sem backend novo).
  */
-export default async function AdminHomePage() {
-  const user = await requireRole(["super_admin", "owner", "manager"]);
-
+export default function AdminHomePage() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-16">
-      <h1 className="text-2xl font-bold">Painel Administrativo</h1>
-      <p className="mt-2 text-muted-foreground">
-        Bem-vindo, {user.fullName ?? "gestor"}. Área protegida — dashboards e
-        relatórios chegam na Fase 5.
-      </p>
-    </main>
+    <ComingSoon
+      icon={LayoutDashboard}
+      title="Dashboard"
+      description="Métricas operacionais chegam na próxima etapa desta sprint."
+    />
   );
 }
