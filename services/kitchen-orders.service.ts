@@ -1,5 +1,6 @@
 import "server-only";
 
+import { toOrder } from "@/lib/kitchen/order-mapper";
 import {
   ALLOWED_TRANSITIONS,
   STATUS_TIMESTAMP_COLUMN,
@@ -10,12 +11,9 @@ import {
   findOrderById,
   updateOrderPriority,
   updateOrderStatus,
-  type OrderWithItemsRow,
 } from "@/repositories/orders.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
-import type { Order, OrderItem, OrderStatus, Tenant } from "@/types/domain";
-
-type OrderItemRow = OrderWithItemsRow["order_items"][number];
+import type { Order, OrderStatus, Tenant } from "@/types/domain";
 
 /** Transição de status não permitida pela máquina de estados (`lib/kitchen/order-status.ts`). */
 export class InvalidOrderTransitionError extends Error {
@@ -119,41 +117,4 @@ export async function setOrderPriority(
   if (!updated) throw new OrderNotFoundError();
 
   return toOrder(updated);
-}
-
-function toOrder(row: OrderWithItemsRow): Order {
-  return {
-    id: row.id,
-    tenantId: row.tenant_id,
-    orderNumber: row.order_number,
-    status: row.status,
-    orderType: row.order_type,
-    customerName: row.customer_name,
-    customerPhone: row.customer_phone,
-    notes: row.notes,
-    subtotalCents: row.subtotal_cents,
-    isPriority: row.is_priority,
-    estimatedReadyAt: row.estimated_ready_at,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    acceptedAt: row.accepted_at,
-    preparingAt: row.preparing_at,
-    readyAt: row.ready_at,
-    deliveredAt: row.delivered_at,
-    completedAt: row.completed_at,
-    cancelledAt: row.cancelled_at,
-    cancelledReason: row.cancelled_reason,
-    items: (row.order_items ?? []).map(toOrderItem),
-  };
-}
-
-function toOrderItem(row: OrderItemRow): OrderItem {
-  return {
-    id: row.id,
-    productId: row.product_id,
-    productName: row.product_name_snapshot,
-    unitPriceCents: row.unit_price_cents,
-    quantity: row.quantity,
-    notes: row.notes,
-  };
 }

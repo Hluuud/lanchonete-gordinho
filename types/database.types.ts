@@ -73,6 +73,32 @@ export type Database = {
           },
         ];
       };
+      order_counters: {
+        Row: {
+          counter_date: string;
+          last_number: number;
+          tenant_id: string;
+        };
+        Insert: {
+          counter_date: string;
+          last_number?: number;
+          tenant_id: string;
+        };
+        Update: {
+          counter_date?: string;
+          last_number?: number;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_counters_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       order_items: {
         Row: {
           created_at: string;
@@ -131,24 +157,102 @@ export type Database = {
           },
         ];
       };
+      order_tracking_status: {
+        Row: {
+          accepted_at: string | null;
+          cancelled_at: string | null;
+          completed_at: string | null;
+          created_at: string;
+          delivered_at: string | null;
+          discount_cents: number;
+          estimated_ready_at: string | null;
+          order_id: string;
+          order_number: number;
+          order_type: Database["public"]["Enums"]["order_type"];
+          preparing_at: string | null;
+          ready_at: string | null;
+          service_fee_cents: number;
+          status: Database["public"]["Enums"]["order_status"];
+          subtotal_cents: number;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          cancelled_at?: string | null;
+          completed_at?: string | null;
+          created_at: string;
+          delivered_at?: string | null;
+          discount_cents: number;
+          estimated_ready_at?: string | null;
+          order_id: string;
+          order_number: number;
+          order_type: Database["public"]["Enums"]["order_type"];
+          preparing_at?: string | null;
+          ready_at?: string | null;
+          service_fee_cents: number;
+          status: Database["public"]["Enums"]["order_status"];
+          subtotal_cents: number;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          cancelled_at?: string | null;
+          completed_at?: string | null;
+          created_at?: string;
+          delivered_at?: string | null;
+          discount_cents?: number;
+          estimated_ready_at?: string | null;
+          order_id?: string;
+          order_number?: number;
+          order_type?: Database["public"]["Enums"]["order_type"];
+          preparing_at?: string | null;
+          ready_at?: string | null;
+          service_fee_cents?: number;
+          status?: Database["public"]["Enums"]["order_status"];
+          subtotal_cents?: number;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_tracking_status_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: true;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_tracking_status_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       orders: {
         Row: {
           accepted_at: string | null;
           cancelled_at: string | null;
           cancelled_reason: string | null;
           completed_at: string | null;
+          coupon_code: string | null;
           created_at: string;
           customer_name: string | null;
           customer_phone: string | null;
           delivered_at: string | null;
+          discount_cents: number;
           estimated_ready_at: string | null;
           id: string;
           is_priority: boolean;
           notes: string | null;
-          order_number: number | null;
+          order_number: number;
           order_type: Database["public"]["Enums"]["order_type"];
           preparing_at: string | null;
           ready_at: string | null;
+          service_fee_cents: number;
           status: Database["public"]["Enums"]["order_status"];
           subtotal_cents: number;
           tenant_id: string;
@@ -159,18 +263,21 @@ export type Database = {
           cancelled_at?: string | null;
           cancelled_reason?: string | null;
           completed_at?: string | null;
+          coupon_code?: string | null;
           created_at?: string;
           customer_name?: string | null;
           customer_phone?: string | null;
           delivered_at?: string | null;
+          discount_cents?: number;
           estimated_ready_at?: string | null;
           id?: string;
           is_priority?: boolean;
           notes?: string | null;
-          order_number?: number | null;
+          order_number: number;
           order_type?: Database["public"]["Enums"]["order_type"];
           preparing_at?: string | null;
           ready_at?: string | null;
+          service_fee_cents?: number;
           status?: Database["public"]["Enums"]["order_status"];
           subtotal_cents?: number;
           tenant_id: string;
@@ -181,18 +288,21 @@ export type Database = {
           cancelled_at?: string | null;
           cancelled_reason?: string | null;
           completed_at?: string | null;
+          coupon_code?: string | null;
           created_at?: string;
           customer_name?: string | null;
           customer_phone?: string | null;
           delivered_at?: string | null;
+          discount_cents?: number;
           estimated_ready_at?: string | null;
           id?: string;
           is_priority?: boolean;
           notes?: string | null;
-          order_number?: number | null;
+          order_number?: number;
           order_type?: Database["public"]["Enums"]["order_type"];
           preparing_at?: string | null;
           ready_at?: string | null;
+          service_fee_cents?: number;
           status?: Database["public"]["Enums"]["order_status"];
           subtotal_cents?: number;
           tenant_id?: string;
@@ -344,6 +454,17 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      create_order: {
+        Args: {
+          p_customer_name: string;
+          p_customer_phone: string;
+          p_items: Json;
+          p_notes: string;
+          p_order_type: Database["public"]["Enums"]["order_type"];
+          p_tenant_id: string;
+        };
+        Returns: Json;
+      };
       current_profile_role: {
         Args: never;
         Returns: Database["public"]["Enums"]["user_role"];
@@ -362,7 +483,7 @@ export type Database = {
         | "delivered"
         | "completed"
         | "cancelled";
-      order_type: "pickup" | "delivery";
+      order_type: "pickup" | "delivery" | "dine_in";
       user_role: "super_admin" | "owner" | "manager" | "kitchen" | "cashier";
     };
     CompositeTypes: {
@@ -500,7 +621,7 @@ export const Constants = {
         "completed",
         "cancelled",
       ],
-      order_type: ["pickup", "delivery"],
+      order_type: ["pickup", "delivery", "dine_in"],
       user_role: ["super_admin", "owner", "manager", "kitchen", "cashier"],
     },
   },

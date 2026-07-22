@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 
 import { EmptyState } from "@/components/empty-state";
@@ -11,7 +12,7 @@ import { useCart } from "@/features/cart/use-cart";
  * comportamento, apenas o "invólucro" muda por breakpoint.
  */
 export function CartPanelContent() {
-  const { items, subtotalCents, clear } = useCart();
+  const { items, subtotalCents, clear, setOpen } = useCart();
 
   if (items.length === 0) {
     return (
@@ -50,12 +51,14 @@ export function CartPanelContent() {
           <span className="text-sm text-muted-foreground">Subtotal</span>
           <PriceTag cents={subtotalCents} className="text-xl" />
         </div>
-        <Button size="lg" className="w-full" disabled>
-          Finalizar pedido
+        <Button
+          size="lg"
+          className="w-full"
+          asChild
+          onClick={() => setOpen(false)}
+        >
+          <Link href="/checkout">Finalizar pedido</Link>
         </Button>
-        <p className="mt-2 text-center text-xs text-muted-foreground">
-          Checkout chega na Fase 1 do roadmap.
-        </p>
       </div>
     </div>
   );

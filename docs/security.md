@@ -28,11 +28,15 @@ Definidas em `0002_rls_policies` (hardened em `0003`):
 | `profiles`   | próprio / gestão do tenant / super_admin  | próprio (self) / gestão / super_admin    |
 | `categories` | ativas (público) / gestão / super_admin   | gestão do tenant / super_admin           |
 | `products`   | publicados (público) / gestão / super_admin | gestão do tenant / super_admin         |
-| `orders`     | staff do tenant / super_admin (sem público) | insert/update: staff do tenant · delete: só gestão |
-| `order_items`| staff do tenant / super_admin (sem público) | insert: staff do tenant · update/delete: só gestão (imutáveis) |
+| `orders`     | staff do tenant / super_admin (**sem público** — tem PII) | insert/update: staff do tenant OU `create_order` (`security definer`) · delete: só gestão |
+| `order_items`| **público** (sem PII) | insert: staff do tenant OU `create_order` · update/delete: só gestão (imutáveis) |
+| `order_counters` | ninguém via API (sem policy — só `create_order`/`service_role`) | idem |
+| `order_tracking_status` | **público** (espelho de `orders` sem PII) | nenhuma (só a trigger `sync_order_tracking_status` escreve) |
 
-Verificado (role `anon`): vê 1 tenant, 4 categorias, 8 produtos; **0 perfis**,
-**0 pedidos** (`orders`/`order_items` não têm policy pública).
+Verificado (role `anon`): vê 1 tenant, 4 categorias, 8 produtos; **0 perfis**.
+`orders` continua sem policy pública (tem `customer_name`/`customer_phone`) —
+o acompanhamento público lê `order_tracking_status`/`order_items` (Sprint 3,
+ver `docs/checkout.md`), nunca `orders` diretamente.
 
 ## Segredos
 
@@ -56,9 +60,25 @@ Verificado (role `anon`): vê 1 tenant, 4 categorias, 8 produtos; **0 perfis**,
   retornam apenas o tenant/papel **do próprio chamador** (via `auth.uid()`);
   anon recebe `null`. Exposição irrelevante e revogar `EXECUTE` quebraria a
   leitura pública do cardápio (avaliação das policies). Mantido conscientemente.
+- **`create_order` — SECURITY DEFINER executável por anon (Sprint 3):**
+  é o único caminho de escrita para um convidado sem papel de staff (as
+  policies de insert de `orders`/`order_items` continuam staff-only). Toda
+  validação de negócio (produto existe/publicado/disponível, quantidade,
+  preço sempre lido do banco) acontece **dentro** da função — ela é o portão
+  de escrita confiável, não uma policy de RLS permissiva. Ver
+  [ADR 0006](./adr/0006-transactional-checkout-rpc.md).
+- **`order_tracking_status`/`order_items` com policy pública (`using
+  (true)`, Sprint 3):** aceito porque nenhuma das duas tem PII — o
+  `order_id` (UUID) é a própria credencial de acesso ao acompanhamento,
+  mesmo modelo de links de pedido/pagamento usado amplamente no mercado.
+  `orders` (que tem `customer_name`/`customer_phone`) permanece
+  deliberadamente sem policy pública. Ver `docs/checkout.md`.
 - `search_path` das funções: corrigido em `0003`.
 
 ## Roadmap de segurança
 
-Rate limiting, CSRF em mutações de formulário, auditoria, e políticas de Storage
-entram junto das fases que introduzem escrita pelo cliente (checkout, pedidos).
+Rate limiting, CSRF em mutações de formulário, auditoria, e políticas de
+Storage seguem **pendentes** (`BACKLOG.md`) — o checkout (Sprint 3) é a
+fase que este documento já antecipava como gatilho para isso, mas nenhum
+desses itens foi implementado ainda. `/api/checkout` em particular não tem
+rate limiting hoje: um script poderia submeter pedidos em loop.

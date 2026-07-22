@@ -87,8 +87,26 @@ assim nesse hook seria a abstração errada. Ver
 ## Testes
 
 Vitest (`vitest.config.ts`, script `test`/`test:watch`). Por ora, cobre só
-lógica pura server/client-agnóstica (máquinas de estado, formatters) — sem
-Testing Library/DOM ainda. Exemplos: `lib/kitchen/order-status.test.ts`,
-`utils/format.test.ts`. Ao introduzir testes de componente, adicionar
-`@testing-library/react` + ambiente `jsdom` neste momento, não antes (evita
-dependência não utilizada).
+lógica pura server/client-agnóstica (máquinas de estado, formatters,
+mapeamento de erros) — sem Testing Library/DOM ainda. Exemplos:
+`lib/kitchen/order-status.test.ts`, `utils/format.test.ts`,
+`lib/checkout/error-messages.test.ts`. Ao introduzir testes de componente,
+adicionar `@testing-library/react` + ambiente `jsdom` neste momento, não
+antes (evita dependência não utilizada).
+
+`import "server-only"` precisa de alias no Vitest (`server-only` →
+`node_modules/server-only/empty.js`, já configurado em
+`vitest.config.ts`) — o pacote lança erro por padrão fora da condição
+`react-server` do bundler do Next, que o Vitest não aplica.
+
+**Lacuna conhecida de testabilidade:** `services/*.ts` instanciam o client
+Supabase internamente (`createSupabaseServerClient()`), sem injeção de
+dependência — diferente de `repositories/*.ts`, que sempre recebem o
+`client` por parâmetro (e por isso são mockáveis/testáveis, ver
+`repositories/orders.repository.test.ts`). Isso significa que a orquestração
+de um service (ex.: `submitCheckout`, `getActiveKitchenOrders`) não é
+unit-testável isoladamente hoje — só a lógica pura que puder ser extraída
+para fora do service (ex.: `mapOrderCreationErrorMessage` em
+`lib/checkout/error-messages.ts`) é. Corrigir isso de verdade (DI no nível
+de service) é um refactor que afeta toda a camada, não só um domínio —
+registrado no `BACKLOG.md`.

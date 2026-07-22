@@ -142,3 +142,31 @@ centralizada em `lib/kitchen/order-status.ts`) → `app/api/kitchen/orders/*`
 aqui. Vitest foi introduzido para a lógica pura mais crítica desta sprint
 (máquina de estados, formatação de tempo decorrido) — ver
 `docs/conventions.md`.
+
+---
+
+## Sprint 3 — Checkout, Criação de Pedidos e Integração Loja → Cozinha
+
+Fecha a Fase 1 do roadmap (checkout era a peça que faltava desde a Sprint 1
+— ver `docs/roadmap.md`, novo) e conecta a loja ao Painel da Cozinha com
+pedidos reais. Detalhe completo em [`docs/checkout.md`](./checkout.md); duas
+decisões têm ADR dedicado:
+
+- [ADR 0005](./adr/0005-atomic-order-number.md) — número do pedido via
+  contador atômico (`order_counters` + upsert), substituindo o `MAX()+1`
+  da Sprint 2 (dívida técnica eliminada).
+- [ADR 0006](./adr/0006-transactional-checkout-rpc.md) — criação do pedido
+  via função Postgres única (`create_order`, `SECURITY DEFINER`),
+  atômica, chamada por convidados sem papel de staff.
+
+Mesmas camadas (`repository → service → route/hook`); o mapeamento
+Row→domínio (`toOrder`/`toOrderItem`) foi extraído para
+`lib/kitchen/order-mapper.ts` e passou a ser compartilhado entre o Painel
+da Cozinha e o Checkout (evita duplicar a mesma lógica).
+
+**Lacuna crítica encontrada e corrigida:** nenhuma tabela estava na
+publicação `supabase_realtime` do Postgres — o Realtime nunca entregou um
+evento sequer neste projeto, nem para o Painel da Cozinha (Sprint 2), só não
+detectado porque aquela verificação usou dados mocados. Corrigido em
+`0010_realtime_publication.sql` e verificado manualmente ponta a ponta
+nesta sessão (ver `docs/checkout.md`).

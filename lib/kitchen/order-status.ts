@@ -91,6 +91,7 @@ export const ORDER_ADVANCE_ACTION_LABELS: Partial<Record<OrderStatus, string>> =
 export const ORDER_TYPE_LABELS: Record<OrderType, string> = {
   pickup: "Retirada",
   delivery: "Entrega",
+  dine_in: "Consumo no local",
 };
 
 /** Chave de variante de cor por status, mapeada para os tokens do design system (`Badge`, colunas). */

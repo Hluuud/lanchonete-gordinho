@@ -48,7 +48,7 @@ export type Menu = {
 };
 
 // ---------------------------------------------------------------------------
-// Pedidos (Painel da Cozinha, Sprint 2)
+// Pedidos (Painel da Cozinha — Sprint 2; Checkout — Sprint 3)
 // ---------------------------------------------------------------------------
 
 export type OrderStatus =
@@ -60,7 +60,8 @@ export type OrderStatus =
   | "completed"
   | "cancelled";
 
-export type OrderType = "pickup" | "delivery";
+/** "dine_in" (consumo no local) — arquitetura preparada, sem captura de mesa ainda. */
+export type OrderType = "pickup" | "delivery" | "dine_in";
 
 export type OrderItem = {
   id: string;
@@ -75,14 +76,22 @@ export type OrderItem = {
 export type Order = {
   id: string;
   tenantId: string;
-  /** "Senha" exibida ao cliente/cozinha. Nulo só na fração de segundo antes da trigger de DB atribuir. */
-  orderNumber: number | null;
+  /** "Senha" exibida ao cliente/cozinha — atribuída atomicamente por `create_order` antes do insert (Sprint 3). */
+  orderNumber: number;
   status: OrderStatus;
   orderType: OrderType;
   customerName: string | null;
   customerPhone: string | null;
   notes: string | null;
   subtotalCents: number;
+  /** Taxa de serviço — arquitetura preparada (Sprint 3), sempre 0 por ora. */
+  serviceFeeCents: number;
+  /** Desconto de cupom — arquitetura preparada (Sprint 3), sempre 0 por ora. */
+  discountCents: number;
+  /** Sempre nulo por ora — sem lógica de cupom real ainda. */
+  couponCode: string | null;
+  /** Computado (`subtotalCents + serviceFeeCents - discountCents`) — não armazenado no banco. */
+  totalCents: number;
   isPriority: boolean;
   estimatedReadyAt: string | null;
   createdAt: string;
@@ -94,5 +103,32 @@ export type Order = {
   completedAt: string | null;
   cancelledAt: string | null;
   cancelledReason: string | null;
+  items: OrderItem[];
+};
+
+/**
+ * Subconjunto público de `Order`, sem PII (`customerName`/`customerPhone`/
+ * `notes`/`cancelledReason` ficam de fora) — para a página de acompanhamento
+ * (`/pedido/[id]`), que qualquer visitante com o link acessa. Ver ADR 0006 e
+ * `docs/security.md`.
+ */
+export type PublicOrderTracking = {
+  orderId: string;
+  orderNumber: number;
+  status: OrderStatus;
+  orderType: OrderType;
+  subtotalCents: number;
+  serviceFeeCents: number;
+  discountCents: number;
+  totalCents: number;
+  estimatedReadyAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  acceptedAt: string | null;
+  preparingAt: string | null;
+  readyAt: string | null;
+  deliveredAt: string | null;
+  completedAt: string | null;
+  cancelledAt: string | null;
   items: OrderItem[];
 };

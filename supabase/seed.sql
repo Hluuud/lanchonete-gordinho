@@ -67,20 +67,25 @@ begin
   delete from public.order_items where tenant_id = v_tenant;
   delete from public.orders where tenant_id = v_tenant;
 
+  -- Sprint 3: order_number não é mais atribuído por trigger — o seed atribui
+  -- explicitamente (1-10) e sincroniza order_counters no final, para que o
+  -- próximo pedido real criado via create_order continue a sequência do dia
+  -- corretamente (sem colidir com estas senhas de demonstração).
+
   -- A: novo pedido, retirada, recém-chegado.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, subtotal_cents, created_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, subtotal_cents, created_at, estimated_ready_at)
   values
-    (v_tenant, 'new', 'pickup', 'Ana Souza', 3290, now() - interval '3 minutes', now() + interval '17 minutes')
+    (v_tenant, 1, 'new', 'pickup', 'Ana Souza', 3290, now() - interval '3 minutes', now() + interval '17 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values (v_order, v_tenant, (select id from public.products where tenant_id = v_tenant and name = 'X-Gordinho'), 'X-Gordinho', 3290, 1);
 
   -- B: novo pedido, entrega, com observação.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, customer_phone, notes, subtotal_cents, created_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, customer_phone, notes, subtotal_cents, created_at, estimated_ready_at)
   values
-    (v_tenant, 'new', 'delivery', 'Carlos Lima', '(11) 91234-5678', 'Sem cebola', 6070, now() - interval '1 minutes', now() + interval '25 minutes')
+    (v_tenant, 2, 'new', 'delivery', 'Carlos Lima', '(11) 91234-5678', 'Sem cebola', 6070, now() - interval '1 minutes', now() + interval '25 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values
@@ -89,9 +94,9 @@ begin
 
   -- C: aceito, retirada.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, estimated_ready_at)
   values
-    (v_tenant, 'accepted', 'pickup', 'Fernanda Alves', 2880, now() - interval '9 minutes', now() - interval '4 minutes', now() + interval '11 minutes')
+    (v_tenant, 3, 'accepted', 'pickup', 'Fernanda Alves', 2880, now() - interval '9 minutes', now() - interval '4 minutes', now() + interval '11 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values
@@ -100,9 +105,9 @@ begin
 
   -- D: aceito, entrega, prioridade.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, is_priority, subtotal_cents, created_at, accepted_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, is_priority, subtotal_cents, created_at, accepted_at, estimated_ready_at)
   values
-    (v_tenant, 'accepted', 'delivery', 'Roberto Dias', true, 6180, now() - interval '6 minutes', now() - interval '2 minutes', now() + interval '14 minutes')
+    (v_tenant, 4, 'accepted', 'delivery', 'Roberto Dias', true, 6180, now() - interval '6 minutes', now() - interval '2 minutes', now() + interval '14 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values
@@ -111,18 +116,18 @@ begin
 
   -- E: em preparo, ATRASADO (estimated_ready_at no passado) — exercita o filtro "Em atraso".
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, preparing_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, preparing_at, estimated_ready_at)
   values
-    (v_tenant, 'preparing', 'pickup', 'Juliana Prado', 6580, now() - interval '15 minutes', now() - interval '13 minutes', now() - interval '10 minutes', now() - interval '2 minutes')
+    (v_tenant, 5, 'preparing', 'pickup', 'Juliana Prado', 6580, now() - interval '15 minutes', now() - interval '13 minutes', now() - interval '10 minutes', now() - interval '2 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values (v_order, v_tenant, (select id from public.products where tenant_id = v_tenant and name = 'X-Gordinho'), 'X-Gordinho', 3290, 2);
 
   -- F: em preparo, entrega, prioridade.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, is_priority, subtotal_cents, created_at, accepted_at, preparing_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, is_priority, subtotal_cents, created_at, accepted_at, preparing_at, estimated_ready_at)
   values
-    (v_tenant, 'preparing', 'delivery', 'Marcos Vinicius', true, 4480, now() - interval '10 minutes', now() - interval '9 minutes', now() - interval '7 minutes', now() + interval '8 minutes')
+    (v_tenant, 6, 'preparing', 'delivery', 'Marcos Vinicius', true, 4480, now() - interval '10 minutes', now() - interval '9 minutes', now() - interval '7 minutes', now() + interval '8 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values
@@ -131,18 +136,18 @@ begin
 
   -- G: pronto, retirada.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, preparing_at, ready_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, preparing_at, ready_at, estimated_ready_at)
   values
-    (v_tenant, 'ready', 'pickup', 'Patrícia Gomes', 1890, now() - interval '22 minutes', now() - interval '20 minutes', now() - interval '18 minutes', now() - interval '1 minutes', now() - interval '2 minutes')
+    (v_tenant, 7, 'ready', 'pickup', 'Patrícia Gomes', 1890, now() - interval '22 minutes', now() - interval '20 minutes', now() - interval '18 minutes', now() - interval '1 minutes', now() - interval '2 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values (v_order, v_tenant, (select id from public.products where tenant_id = v_tenant and name = 'Batata Frita'), 'Batata Frita', 1890, 1);
 
   -- H: entregue, entrega.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, preparing_at, ready_at, delivered_at)
+    (tenant_id, order_number, status, order_type, customer_name, subtotal_cents, created_at, accepted_at, preparing_at, ready_at, delivered_at)
   values
-    (v_tenant, 'delivered', 'delivery', 'Diego Martins', 4380, now() - interval '40 minutes', now() - interval '38 minutes', now() - interval '35 minutes', now() - interval '10 minutes', now() - interval '3 minutes')
+    (v_tenant, 8, 'delivered', 'delivery', 'Diego Martins', 4380, now() - interval '40 minutes', now() - interval '38 minutes', now() - interval '35 minutes', now() - interval '10 minutes', now() - interval '3 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values
@@ -151,21 +156,28 @@ begin
 
   -- I: cancelado, retirada.
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, subtotal_cents, created_at, cancelled_at, cancelled_reason)
+    (tenant_id, order_number, status, order_type, customer_name, subtotal_cents, created_at, cancelled_at, cancelled_reason)
   values
-    (v_tenant, 'cancelled', 'pickup', 'Sem retorno', 2690, now() - interval '25 minutes', now() - interval '20 minutes', 'Cliente não compareceu para retirada')
+    (v_tenant, 9, 'cancelled', 'pickup', 'Sem retorno', 2690, now() - interval '25 minutes', now() - interval '20 minutes', 'Cliente não compareceu para retirada')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values (v_order, v_tenant, (select id from public.products where tenant_id = v_tenant and name = 'X-Salada'), 'X-Salada', 2690, 1);
 
   -- J: novo pedido, entrega, recém-chegado (menos de 1 minuto — exercita o rótulo "agora").
   insert into public.orders
-    (tenant_id, status, order_type, customer_name, subtotal_cents, created_at, estimated_ready_at)
+    (tenant_id, order_number, status, order_type, customer_name, subtotal_cents, created_at, estimated_ready_at)
   values
-    (v_tenant, 'new', 'delivery', 'Marina Ribeiro', 2780, now() - interval '30 seconds', now() + interval '20 minutes')
+    (v_tenant, 10, 'new', 'delivery', 'Marina Ribeiro', 2780, now() - interval '30 seconds', now() + interval '20 minutes')
   returning id into v_order;
   insert into public.order_items (order_id, tenant_id, product_id, product_name_snapshot, unit_price_cents, quantity)
   values
     (v_order, v_tenant, (select id from public.products where tenant_id = v_tenant and name = 'Milkshake de Chocolate'), 'Milkshake de Chocolate', 1790, 1),
     (v_order, v_tenant, (select id from public.products where tenant_id = v_tenant and name = 'Suco de Laranja 500ml'), 'Suco de Laranja 500ml', 990, 1);
+
+  -- Sincroniza o contador atômico com as senhas de demonstração acima, para
+  -- que o próximo create_order() real continue a partir de 11 hoje.
+  insert into public.order_counters (tenant_id, counter_date, last_number)
+  values (v_tenant, current_date, 10)
+  on conflict (tenant_id, counter_date)
+  do update set last_number = greatest(public.order_counters.last_number, 10);
 end $$;

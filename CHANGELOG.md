@@ -4,6 +4,58 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 3: Checkout, Criação de Pedidos e Integração Loja → Cozinha
+
+Fluxo completo ponta a ponta: carrinho → checkout → pedido persistido →
+Realtime → Painel da Cozinha, e página pública de acompanhamento com QR
+Code. Fecha a Fase 1 do roadmap (checkout era a peça que faltava).
+
+- **Número do pedido atômico**: `order_counters` + upsert atômico substitui
+  o `MAX()+1` da Sprint 2 (dívida técnica eliminada) —
+  [ADR 0005](docs/adr/0005-atomic-order-number.md).
+- **Criação de pedido transacional**: função Postgres única `create_order`
+  (`SECURITY DEFINER`) valida produto/quantidade/disponibilidade, nunca
+  confia em preço do client, gera a senha e retorna o pedido completo numa
+  única chamada — [ADR 0006](docs/adr/0006-transactional-checkout-rpc.md).
+- **Checkout** (`/checkout`): tipo de pedido (retirada/consumo no
+  local/entrega), nome opcional, observação, resumo, confirmação com
+  loading/erro/retry (`features/checkout/`).
+- **Acompanhamento público** (`/pedido/[id]`): senha, itens, total, stepper
+  de status em tempo real, tempo estimado, QR Code (gerado no servidor,
+  `lib/checkout/qr-code.ts`) e link compartilhável. Serve tanto de
+  confirmação pós-checkout quanto de alvo do QR.
+- **Segurança do tracking público**: nova tabela `order_tracking_status`
+  (espelho de `orders` sem PII, sincronizada por trigger) — `orders`
+  continua staff-only; só ela e `order_items` (sem PII) ficam públicas.
+- Novos módulos: `features/checkout/`, `lib/checkout/`,
+  `services/checkout.service.ts`, `app/api/checkout/`, `app/pedido/[id]/`.
+  Mapper `toOrder`/`toOrderItem` extraído para `lib/kitchen/order-mapper.ts`
+  (compartilhado com o Painel da Cozinha).
+- `docs/roadmap.md` e `docs/backend.md` criados (previstos no `CLAUDE.md`,
+  nunca existiam).
+- Testes expandidos: validação de checkout, mapeamento de erros do
+  repository/service, máquina de estados (Vitest).
+
+### Fixed
+
+- **Crítico**: nenhuma tabela estava na publicação `supabase_realtime` do
+  Postgres — o Realtime nunca entregou um evento sequer neste projeto, nem
+  para o Painel da Cozinha (Sprint 2). Só não foi detectado antes porque a
+  verificação da Sprint 2 usou dados mocados. Corrigido
+  (`0010_realtime_publication.sql`) e verificado ponta a ponta nesta sessão.
+- Seed da Sprint 2 quebrou com a remoção da trigger de `order_number`
+  (schema agora exige o valor explícito) — `supabase/seed.sql` atualizado
+  para atribuir a senha diretamente e sincronizar `order_counters`.
+
+### Known limitations
+
+- Sem endereço de entrega ou número de mesa (`dine_in`/`delivery`
+  selecionáveis, sem os campos complementares).
+- Sem rate limiting em `/api/checkout` (risco já anunciado desde a Sprint 1
+  em `docs/security.md`, ainda não implementado).
+- Sem teste de concorrência real do `create_order` — verificado manualmente
+  via MCP, não como teste automatizado (exigiria Postgres de teste dedicado).
+
 ### Added — Sprint 2: Painel da Cozinha
 
 Kanban de pedidos em tempo real para a cozinha (`/cozinha`, Fase 2 do
