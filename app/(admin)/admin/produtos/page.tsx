@@ -1,15 +1,24 @@
-import { UtensilsCrossed } from "lucide-react";
+import { notFound } from "next/navigation";
 
-import { ComingSoon } from "@/features/admin/components/coming-soon";
+import { ProductsTable } from "@/features/admin/components/products-table";
+import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
+import { getMenuByTenantSlug } from "@/services/menu.service";
 
 export const metadata = { title: "Produtos" };
 
-export default function AdminProdutosPage() {
+/**
+ * Cardápio publicado, somente leitura — reusa `getMenuByTenantSlug` (mesmo
+ * service da loja) direto no Server Component, sem hop HTTP.
+ */
+export default async function AdminProdutosPage() {
+  const slug = await resolveTenantSlug();
+  const menu = await getMenuByTenantSlug(slug);
+
+  if (!menu) notFound();
+
   return (
-    <ComingSoon
-      icon={UtensilsCrossed}
-      title="Produtos"
-      description="A listagem do cardápio chega na próxima etapa desta sprint."
-    />
+    <div className="flex flex-1 flex-col gap-4 p-4 sm:p-6">
+      <ProductsTable categories={menu.categories} />
+    </div>
   );
 }

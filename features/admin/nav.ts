@@ -26,18 +26,18 @@ export type AdminNavItem = {
  * antes), para o menu nunca prometer algo que ainda não existe.
  */
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, ready: false },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, ready: true },
   {
     href: "/admin/pedidos",
     label: "Pedidos",
     icon: ClipboardList,
-    ready: false,
+    ready: true,
   },
   {
     href: "/admin/produtos",
     label: "Produtos",
     icon: UtensilsCrossed,
-    ready: false,
+    ready: true,
   },
   { href: "/admin/categorias", label: "Categorias", icon: Tags, ready: false },
   { href: "/admin/clientes", label: "Clientes", icon: Users, ready: false },
