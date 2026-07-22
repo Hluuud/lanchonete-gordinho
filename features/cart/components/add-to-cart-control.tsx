@@ -12,8 +12,17 @@ import type { Product } from "@/types/domain";
  * Ilha de interatividade dentro do `ProductCard` (que permanece Server
  * Component). Alterna entre botão "adicionar" e stepper de quantidade
  * conforme o item já está ou não no carrinho.
+ *
+ * `variant="labeled"` exibe o botão largo "Adicionar" (cards grandes);
+ * `"icon"` mantém o botão compacto (carrossel, espaços apertados).
  */
-export function AddToCartControl({ product }: { product: Product }) {
+export function AddToCartControl({
+  product,
+  variant = "icon",
+}: {
+  product: Product;
+  variant?: "icon" | "labeled";
+}) {
   const { quantityOf, addItem, incrementItem, decrementItem } = useCart();
   const quantity = quantityOf(product.id);
   const unavailable = !product.isAvailable;
@@ -29,15 +38,32 @@ export function AddToCartControl({ product }: { product: Product }) {
     );
   }
 
+  function handleAdd() {
+    addItem(product);
+    toast.success(`${product.name} adicionado ao carrinho`);
+  }
+
+  if (variant === "labeled") {
+    return (
+      <Button
+        size="md"
+        aria-label={`Adicionar ${product.name} ao carrinho`}
+        disabled={unavailable}
+        onClick={handleAdd}
+        className="min-h-11"
+      >
+        Adicionar
+        <Plus aria-hidden />
+      </Button>
+    );
+  }
+
   return (
     <Button
       size="icon"
       aria-label={`Adicionar ${product.name} ao carrinho`}
       disabled={unavailable}
-      onClick={() => {
-        addItem(product);
-        toast.success(`${product.name} adicionado ao carrinho`);
-      }}
+      onClick={handleAdd}
     >
       <Plus aria-hidden />
     </Button>

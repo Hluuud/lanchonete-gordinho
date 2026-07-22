@@ -1,48 +1,76 @@
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** Skeleton loading da loja, exibido pelo Suspense enquanto o cardápio carrega. */
+/**
+ * Skeleton loading da loja, exibido pelo Suspense enquanto o cardápio
+ * carrega. Espelha o shell de autoatendimento (sidebar + topbar + banner +
+ * grade de cards grandes) para minimizar layout shift.
+ */
 export function MenuSkeleton() {
   return (
-    <div className="flex flex-1 flex-col" aria-hidden>
-      <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 px-4 py-12 sm:py-16">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-3">
-          <Skeleton className="h-4 w-32 bg-foreground/10" />
-          <Skeleton className="h-11 w-72 bg-foreground/10" />
-          <Skeleton className="h-5 w-56 bg-foreground/10" />
-          <Skeleton className="mt-2 h-10 w-36 rounded-full bg-foreground/10" />
+    <div
+      className="flex flex-1 flex-col lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start"
+      aria-hidden
+    >
+      {/* Sidebar (desktop/totem) */}
+      <div className="sticky top-0 hidden h-dvh flex-col gap-4 border-r bg-card px-5 pt-6 lg:flex">
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-14 rounded-full" />
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+        </div>
+        <Skeleton className="h-12 w-full rounded-full" />
+        <div className="mt-2 flex flex-col gap-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-11 w-full rounded-xl" />
+          ))}
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 pb-16">
-        <Skeleton className="h-12 w-full rounded-full" />
-
-        <div className="mt-4 flex gap-2">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 w-20 rounded-full" />
-          ))}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Topbar */}
+        <div className="sticky top-0 z-30 border-b bg-background">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-3 px-4">
+            <Skeleton className="size-10 rounded-full lg:hidden" />
+            <div className="flex flex-1 flex-col gap-1.5">
+              <Skeleton className="h-4 w-44" />
+              <Skeleton className="hidden h-3 w-28 sm:block" />
+            </div>
+            <Skeleton className="h-7 w-28 rounded-full" />
+            <Skeleton className="size-11 rounded-full" />
+          </div>
         </div>
 
-        <div className="mt-8 flex gap-2 py-1">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-24 rounded-full" />
-          ))}
-        </div>
+        <div className="mx-auto w-full max-w-6xl px-4 py-4 pb-24">
+          <Skeleton className="h-12 w-full rounded-full lg:hidden" />
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Card key={i} className="border-transparent shadow-none">
-              <Skeleton className="aspect-5/4 w-full rounded-none" />
-              <div className="flex flex-col gap-2 p-4">
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <div className="mt-2 flex items-center justify-between">
-                  <Skeleton className="h-6 w-20" />
-                  <Skeleton className="size-11 rounded-md" />
+          <div className="mt-4 flex gap-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-24 rounded-full" />
+            ))}
+          </div>
+
+          {/* Banner */}
+          <Skeleton className="mt-6 aspect-16/9 w-full rounded-3xl sm:aspect-21/9 xl:aspect-3/1" />
+
+          {/* Grade de cards grandes */}
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="gap-0 border-transparent py-0 shadow-none">
+                <Skeleton className="aspect-5/4 w-full rounded-none" />
+                <div className="flex flex-col gap-2 p-4 sm:p-5">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <div className="mt-2 flex items-center justify-between">
+                    <Skeleton className="h-8 w-24" />
+                    <Skeleton className="h-11 w-32 rounded-md" />
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </div>

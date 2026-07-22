@@ -30,7 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
             src={product.imageUrl}
             alt={product.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 400px"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
@@ -58,9 +58,9 @@ export function ProductCard({ product }: { product: Product }) {
         )}
       </div>
 
-      <CardContent className="gap-1.5 p-4">
+      <CardContent className="gap-1.5 p-4 sm:p-5">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="leading-tight font-bold text-card-foreground">
+          <h3 className="text-lg leading-tight font-bold text-card-foreground">
             {product.name}
           </h3>
           {product.rating != null && (
@@ -81,9 +81,9 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
       </CardContent>
 
-      <CardFooter className="p-4 pt-0">
-        <PriceTag cents={product.priceCents} className="text-xl" />
-        <AddToCartControl product={product} />
+      <CardFooter className="p-4 pt-0 sm:p-5 sm:pt-0">
+        <PriceTag cents={product.priceCents} className="text-2xl" />
+        <AddToCartControl product={product} variant="labeled" />
       </CardFooter>
     </Card>
   );

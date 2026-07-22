@@ -37,7 +37,7 @@ export function MenuSection({ section }: { section: StoreSection }) {
           {count} {count === 1 ? "item" : "itens"}
         </span>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {section.products.map((product) => (
           <ProductCard key={`${section.id}-${product.id}`} product={product} />
         ))}
