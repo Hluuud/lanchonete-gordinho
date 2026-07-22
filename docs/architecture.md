@@ -63,10 +63,13 @@ exposto em `/api/menu` para consumo client (`hooks/use-menu`).
 ## Route groups
 
 - `(store)` — loja pública do cliente (guest, sem login). `/`
-- `(admin)` — painel administrativo (Fase 5), protegido. `/admin`
+- `(admin)` — painel administrativo (shell + Dashboard/Pedidos/Produtos
+  desde a Sprint 4; demais telas na Fase 4/5), protegido. `/admin`
 - `(kitchen)` — painel da cozinha (Fase 2), protegido. `/cozinha`
 
-Proteção via `lib/auth/session.ts` (`requireRole`) + RLS no banco.
+Proteção via `lib/auth/session.ts` (`requireRole`) + RLS no banco. Desde a
+Sprint 4, o guard do admin vive no `layout.tsx` do grupo (cobre todas as
+subpáginas de uma vez), não mais em cada `page.tsx`.
 
 ## Stack
 
@@ -170,3 +173,26 @@ evento sequer neste projeto, nem para o Painel da Cozinha (Sprint 2), só não
 detectado porque aquela verificação usou dados mocados. Corrigido em
 `0010_realtime_publication.sql` e verificado manualmente ponta a ponta
 nesta sessão (ver `docs/checkout.md`).
+
+---
+
+## Sprint 4 — Redesign UX/UI: Cardápio de Autoatendimento
+
+Sprint **exclusivamente de frontend** (nenhum schema, migration,
+repository, service ou API route mudou de contrato) — ver `docs/frontend.md`
+para o detalhe completo. Duas mudanças arquiteturais relevantes:
+
+- **Identidades visuais por módulo** — os três grupos de rota
+  (`(store)`/`(kitchen)`/`(admin)`) ganharam paletas próprias via classes
+  de escopo de tokens CSS (`:root`/`.dark`/`.theme-admin`), sem duplicar
+  nenhum componente do design system — [ADR 0007](./adr/0007-module-scoped-visual-identities.md).
+- **`features/admin/` nasce** com o mesmo padrão das demais features:
+  páginas com dado real (Dashboard, Pedidos, Produtos) chamam os services
+  já existentes (`getMenuByTenantSlug`, `getActiveKitchenOrders`) direto do
+  Server Component — zero backend novo, reuso total da camada de serviços
+  estabelecida na Fase 0.
+
+O board da cozinha ganhou uma camada de agrupamento visual
+(`lib/kitchen/board-columns.ts`) **sobre** a máquina de estados existente
+(`lib/kitchen/order-status.ts`, intocada) — 4 colunas na tela mapeiam para
+os 7 status reais; detalhe em `docs/kitchen-panel.md`.

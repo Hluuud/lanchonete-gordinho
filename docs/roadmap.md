@@ -36,9 +36,14 @@ ESC/POS, QR Code (já gerado desacopladamente em
 `lib/checkout/qr-code.ts` — reaproveitável para impressão térmica),
 reimpressão, impressão por setor.
 
-## Fase 4 — Painel Administrativo
+## Fase 4 — Painel Administrativo 🚧 iniciada na Sprint 4
 
-Relatórios, dashboard, financeiro, indicadores. Não iniciada.
+- **Shell + Dashboard/Pedidos/Produtos** (somente leitura) — Sprint 4:
+  `app/(admin)/admin/`, identidade visual própria (`.theme-admin`, ADR
+  0007), reuso direto dos services da loja/cozinha (sem backend novo).
+- Pendente: CRUD real de Categorias/Clientes/Cupons/Funcionários,
+  Relatórios, Configurações, Impressoras (hoje placeholders "Em breve"),
+  histórico de pedidos finalizados, realtime na lista de pedidos.
 
 ## Fase 5 — Recursos Premium
 

@@ -4,6 +4,70 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 4: Redesign UX/UI — Cardápio de Autoatendimento
+
+Sprint exclusivamente de frontend (nenhum schema, migration, repository,
+service ou API route mudou de contrato) — três módulos ganharam identidade
+visual própria e a loja virou um verdadeiro cardápio digital de
+autoatendimento (referências de experiência: New Dog, Goomer, Consumer).
+Detalhe completo em `docs/frontend.md` (novo).
+
+- **Paleta da marca**: tokens migrados do vermelho/âmbar da Sprint 1 para
+  laranja/preto/branco derivados da logo oficial (`public/brand/logo.png`,
+  `BrandLogo`); `themeColor` do PWA atualizado.
+- **Loja — shell de autoatendimento**: `StoreSidebar` fixa (desktop/totem)
+  com busca e navegação de seções com ScrollSpy; `StoreTopbar` sticky com
+  status Aberto/Fechado, tempo médio de preparo e carrinho; `StoreMobileNav`
+  (drawer) complementa a `CategoryNav` horizontal no celular.
+- **Seções virtuais derivadas de badges** (`features/menu/virtual-sections.ts`):
+  "Promoções & Destaques" (`isFeatured`) e "Novidades" (`isNew`), ocultas
+  quando vazias — "Combos"/"Mais Vendidos" ficam de fora até existir schema
+  (nada de dado fabricado).
+- **Cards de produto maiores**: grid relaxado (1/2/3 colunas), botão
+  "Adicionar" com rótulo, banner principal maior (carrossel existente
+  redesenhado).
+- **Carrinho redesenhado**: estimativa de preparo (`estimateCartPrepMinutes`
+  — maior tempo entre os itens), pulso animado no contador ao adicionar,
+  drawer mobile quase fullscreen, oculto durante `/checkout`.
+- **Painel da Cozinha — redesenho industrial**: identidade `.dark` escopada
+  ao módulo (alto contraste); board reduzido a **4 colunas visuais**
+  (`lib/kitchen/board-columns.ts`) agrupando os 7 status reais — a máquina
+  de estados (`lib/kitchen/order-status.ts`) não mudou; drag-and-drop
+  resolvido por `resolveDropPath` (uma coluna visual por vez,
+  `changeStatusPath` reverte só o passo que falhar); auto-hide visual de
+  pedidos finalizados após 5 min (`KITCHEN_DONE_AUTOHIDE_MS`, nunca chama a
+  API); cartão com senha gigante, cor por urgência do tempo de espera,
+  toggle de prioridade oculto em pedidos já entregues (fecha item da
+  Sprint 2), cancelados movidos para um filtro dedicado fora das colunas.
+- **Painel Administrativo — shell + primeiras páginas reais**: menu lateral
+  ERP (`features/admin/nav.ts`), identidade `.theme-admin`; Dashboard,
+  Pedidos e Produtos com dados reais (reusam `getActiveKitchenOrders` e
+  `getMenuByTenantSlug` direto do Server Component, sem backend novo);
+  demais itens do menu como placeholders "Em breve".
+- **ADR 0007**: identidades visuais por módulo via classes de escopo de
+  tokens CSS (`:root`/`.dark`/`.theme-admin`) — zero duplicação de
+  componentes do design system.
+- Novos testes (lógica pura): seções virtuais, horário/status da loja,
+  estimativa de preparo do carrinho, mapeamento de colunas visuais da
+  cozinha, limiares de urgência (38 testes novos — 33 → 71).
+- `KITCHEN_BOARD_COLUMNS` (`lib/kitchen/order-status.ts`) removido — órfão
+  desde que o board passou a usar `KITCHEN_VISUAL_COLUMNS`.
+
+### Known limitations
+
+- Verificação visual em viewport mobile via automação de browser não foi
+  possível nesta sessão (`resize_window` não altera o viewport real neste
+  ambiente — mesma limitação já registrada nas Sprints 1/2); responsividade
+  revisada por código (classes `lg:`/`md:` seguem o mesmo padrão já testado
+  visualmente em sprints anteriores). Recomenda-se validação manual em
+  device/DevTools antes do merge.
+- Não foi possível autenticar como `kitchen`/`manager` nesta sessão (sem
+  credenciais de teste seedadas) para validar visualmente `/cozinha` e
+  `/admin` via browser — verificado por build/lint/typecheck/testes e
+  revisão de código.
+- Toasts e overlays Radix não são "cientes" do tema do módulo (portal no
+  `<body>`, fora do escopo `.dark`/`.theme-admin`) — ver ADR 0007.
+
 ### Added — Sprint 3: Checkout, Criação de Pedidos e Integração Loja → Cozinha
 
 Fluxo completo ponta a ponta: carrinho → checkout → pedido persistido →

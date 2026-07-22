@@ -54,20 +54,6 @@ export const STATUS_TIMESTAMP_COLUMN: Partial<
   cancelled: "cancelled_at",
 };
 
-/**
- * As 6 colunas do Kanban, em ordem. "completed" não é coluna: pedidos
- * entregues são arquivados (botão "Finalizar") e saem do board ativo — ver
- * `docs/kitchen-panel.md`.
- */
-export const KITCHEN_BOARD_COLUMNS: OrderStatus[] = [
-  "new",
-  "accepted",
-  "preparing",
-  "ready",
-  "delivered",
-  "cancelled",
-];
-
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   new: "Novo Pedido",
   accepted: "Aceito",
