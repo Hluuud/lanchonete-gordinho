@@ -23,7 +23,7 @@ export function CartPanel() {
         <SheetContent
           title={CART_TITLE}
           description={CART_DESCRIPTION}
-          className="p-0 pt-6"
+          className="p-0 pt-6 sm:max-w-md"
         >
           <CartPanelContent />
         </SheetContent>
@@ -33,7 +33,11 @@ export function CartPanel() {
 
   return (
     <Drawer open={isOpen} onOpenChange={setOpen}>
-      <DrawerContent title={CART_TITLE} description={CART_DESCRIPTION}>
+      <DrawerContent
+        title={CART_TITLE}
+        description={CART_DESCRIPTION}
+        className="max-h-[92dvh]"
+      >
         <div className="min-h-0 flex-1 pt-2 pb-[env(safe-area-inset-bottom)]">
           <CartPanelContent />
         </div>

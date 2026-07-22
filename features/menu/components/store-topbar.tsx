@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import { Clock, ShoppingBag } from "lucide-react";
 
 import { BrandLogo } from "@/components/brand-logo";
@@ -19,6 +20,7 @@ export function StoreTopbar({
   avgPrepMinutes: number | null;
 }) {
   const { totalQuantity, setOpen } = useCart();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
@@ -51,12 +53,17 @@ export function StoreTopbar({
         >
           <ShoppingBag className="size-5" aria-hidden />
           {totalQuantity > 0 && (
-            <span
+            <motion.span
+              // Pulso a cada mudança de quantidade (feedback do "Adicionar").
+              key={totalQuantity}
+              initial={prefersReducedMotion ? false : { scale: 1.5 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 22 }}
               aria-hidden
               className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground tabular-nums"
             >
               {totalQuantity}
-            </span>
+            </motion.span>
           )}
         </button>
       </div>

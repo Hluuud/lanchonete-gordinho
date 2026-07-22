@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 
@@ -8,10 +9,14 @@ import { useCart } from "@/features/cart/use-cart";
 
 /**
  * Carrinho fixo (estilo iFood): pílula flutuante que aparece assim que há
- * itens, mostrando quantidade e subtotal ao vivo.
+ * itens, mostrando quantidade e subtotal ao vivo. Oculta no checkout — lá o
+ * resumo do pedido já ocupa a tela.
  */
 export function CartButton() {
   const { totalQuantity, subtotalCents, setOpen } = useCart();
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/checkout")) return null;
 
   return (
     <AnimatePresence>

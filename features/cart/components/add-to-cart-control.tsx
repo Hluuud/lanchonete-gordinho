@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { ADD_TO_CART_FEEDBACK } from "@/features/cart/config";
 import { QuantityStepper } from "@/features/cart/components/quantity-stepper";
 import { useCart } from "@/features/cart/use-cart";
 import type { Product } from "@/types/domain";
@@ -23,7 +24,8 @@ export function AddToCartControl({
   product: Product;
   variant?: "icon" | "labeled";
 }) {
-  const { quantityOf, addItem, incrementItem, decrementItem } = useCart();
+  const { quantityOf, addItem, incrementItem, decrementItem, setOpen } =
+    useCart();
   const quantity = quantityOf(product.id);
   const unavailable = !product.isAvailable;
 
@@ -40,6 +42,10 @@ export function AddToCartControl({
 
   function handleAdd() {
     addItem(product);
+    if (ADD_TO_CART_FEEDBACK === "open-panel") {
+      setOpen(true);
+      return;
+    }
     toast.success(`${product.name} adicionado ao carrinho`);
   }
 

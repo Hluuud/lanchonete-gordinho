@@ -1,3 +1,5 @@
+import Image from "next/image";
+import { motion, useReducedMotion } from "framer-motion";
 import { Trash2 } from "lucide-react";
 
 import { PriceTag } from "@/components/price-tag";
@@ -7,17 +9,35 @@ import type { CartItem } from "@/features/cart/types";
 
 export function CartItemRow({ item }: { item: CartItem }) {
   const { incrementItem, decrementItem, removeItem, setNote } = useCart();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
-    <li className="flex flex-col gap-2 border-b py-4 last:border-b-0">
+    <motion.li
+      layout={!prefersReducedMotion}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={prefersReducedMotion ? undefined : { opacity: 0, x: -16 }}
+      transition={{ duration: 0.18 }}
+      className="flex flex-col gap-2 border-b py-4 last:border-b-0"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div
-            aria-hidden
-            className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/15 via-accent/20 to-accent/40 text-lg font-black text-primary/40"
-          >
-            {item.product.name.charAt(0).toUpperCase()}
-          </div>
+          {item.product.imageUrl ? (
+            <Image
+              src={item.product.imageUrl}
+              alt=""
+              width={64}
+              height={64}
+              className="size-16 shrink-0 rounded-lg object-cover"
+            />
+          ) : (
+            <div
+              aria-hidden
+              className="flex size-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/15 via-accent/20 to-accent/40 text-lg font-black text-primary/40"
+            >
+              {item.product.name.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div>
             <p className="leading-tight font-semibold text-foreground">
               {item.product.name}
@@ -50,7 +70,7 @@ export function CartItemRow({ item }: { item: CartItem }) {
           onChange={(event) => setNote(item.product.id, event.target.value)}
           placeholder="Ex.: sem cebola"
           maxLength={140}
-          className="h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none"
+          className="h-10 flex-1 rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none"
         />
         <QuantityStepper
           label={item.product.name}
@@ -59,6 +79,6 @@ export function CartItemRow({ item }: { item: CartItem }) {
           onDecrement={() => decrementItem(item.product.id)}
         />
       </div>
-    </li>
+    </motion.li>
   );
 }
