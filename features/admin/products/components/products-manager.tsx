@@ -38,10 +38,12 @@ const ALL_CATEGORIES_VALUE = "all";
 export function ProductsManager({
   result,
   categoryOptions,
+  modifierGroupOptions,
   tenantId,
 }: {
   result: Paginated<AdminProduct>;
   categoryOptions: { id: string; name: string }[];
+  modifierGroupOptions: { id: string; name: string }[];
   tenantId: string;
 }) {
   const router = useRouter();
@@ -227,6 +229,7 @@ export function ProductsManager({
         onOpenChange={(open) => setFormState((state) => ({ ...state, open }))}
         product={formState.product}
         categoryOptions={categoryOptions}
+        modifierGroupOptions={modifierGroupOptions}
         tenantId={tenantId}
       />
 

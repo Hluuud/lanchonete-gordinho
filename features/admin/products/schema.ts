@@ -50,6 +50,8 @@ const productExtrasFields = {
   ingredients: z.array(z.string().trim().min(1).max(60)).max(50).default([]),
   allergens: z.array(z.string().trim().min(1).max(60)).max(50).default([]),
   tags: z.array(z.string().trim().min(1).max(60)).max(50).default([]),
+  /** Grupos de adicionais vinculados (Sprint 5, Fase 3) — reconciliados via `product_modifier_groups`. */
+  modifierGroupIds: z.array(z.string().uuid()).max(50).default([]),
 };
 
 /** Schema completo — usado pelas route handlers (`/api/admin/products`) para revalidar o payload inteiro. */

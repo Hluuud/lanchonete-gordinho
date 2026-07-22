@@ -82,6 +82,104 @@ export type Database = {
           },
         ]
       }
+      modifier_groups: {
+        Row: {
+          created_at: string
+          id: string
+          is_required: boolean
+          max_selections: number
+          min_selections: number
+          name: string
+          selection_type: Database["public"]["Enums"]["modifier_selection_type"]
+          sort_order: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          max_selections?: number
+          min_selections?: number
+          name: string
+          selection_type?: Database["public"]["Enums"]["modifier_selection_type"]
+          sort_order?: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          max_selections?: number
+          min_selections?: number
+          name?: string
+          selection_type?: Database["public"]["Enums"]["modifier_selection_type"]
+          sort_order?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "modifier_groups_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      modifier_options: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          is_available: boolean
+          name: string
+          price_cents: number
+          sort_order: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          is_available?: boolean
+          name: string
+          price_cents?: number
+          sort_order?: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          is_available?: boolean
+          name?: string
+          price_cents?: number
+          sort_order?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "modifier_options_group_id_tenant_id_fkey"
+            columns: ["group_id", "tenant_id"]
+            isOneToOne: false
+            referencedRelation: "modifier_groups"
+            referencedColumns: ["id", "tenant_id"]
+          },
+          {
+            foreignKeyName: "modifier_options_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_counters: {
         Row: {
           counter_date: string
@@ -327,6 +425,52 @@ export type Database = {
           },
         ]
       }
+      product_modifier_groups: {
+        Row: {
+          created_at: string
+          group_id: string
+          product_id: string
+          sort_order: number
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          product_id: string
+          sort_order?: number
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          product_id?: string
+          sort_order?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_modifier_groups_group_id_tenant_id_fkey"
+            columns: ["group_id", "tenant_id"]
+            isOneToOne: false
+            referencedRelation: "modifier_groups"
+            referencedColumns: ["id", "tenant_id"]
+          },
+          {
+            foreignKeyName: "product_modifier_groups_product_id_tenant_id_fkey"
+            columns: ["product_id", "tenant_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id", "tenant_id"]
+          },
+          {
+            foreignKeyName: "product_modifier_groups_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           allergens: string[]
@@ -505,6 +649,7 @@ export type Database = {
       is_tenant_staff: { Args: { target_tenant: string }; Returns: boolean }
     }
     Enums: {
+      modifier_selection_type: "single" | "multiple"
       order_status:
         | "new"
         | "accepted"
@@ -642,6 +787,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      modifier_selection_type: ["single", "multiple"],
       order_status: [
         "new",
         "accepted",

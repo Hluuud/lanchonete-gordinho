@@ -1,6 +1,7 @@
 import {
   BarChart3,
   ClipboardList,
+  Layers,
   LayoutDashboard,
   Printer,
   Settings,
@@ -40,6 +41,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     ready: true,
   },
   { href: "/admin/categorias", label: "Categorias", icon: Tags, ready: true },
+  {
+    href: "/admin/adicionais",
+    label: "Adicionais",
+    icon: Layers,
+    ready: true,
+  },
   { href: "/admin/clientes", label: "Clientes", icon: Users, ready: false },
   {
     href: "/admin/cupons",

@@ -4,6 +4,7 @@ import { ProductsManager } from "@/features/admin/products/components/products-m
 import { parseListParams, type RawSearchParams } from "@/features/admin/pagination";
 import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
 import { listCategoryOptions } from "@/services/admin/categories.service";
+import { listModifierGroupOptions } from "@/services/admin/modifiers.service";
 import {
   TenantNotFoundError,
   listAdminProducts,
@@ -36,7 +37,7 @@ export default async function AdminProdutosPage({
 
   const slug = await resolveTenantSlug();
 
-  const [tenant, result, categoryOptions] = await Promise.all([
+  const [tenant, result, categoryOptions, modifierGroupOptions] = await Promise.all([
     getTenantBySlug(slug),
     listAdminProducts(slug, {
       ...params,
@@ -48,6 +49,7 @@ export default async function AdminProdutosPage({
       throw error;
     }),
     listCategoryOptions(slug),
+    listModifierGroupOptions(slug),
   ]);
 
   if (!tenant) notFound();
@@ -56,6 +58,7 @@ export default async function AdminProdutosPage({
     <ProductsManager
       result={result}
       categoryOptions={categoryOptions}
+      modifierGroupOptions={modifierGroupOptions}
       tenantId={tenant.id}
     />
   );

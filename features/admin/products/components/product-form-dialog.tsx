@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -100,12 +101,14 @@ export function ProductFormDialog({
   onOpenChange,
   product,
   categoryOptions,
+  modifierGroupOptions,
   tenantId,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   product: AdminProduct | null;
   categoryOptions: { id: string; name: string }[];
+  modifierGroupOptions: { id: string; name: string }[];
   tenantId: string;
 }) {
   const router = useRouter();
@@ -122,6 +125,15 @@ export function ProductFormDialog({
     product ? toCommaText(product.allergens) : "",
   );
   const [tagsText, setTagsText] = useState(product ? toCommaText(product.tags) : "");
+  const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>(
+    product?.modifierGroupIds ?? [],
+  );
+
+  function toggleGroup(groupId: string, checked: boolean) {
+    setSelectedGroupIds((current) =>
+      checked ? [...current, groupId] : current.filter((id) => id !== groupId),
+    );
+  }
 
   const {
     register,
@@ -142,6 +154,7 @@ export function ProductFormDialog({
       ingredients: fromCommaText(ingredientsText),
       allergens: fromCommaText(allergensText),
       tags: fromCommaText(tagsText),
+      modifierGroupIds: selectedGroupIds,
     };
 
     const promise = isEditing
@@ -345,6 +358,32 @@ export function ProductFormDialog({
                 onChange={(event) => setTagsText(event.target.value)}
               />
             </div>
+          </div>
+
+          <div>
+            <p className="mb-1.5 text-sm font-medium">Grupos de adicionais</p>
+            {modifierGroupOptions.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                Nenhum grupo cadastrado ainda — crie em &ldquo;Adicionais&rdquo;.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-1.5 rounded-lg border p-3">
+                {modifierGroupOptions.map((group) => (
+                  <label
+                    key={group.id}
+                    className="flex items-center gap-2 text-sm"
+                    htmlFor={`product-modifier-group-${group.id}`}
+                  >
+                    <Checkbox
+                      id={`product-modifier-group-${group.id}`}
+                      checked={selectedGroupIds.includes(group.id)}
+                      onCheckedChange={(checked) => toggleGroup(group.id, checked === true)}
+                    />
+                    {group.name}
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

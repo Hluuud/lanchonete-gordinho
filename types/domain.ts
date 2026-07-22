@@ -74,8 +74,38 @@ export type AdminProduct = {
   ingredients: string[];
   allergens: string[];
   tags: string[];
+  /** IDs dos grupos de adicionais vinculados (Sprint 5, Fase 3). */
+  modifierGroupIds: string[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type ModifierSelectionType = "single" | "multiple";
+
+export type AdminModifierOption = {
+  id: string;
+  name: string;
+  priceCents: number;
+  isAvailable: boolean;
+  sortOrder: number;
+};
+
+/**
+ * Grupo de adicionais (Sprint 5, Fase 3) — reutilizável entre produtos via
+ * `product_modifier_groups`. Modelagem/CRUD administrativo apenas: o
+ * cliente ainda não escolhe adicionais ao pedir (ver BACKLOG).
+ */
+export type AdminModifierGroup = {
+  id: string;
+  name: string;
+  selectionType: ModifierSelectionType;
+  isRequired: boolean;
+  minSelections: number;
+  maxSelections: number;
+  sortOrder: number;
+  options: AdminModifierOption[];
+  /** Quantos produtos usam este grupo — informativo na listagem. */
+  productCount: number;
 };
 
 export type AdminCategory = {

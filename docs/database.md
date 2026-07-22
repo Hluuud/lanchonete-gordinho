@@ -25,6 +25,9 @@ região `sa-east-1`). Migrations versionadas em `supabase/migrations/`.
 | `order_items`  | Itens de um pedido — snapshot de nome/preço, imutável após criar.|
 | `order_counters` | Contador atômico de "senha", por tenant/dia (Sprint 3).        |
 | `order_tracking_status` | Espelho de `orders` sem PII, para acompanhamento público (Sprint 3). |
+| `modifier_groups` | Grupos de adicionais reutilizáveis por tenant (Sprint 5, Fase 3). Staff-only. |
+| `modifier_options` | Opções de um grupo de adicionais (Sprint 5, Fase 3). Staff-only. |
+| `product_modifier_groups` | Vínculo N:N entre produtos e grupos de adicionais (Sprint 5, Fase 3). Staff-only. |
 
 `user_role` (enum): `super_admin`, `owner`, `manager`, `kitchen`, `cashier`.
 
@@ -105,6 +108,32 @@ O tipo de domínio `Product` (vitrine pública) **não muda** — os campos
 novos só existem em `AdminProduct` (`types/domain.ts`), consumido
 exclusivamente pelo Painel Administrativo.
 
+### Adicionais (Sprint 5, Fase 3)
+
+`modifier_groups` pertence ao **tenant**, não a um produto — reutilizável
+entre vários produtos via `product_modifier_groups` (N:N). Cada grupo tem
+`selection_type` (`single`/`multiple`), `min_selections`/`max_selections`
+(checks garantem `min ≤ max` e `single → max ≤ 1`) e `is_required`.
+`modifier_options` pertence a um grupo (FK composta `(group_id, tenant_id)`,
+`on delete cascade`). O vínculo produto↔grupo também é `on delete cascade`
+dos dois lados — apagar um grupo só desvincula produtos, nunca apaga
+produtos; apagar um produto só desvincula grupos, nunca apaga grupos
+(diferente de categorias→produtos, aqui não há necessidade de proteção
+contra exclusão).
+
+**RLS staff-only** (`is_tenant_staff` para leitura, `is_tenant_manager`
+para escrita) — **sem policy pública** ainda, porque o storefront não
+consome isso nesta sprint (só modelagem/CRUD administrativo; o cliente não
+escolhe adicionais ao pedir — ver BACKLOG e o plano da Sprint 5).
+
+A camada de serviço (`services/admin/modifiers.service.ts`) usa uma
+estratégia de **substituição completa** para as opções de um grupo e para
+os vínculos de um produto (`replaceModifierOptions`/
+`setProductModifierGroups` em `repositories/modifiers.repository.ts`):
+apaga tudo e reinsere do zero a cada save, em vez de diff/upsert — seguro
+porque nenhuma outra tabela referencia `modifier_options`/
+`product_modifier_groups` ainda.
+
 ### Storage (Sprint 5)
 
 Bucket público `store-assets` (`storage.buckets`), primeira vez que o
@@ -155,6 +184,11 @@ pertencem ao **mesmo tenant** no nível do banco.
   (com `check`), `sku` (único parcial por tenant), `is_bestseller`,
   `ingredients`/`allergens`/`tags` (`text[]`), `nutritional_info` (`jsonb`,
   reservado). Sprint 5, Fase 2. Nenhuma mudança de RLS.
+- `0014_product_modifiers` — cria `modifier_groups`, `modifier_options`,
+  `product_modifier_groups` + enum `modifier_selection_type`. Sprint 5,
+  Fase 3.
+- `0015_product_modifiers_rls` — RLS staff-only das três tabelas acima
+  (sem policy pública). Sprint 5, Fase 3.
 
 ## Seed
 

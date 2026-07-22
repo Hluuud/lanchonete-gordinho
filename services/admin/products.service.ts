@@ -10,6 +10,7 @@ import {
   updateProduct,
   type AdminProductRow,
 } from "@/repositories/menu.repository";
+import { setProductModifierGroups } from "@/repositories/modifiers.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
 import type { AdminProduct } from "@/types/domain";
 import type {
@@ -70,6 +71,7 @@ function toAdminProduct(row: AdminProductRow): AdminProduct {
     ingredients: row.ingredients,
     allergens: row.allergens,
     tags: row.tags,
+    modifierGroupIds: (row.product_modifier_groups ?? []).map((link) => link.group_id),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -125,7 +127,8 @@ export async function createAdminProduct(
       allergens: input.allergens,
       tags: input.tags,
     });
-    return toAdminProduct(row);
+    await setProductModifierGroups(supabase, tenant.id, row.id, input.modifierGroupIds);
+    return toAdminProduct({ ...row, product_modifier_groups: input.modifierGroupIds.map((groupId) => ({ group_id: groupId })) });
   } catch (error) {
     throw translateWriteError(error, input.sku ?? null);
   }
@@ -159,6 +162,14 @@ export async function updateAdminProduct(
       tags: input.tags,
     });
     if (!row) throw new ProductNotFoundError();
+
+    if (input.modifierGroupIds !== undefined) {
+      await setProductModifierGroups(supabase, tenant.id, productId, input.modifierGroupIds);
+      return toAdminProduct({
+        ...row,
+        product_modifier_groups: input.modifierGroupIds.map((groupId) => ({ group_id: groupId })),
+      });
+    }
     return toAdminProduct(row);
   } catch (error) {
     if (error instanceof ProductNotFoundError) throw error;

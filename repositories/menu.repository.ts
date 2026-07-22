@@ -241,7 +241,8 @@ const ADMIN_PRODUCT_SELECT = `
   image_url, prep_time_minutes, sort_order, is_available, is_published,
   is_featured, is_new, is_bestseller, ingredients, allergens, tags,
   created_at, updated_at,
-  categories!products_category_id_tenant_id_fkey ( name )
+  categories!products_category_id_tenant_id_fkey ( name ),
+  product_modifier_groups ( group_id )
 `;
 
 /** Row de produto administrativo (com o nome da categoria aninhado), como retornada pelo Supabase. */

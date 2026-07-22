@@ -4,6 +4,27 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 3): Grupos de Adicionais
+
+- Novas tabelas `modifier_groups`, `modifier_options`,
+  `product_modifier_groups` (N:N) + enum `modifier_selection_type`
+  (`0014_product_modifiers.sql`, `0015_product_modifiers_rls.sql`) — RLS
+  staff-only, sem policy pública (modelagem/CRUD administrativo apenas
+  nesta sprint; o cliente ainda não escolhe adicionais ao pedir).
+- `/admin/adicionais`: CRUD de grupos reutilizáveis (ex. "Molhos",
+  "Queijos") com suas opções editadas inline no mesmo formulário
+  (`react-hook-form` `useFieldArray`) — seleção única/múltipla,
+  obrigatório, mínimo/máximo, preço por opção.
+- `/admin/produtos`: novo campo "Grupos de adicionais" (checklist) —
+  vincula/desvincula grupos existentes ao produto.
+- Novas rotas `app/api/admin/modifier-groups` (`GET`/`POST`) e
+  `app/api/admin/modifier-groups/[id]` (`PATCH`/`DELETE`).
+- `AdminModifierGroup`/`AdminModifierOption` (`types/domain.ts`);
+  `AdminProduct` ganha `modifierGroupIds`.
+- Novo `repositories/modifiers.repository.ts` (tabelas novas o
+  suficiente para justificar arquivo próprio, diferente de
+  Categorias/Produtos que estendem `menu.repository.ts`).
+
 ### Added — Sprint 5 (Fase 2): CRUD de Produtos
 
 - `products` ganha `promo_price_cents`, `sku` (único por tenant), `is_bestseller`,
