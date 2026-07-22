@@ -37,13 +37,13 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
   return (
     <section
       aria-label="Destaques"
-      className="relative overflow-hidden rounded-2xl border shadow-sm"
+      className="relative overflow-hidden rounded-3xl border shadow-sm"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative aspect-21/9 w-full sm:aspect-32/9">
+      <div className="relative aspect-16/9 w-full sm:aspect-21/9 xl:aspect-3/1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={product.id}
@@ -51,7 +51,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: prefersReducedMotion ? 0 : -24 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.35 }}
-            className="absolute inset-0 flex items-center bg-gradient-to-br from-primary/90 via-primary to-accent/80 px-6 sm:px-10"
+            className="absolute inset-0 flex items-center bg-gradient-to-br from-primary/90 via-primary to-accent/80 px-6 sm:px-12"
           >
             {product.imageUrl && (
               <Image
@@ -65,18 +65,18 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
             <div className="relative flex w-full items-center justify-between gap-4">
               <div className="min-w-0 text-primary-foreground">
                 <ProductBadge kind="featured" />
-                <h2 className="mt-2 truncate text-xl font-black sm:text-3xl">
+                <h2 className="mt-2 truncate text-2xl font-black sm:text-4xl">
                   {product.name}
                 </h2>
                 {product.description && (
-                  <p className="mt-1 line-clamp-1 max-w-md text-sm opacity-90 sm:text-base">
+                  <p className="mt-1.5 line-clamp-2 max-w-lg text-sm opacity-90 sm:text-base">
                     {product.description}
                   </p>
                 )}
-                <div className="mt-3">
+                <div className="mt-4">
                   <PriceTag
                     cents={product.priceCents}
-                    className="text-lg text-primary-foreground sm:text-2xl"
+                    className="text-xl text-primary-foreground sm:text-3xl"
                   />
                 </div>
               </div>

@@ -3,10 +3,9 @@
 import { useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import { CategorySection } from "@/features/menu/components/category-section";
 import { FeaturedCarousel } from "@/features/menu/components/featured-carousel";
 import { CategoryNav } from "@/features/menu/components/category-nav";
-import { NewArrivalsRow } from "@/features/menu/components/new-arrivals-row";
+import { MenuSection } from "@/features/menu/components/menu-section";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreTopbar } from "@/features/menu/components/store-topbar";
 import { getAverageMenuPrepTimeMinutes } from "@/features/menu/store-info";
@@ -52,17 +51,9 @@ export function StoreExperience({ menu }: { menu: Menu }) {
     [allProducts],
   );
 
-  const newProducts = useMemo(
-    () => allProducts.filter((product) => product.badges.isNew),
-    [allProducts],
-  );
-
-  // Etapa atual: sidebar navega pelas categorias reais; as seções virtuais
-  // (Destaques/Novidades) entram no conteúdo e na navegação na próxima etapa.
-  const sections = useMemo(
-    () => buildStoreSections(menu).filter((s) => s.kind === "category"),
-    [menu],
-  );
+  // Seções virtuais (Destaques/Novidades, derivadas de badges) + categorias
+  // reais — mesma fonte para sidebar, CategoryNav mobile e conteúdo.
+  const sections = useMemo(() => buildStoreSections(menu), [menu]);
 
   const avgPrepMinutes = useMemo(
     () => getAverageMenuPrepTimeMinutes(menu),
@@ -129,12 +120,11 @@ export function StoreExperience({ menu }: { menu: Menu }) {
                   </div>
                 )}
 
-                <CategoryNav categories={menu.categories} />
+                <CategoryNav sections={sections} />
 
                 <div className="mt-8 flex flex-col gap-12">
-                  <NewArrivalsRow products={newProducts} />
-                  {menu.categories.map((category) => (
-                    <CategorySection key={category.id} category={category} />
+                  {sections.map((section) => (
+                    <MenuSection key={section.id} section={section} />
                   ))}
                 </div>
               </>
