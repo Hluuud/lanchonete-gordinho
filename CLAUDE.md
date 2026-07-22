@@ -570,6 +570,71 @@ Antes de considerar qualquer tarefa concluída, verificar:
 
 ---
 
+# Definition of Done de Sprint/Fase
+
+Ao concluir qualquer Sprint ou Fase, executar nesta ordem:
+
+1. Atualizar documentação relacionada (`docs/`)
+2. Atualizar `CHANGELOG.md`
+3. Atualizar `BACKLOG.md`
+4. Criar/atualizar ADR quando houver decisão arquitetural relevante
+5. Executar build
+6. Executar typecheck
+7. Executar lint
+8. Executar testes existentes
+9. Realizar revisão crítica como Principal Engineer (ver seção "Revisão final")
+10. Criar commit automaticamente, seguindo Conventional Commits
+
+**Não perguntar se deve realizar commit.** O commit faz parte da Definition
+of Done de toda sprint/fase concluída — é automático, não opcional. Isso não
+dispensa confirmação para ações fora do escopo da sprint (push, force-push,
+alterações destrutivas), que seguem as regras normais de confirmação.
+
+## Sprint Report
+
+Toda sprint/fase deve terminar com um Sprint Report, no seguinte formato:
+
+```
+## Sprint Report — <nome da sprint>
+
+### Resumo
+### Arquivos modificados
+### Novos componentes / hooks / services / repositories
+### Mudanças arquiteturais
+### Performance
+### Riscos
+### Dívida técnica
+### Melhorias futuras
+### Commit realizado
+### Checklist DoD
+```
+
+## Revisão final
+
+Antes de encerrar a sprint, revisar criticamente como Principal Engineer.
+Identificar (e registrar no `BACKLOG.md`, nunca omitir):
+
+- gargalos;
+- oportunidades de simplificação;
+- possíveis problemas de escalabilidade;
+- melhorias arquiteturais;
+- riscos futuros.
+
+Não implementar funcionalidades apenas porque são "bonitas". Toda
+funcionalidade deve resolver um problema operacional do restaurante ou
+preparar a plataforma para sua evolução como SaaS.
+
+---
+
+# BACKLOG.md
+
+Pendências, dívida técnica e melhorias futuras vivem em `BACKLOG.md` (raiz do
+projeto), organizado por sprint/fase, nunca apenas mencionadas em conversa.
+Todo item identificado na revisão final de uma sprint deve ser registrado lá
+antes de encerrar a sprint.
+
+---
+
 # Governança da documentação
 
 Toda alteração relevante deve atualizar a documentação correspondente.

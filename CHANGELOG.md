@@ -4,6 +4,47 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 2: Painel da Cozinha
+
+Kanban de pedidos em tempo real para a cozinha (`/cozinha`, Fase 2 do
+roadmap). Primeira sprint com domínio de escrita autenticada
+(`orders`/`order_items`) e primeiro uso de Supabase Realtime na plataforma.
+
+- **Schema**: migrations `0004_orders_schema` (`orders`, `order_items`,
+  enums `order_status`/`order_type`, trigger de "senha" sequencial por
+  tenant/dia) e `0005_orders_rls` (RLS + helper `is_tenant_staff`). Seed
+  estendido com 10 pedidos de exemplo cobrindo as 6 colunas do board.
+- **Board**: colunas Novo Pedido/Aceito/Em Preparo/Pronto/Entregue/Cancelado,
+  atualizadas via Supabase Realtime (reducer local + patch otimista com
+  reversão em falha — [ADR 0003](./docs/adr/0003-kitchen-realtime-state-model.md)).
+  Drag-and-drop entre colunas (`@dnd-kit` —
+  [ADR 0004](./docs/adr/0004-drag-and-drop-library.md)), com botão de ação
+  equivalente em todo card (acessibilidade/tablet/TV da cozinha).
+- **Card**: senha, horário, timer de tempo decorrido, tempo previsto, itens
+  com observação, tipo (retirada/entrega), badges de prioridade e atraso.
+- **Filtros e busca**: Todos/Retirada/Entrega/Em atraso/Prioridade + busca
+  por senha, produto ou cliente (client-side, sem chamada extra ao Supabase).
+- **Som**: aviso de novo pedido via Web Audio API (sem asset de áudio),
+  toggle persistido e sincronizado entre abas/telas.
+- **Responsividade**: colunas com scroll horizontal em desktop/tablet/TV;
+  Tabs (uma coluna por vez) em mobile.
+- **Testes**: Vitest introduzido (novo no projeto) para a máquina de estados
+  de status e os formatters de tempo.
+- Novo módulo `features/kitchen/`, `lib/kitchen/`,
+  `repositories/orders.repository.ts`, `services/kitchen-orders.service.ts`,
+  `app/api/kitchen/orders/*`. Novo primitivo de design system: `warning` no
+  `Badge`; `Tabs`/`Input` (shadcn).
+
+### Known limitations
+
+- Sem checkout real: pedidos vêm de `supabase/seed.sql`, não de um fluxo de
+  compra — ver `BACKLOG.md`.
+- Verificação de drag-and-drop e do layout mobile via automação de browser
+  não foi possível nesta sessão (mesma limitação de ferramenta já registrada
+  abaixo, agora também para gestos de arrastar multi-etapa) — lógica de
+  transição de status está coberta por testes unitários; recomenda-se
+  validação manual em device/DevTools antes do merge.
+
 ### Added — Sprint 1: Experiência da Loja (UX)
 
 Redesign completo da loja pública, inspirado em iFood/McDonald's/Burger

@@ -46,3 +46,53 @@ export type Menu = {
   tenant: Tenant;
   categories: MenuCategory[];
 };
+
+// ---------------------------------------------------------------------------
+// Pedidos (Painel da Cozinha, Sprint 2)
+// ---------------------------------------------------------------------------
+
+export type OrderStatus =
+  | "new"
+  | "accepted"
+  | "preparing"
+  | "ready"
+  | "delivered"
+  | "completed"
+  | "cancelled";
+
+export type OrderType = "pickup" | "delivery";
+
+export type OrderItem = {
+  id: string;
+  /** Nulo se o produto original foi removido do cardápio — o snapshot permanece. */
+  productId: string | null;
+  productName: string;
+  unitPriceCents: number;
+  quantity: number;
+  notes: string | null;
+};
+
+export type Order = {
+  id: string;
+  tenantId: string;
+  /** "Senha" exibida ao cliente/cozinha. Nulo só na fração de segundo antes da trigger de DB atribuir. */
+  orderNumber: number | null;
+  status: OrderStatus;
+  orderType: OrderType;
+  customerName: string | null;
+  customerPhone: string | null;
+  notes: string | null;
+  subtotalCents: number;
+  isPriority: boolean;
+  estimatedReadyAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  acceptedAt: string | null;
+  preparingAt: string | null;
+  readyAt: string | null;
+  deliveredAt: string | null;
+  completedAt: string | null;
+  cancelledAt: string | null;
+  cancelledReason: string | null;
+  items: OrderItem[];
+};

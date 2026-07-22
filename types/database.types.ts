@@ -73,6 +73,141 @@ export type Database = {
           },
         ];
       };
+      order_items: {
+        Row: {
+          created_at: string;
+          id: string;
+          notes: string | null;
+          order_id: string;
+          product_id: string | null;
+          product_name_snapshot: string;
+          quantity: number;
+          tenant_id: string;
+          unit_price_cents: number;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          notes?: string | null;
+          order_id: string;
+          product_id?: string | null;
+          product_name_snapshot: string;
+          quantity?: number;
+          tenant_id: string;
+          unit_price_cents: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          notes?: string | null;
+          order_id?: string;
+          product_id?: string | null;
+          product_name_snapshot?: string;
+          quantity?: number;
+          tenant_id?: string;
+          unit_price_cents?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_tenant_id_fkey";
+            columns: ["order_id", "tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id", "tenant_id"];
+          },
+          {
+            foreignKeyName: "order_items_product_id_tenant_id_fkey";
+            columns: ["product_id", "tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id", "tenant_id"];
+          },
+          {
+            foreignKeyName: "order_items_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          accepted_at: string | null;
+          cancelled_at: string | null;
+          cancelled_reason: string | null;
+          completed_at: string | null;
+          created_at: string;
+          customer_name: string | null;
+          customer_phone: string | null;
+          delivered_at: string | null;
+          estimated_ready_at: string | null;
+          id: string;
+          is_priority: boolean;
+          notes: string | null;
+          order_number: number | null;
+          order_type: Database["public"]["Enums"]["order_type"];
+          preparing_at: string | null;
+          ready_at: string | null;
+          status: Database["public"]["Enums"]["order_status"];
+          subtotal_cents: number;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          cancelled_at?: string | null;
+          cancelled_reason?: string | null;
+          completed_at?: string | null;
+          created_at?: string;
+          customer_name?: string | null;
+          customer_phone?: string | null;
+          delivered_at?: string | null;
+          estimated_ready_at?: string | null;
+          id?: string;
+          is_priority?: boolean;
+          notes?: string | null;
+          order_number?: number | null;
+          order_type?: Database["public"]["Enums"]["order_type"];
+          preparing_at?: string | null;
+          ready_at?: string | null;
+          status?: Database["public"]["Enums"]["order_status"];
+          subtotal_cents?: number;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          cancelled_at?: string | null;
+          cancelled_reason?: string | null;
+          completed_at?: string | null;
+          created_at?: string;
+          customer_name?: string | null;
+          customer_phone?: string | null;
+          delivered_at?: string | null;
+          estimated_ready_at?: string | null;
+          id?: string;
+          is_priority?: boolean;
+          notes?: string | null;
+          order_number?: number | null;
+          order_type?: Database["public"]["Enums"]["order_type"];
+          preparing_at?: string | null;
+          ready_at?: string | null;
+          status?: Database["public"]["Enums"]["order_status"];
+          subtotal_cents?: number;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "orders_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       products: {
         Row: {
           category_id: string;
@@ -216,8 +351,18 @@ export type Database = {
       current_profile_tenant: { Args: never; Returns: string };
       is_super_admin: { Args: never; Returns: boolean };
       is_tenant_manager: { Args: { target_tenant: string }; Returns: boolean };
+      is_tenant_staff: { Args: { target_tenant: string }; Returns: boolean };
     };
     Enums: {
+      order_status:
+        | "new"
+        | "accepted"
+        | "preparing"
+        | "ready"
+        | "delivered"
+        | "completed"
+        | "cancelled";
+      order_type: "pickup" | "delivery";
       user_role: "super_admin" | "owner" | "manager" | "kitchen" | "cashier";
     };
     CompositeTypes: {
@@ -346,13 +491,26 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      order_status: [
+        "new",
+        "accepted",
+        "preparing",
+        "ready",
+        "delivered",
+        "completed",
+        "cancelled",
+      ],
+      order_type: ["pickup", "delivery"],
       user_role: ["super_admin", "owner", "manager", "kitchen", "cashier"],
     },
   },
 } as const;
 
 /**
- * Alias de conveniência para o enum de papéis (usado pela camada de auth).
- * Mantido fora do bloco gerado para sobreviver a regenerações.
+ * Aliases de conveniência para enums usados fora do bloco gerado (auth,
+ * domínio de pedidos). Mantidos fora do bloco gerado para sobreviver a
+ * regenerações.
  */
 export type UserRole = Database["public"]["Enums"]["user_role"];
+export type OrderStatus = Database["public"]["Enums"]["order_status"];
+export type OrderType = Database["public"]["Enums"]["order_type"];

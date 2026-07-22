@@ -72,4 +72,23 @@ responsabilidade de quem consome o valor (`useDebounce`), não do input em si.
 Assinar APIs externas ao React via `useSyncExternalStore`, não
 `useEffect` + `useState` — evita um render extra e satisfaz a regra de lint
 `react-hooks/set-state-in-effect`. Ver `hooks/use-media-query.ts` e
-`components/offline-banner.tsx`.
+`components/offline-banner.tsx`. Vale também para leituras pontuais de
+`localStorage` corrigidas após o mount (ex.: `lib/kitchen/notification-sound.ts`
++ `features/kitchen/components/kitchen-header.tsx`) — não só para valores que
+mudam continuamente.
+
+Exceção deliberada: assinaturas que precisam disparar efeitos colaterais
+assíncronos a cada evento (fetch, toast, som) — não apenas sincronizar um
+valor lido — usam `useEffect` tradicional (ex.: `use-kitchen-realtime.ts`).
+`useSyncExternalStore` exige que `getSnapshot` seja puro; forçar um caso
+assim nesse hook seria a abstração errada. Ver
+[ADR 0003](./adr/0003-kitchen-realtime-state-model.md).
+
+## Testes
+
+Vitest (`vitest.config.ts`, script `test`/`test:watch`). Por ora, cobre só
+lógica pura server/client-agnóstica (máquinas de estado, formatters) — sem
+Testing Library/DOM ainda. Exemplos: `lib/kitchen/order-status.test.ts`,
+`utils/format.test.ts`. Ao introduzir testes de componente, adicionar
+`@testing-library/react` + ambiente `jsdom` neste momento, não antes (evita
+dependência não utilizada).

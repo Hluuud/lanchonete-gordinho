@@ -1,26 +1,39 @@
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+
+import { KitchenBoard } from "@/features/kitchen/components/kitchen-board";
+import { KitchenBoardSkeleton } from "@/features/kitchen/components/kitchen-board-skeleton";
 import { requireRole } from "@/lib/auth/session";
+import { KITCHEN_STAFF_ROLES } from "@/lib/kitchen/roles";
+import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
+import { getActiveKitchenOrders } from "@/services/kitchen-orders.service";
 
 export const metadata = { title: "Cozinha" };
 
 /**
- * Stub do Painel da Cozinha (Fase 2). Estabelece o route group protegido.
- * O Kanban de pedidos em tempo real (Supabase Realtime) entra na Fase 2.
+ * Painel da Cozinha (Fase 2): busca os pedidos ativos no servidor (RLS do
+ * usuário autenticado) e entrega já carregados para `KitchenBoard`, que passa
+ * a atualizá-los via Supabase Realtime — ver `docs/kitchen-panel.md`.
  */
 export default async function KitchenHomePage() {
-  const user = await requireRole([
-    "super_admin",
-    "owner",
-    "manager",
-    "kitchen",
-  ]);
+  await requireRole(KITCHEN_STAFF_ROLES);
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-16">
-      <h1 className="text-2xl font-bold">Painel da Cozinha</h1>
-      <p className="mt-2 text-muted-foreground">
-        Olá, {user.fullName ?? "equipe"}. Área protegida — o painel de pedidos
-        em tempo real chega na Fase 2.
-      </p>
-    </main>
+    <Suspense fallback={<KitchenBoardSkeleton />}>
+      <KitchenBoardContent />
+    </Suspense>
+  );
+}
+
+async function KitchenBoardContent() {
+  const slug = await resolveTenantSlug();
+  const result = await getActiveKitchenOrders(slug);
+
+  if (!result) {
+    notFound();
+  }
+
+  return (
+    <KitchenBoard initialOrders={result.orders} tenantId={result.tenant.id} />
   );
 }

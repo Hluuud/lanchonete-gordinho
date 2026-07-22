@@ -116,3 +116,29 @@ no banco ainda (chega com combos/upsell, Fase 1/6). Ver
 mobile) — escolhidos via `useMediaQuery`. `Button` ganhou `asChild` (Radix
 Slot) para compor com `<Link>`. `EmptyState` é o padrão único para carrinho
 vazio, busca sem resultado, erro e "não encontrado".
+
+---
+
+## Sprint 2 — Painel da Cozinha
+
+Fase 2 do roadmap. Introduz o primeiro domínio de escrita autenticada da
+plataforma (`orders`/`order_items`) e o primeiro uso de Supabase Realtime.
+Detalhe completo em [`docs/kitchen-panel.md`](./kitchen-panel.md); duas
+decisões arquiteturais têm ADR dedicado:
+
+- [ADR 0003](./adr/0003-kitchen-realtime-state-model.md) — estado do board
+  via reducer local + Realtime híbrido (otimista, com reversão em falha).
+- [ADR 0004](./adr/0004-drag-and-drop-library.md) — `@dnd-kit` para o
+  drag-and-drop entre colunas.
+
+Camadas seguem exatamente o padrão estabelecido na Fase 0
+(`repository → service → route/hook`): `repositories/orders.repository.ts` →
+`services/kitchen-orders.service.ts` (máquina de estados de status
+centralizada em `lib/kitchen/order-status.ts`) → `app/api/kitchen/orders/*`
+→ `features/kitchen/*` (Client Components). Nenhuma camada anterior
+(cardápio, carrinho, tenant, auth) foi alterada.
+
+**Testes (novo nesta sprint):** o projeto não tinha framework de teste até
+aqui. Vitest foi introduzido para a lógica pura mais crítica desta sprint
+(máquina de estados, formatação de tempo decorrido) — ver
+`docs/conventions.md`.
