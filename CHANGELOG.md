@@ -4,6 +4,24 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 2): CRUD de Produtos
+
+- `products` ganha `promo_price_cents`, `sku` (único por tenant), `is_bestseller`,
+  `ingredients`/`allergens`/`tags` (`text[]`), `nutritional_info`
+  (`0013_products_admin_fields.sql`, reservado/placeholder — mesmo
+  tratamento do campo `rating` no domínio).
+- `/admin/produtos`: listagem paginada/buscável (nome/SKU)/filtrável por
+  categoria, formulário completo (imagem via upload real — `ImageUpload`,
+  Fase 0 —, preço e preço promocional em reais na UI/centavos no domínio,
+  SKU, tempo de preparo, ordem, ingredientes/alérgenos/tags como texto
+  separado por vírgula, 5 toggles de situação), excluir com confirmação.
+- Novas rotas `app/api/admin/products` (`GET`/`POST`) e
+  `app/api/admin/products/[id]` (`PATCH`/`DELETE`).
+- `AdminProduct` (`types/domain.ts`) — superset de gestão de `Product`; o
+  tipo público (vitrine) não muda.
+- Removida `features/admin/components/products-table.tsx` (Sprint 4,
+  somente leitura) — substituída pelo CRUD completo.
+
 ### Added — Sprint 5 (Fase 1): CRUD de Categorias
 
 Primeiro CRUD administrativo ponta a ponta — valida o template inteiro

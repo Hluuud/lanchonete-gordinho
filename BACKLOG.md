@@ -15,6 +15,20 @@ arquiteturais associadas.
   editar, excluir, bloqueio de exclusão com produtos) — sem credenciais de
   teste seedadas nesta sessão; coberto por build/lint/typecheck e revisão
   de código, não por teste end-to-end real.
+- ☐ **Animação de fechamento do dialog de produto**: `ProductFormDialog` é
+  remontado (via `key`) a cada abertura para evitar sincronizar estado
+  local por efeito (lint `react-hooks/set-state-in-effect`) — troca
+  aceitável: a abertura sempre parte de estado fresco, mas o fechamento
+  perde a transição de saída do Radix (a árvore desmonta junto do
+  `open=false`). Polimento visual menor.
+- ☐ **"Mais vendido" calculado de vendas reais**: hoje `is_bestseller` é um
+  toggle manual (`products.is_bestseller`); os dados para calcular
+  automaticamente já existem em `order_items` (ver Fase 7 — Dashboard).
+- ☐ **Taxonomia compartilhada de ingredientes/alérgenos/tags**: hoje são
+  `text[]` de texto livre por produto (decisão de escopo da Fase 2) — sem
+  filtro "todos os produtos com glúten" nem autocompletar entre produtos.
+  Migrar para tabelas normalizadas (`tags`, `allergens` + tabelas de
+  vínculo) se precisar de reuso/filtro entre produtos.
 - ☐ **Adicionais e Combos vendáveis na loja** (Sprint 6): Fases 3 e 4 desta
   sprint só modelam/administram — o cliente ainda não escolhe adicionais
   nem monta combos ao pedir. Exige mudanças em carrinho/checkout/

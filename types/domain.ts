@@ -52,6 +52,32 @@ export type Menu = {
 // vitrine pública. `MenuCategory`/`Product` continuam o contrato do cliente.
 // ---------------------------------------------------------------------------
 
+export type AdminProduct = {
+  id: string;
+  categoryId: string;
+  categoryName: string;
+  name: string;
+  description: string | null;
+  priceCents: number;
+  /** Sempre menor que `priceCents` quando presente (constraint no banco). */
+  promoPriceCents: number | null;
+  sku: string | null;
+  imageUrl: string | null;
+  prepTimeMinutes: number;
+  sortOrder: number;
+  isAvailable: boolean;
+  /** Aparece no cardápio (equivalente a `is_active` de `AdminCategory`). */
+  isPublished: boolean;
+  isFeatured: boolean;
+  isNew: boolean;
+  isBestseller: boolean;
+  ingredients: string[];
+  allergens: string[];
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AdminCategory = {
   id: string;
   name: string;

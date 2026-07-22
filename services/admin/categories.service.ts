@@ -9,6 +9,7 @@ import {
   deleteCategory,
   findAllCategoriesByTenant,
   findCategoryById,
+  findCategoryOptions,
   updateCategory,
   type AdminCategoryRow,
 } from "@/repositories/menu.repository";
@@ -81,6 +82,14 @@ export async function listAdminCategories(
 
   const { rows, total } = await findAllCategoriesByTenant(supabase, tenant.id, params);
   return buildPaginated(rows.map(toAdminCategory), total, params.page, params.pageSize);
+}
+
+/** Pares `{id, name}` de todas as categorias — para popular o `Select` do formulário de produto. */
+export async function listCategoryOptions(
+  tenantSlug: string,
+): Promise<{ id: string; name: string }[]> {
+  const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+  return findCategoryOptions(supabase, tenant.id);
 }
 
 export async function createAdminCategory(

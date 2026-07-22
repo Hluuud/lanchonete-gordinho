@@ -329,53 +329,74 @@ export type Database = {
       }
       products: {
         Row: {
+          allergens: string[]
           category_id: string
           created_at: string
           description: string | null
           id: string
           image_url: string | null
+          ingredients: string[]
           is_available: boolean
+          is_bestseller: boolean
           is_featured: boolean
           is_new: boolean
           is_published: boolean
           name: string
+          nutritional_info: Json | null
           prep_time_minutes: number
           price_cents: number
+          promo_price_cents: number | null
+          sku: string | null
           sort_order: number
+          tags: string[]
           tenant_id: string
           updated_at: string
         }
         Insert: {
+          allergens?: string[]
           category_id: string
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          ingredients?: string[]
           is_available?: boolean
+          is_bestseller?: boolean
           is_featured?: boolean
           is_new?: boolean
           is_published?: boolean
           name: string
+          nutritional_info?: Json | null
           prep_time_minutes?: number
           price_cents: number
+          promo_price_cents?: number | null
+          sku?: string | null
           sort_order?: number
+          tags?: string[]
           tenant_id: string
           updated_at?: string
         }
         Update: {
+          allergens?: string[]
           category_id?: string
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          ingredients?: string[]
           is_available?: boolean
+          is_bestseller?: boolean
           is_featured?: boolean
           is_new?: boolean
           is_published?: boolean
           name?: string
+          nutritional_info?: Json | null
           prep_time_minutes?: number
           price_cents?: number
+          promo_price_cents?: number | null
+          sku?: string | null
           sort_order?: number
+          tags?: string[]
           tenant_id?: string
           updated_at?: string
         }

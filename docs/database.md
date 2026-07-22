@@ -20,7 +20,7 @@ região `sa-east-1`). Migrations versionadas em `supabase/migrations/`.
 | `tenants`      | Restaurantes (unidade de isolamento do SaaS).                    |
 | `profiles`     | Liga `auth.users` → `tenant_id` + `role`.                        |
 | `categories`   | Seções do cardápio, por tenant. Campos de gestão (Sprint 5): `icon`, `color`, `is_available`. |
-| `products`     | Itens do cardápio, por tenant. Preço em `price_cents`.           |
+| `products`     | Itens do cardápio, por tenant. Preço em `price_cents`. Campos de gestão (Sprint 5): `promo_price_cents`, `sku`, `is_bestseller`, `ingredients`, `allergens`, `tags`, `nutritional_info`. |
 | `orders`       | Pedidos, por tenant. Ver seção dedicada.                         |
 | `order_items`  | Itens de um pedido — snapshot de nome/preço, imutável após criar.|
 | `order_counters` | Contador atômico de "senha", por tenant/dia (Sprint 3).        |
@@ -90,6 +90,21 @@ tem produtos — o FK `products.category_id → categories.id` é `on delete
 cascade` (existente desde `0001`, não alterado), então apagar sem essa
 proteção apagaria os produtos junto.
 
+### `products` — campos de gestão (Sprint 5, Fase 2)
+
+`promo_price_cents` (nullable, `check` garante que é sempre menor que
+`price_cents` quando presente), `sku` (único por tenant via índice parcial
+`products_tenant_sku_key`, permite múltiplos produtos sem SKU), `is_bestseller`
+("mais vendido" — flag manual nesta sprint; calcular de vendas reais é
+BACKLOG), `ingredients`/`allergens`/`tags` (`text[]`, texto livre por item,
+sem taxonomia compartilhada — decisão de escopo da Sprint 5), e
+`nutritional_info` (`jsonb`, reservado/não exposto na UI ainda — mesmo
+tratamento do campo `rating` no domínio: slot preparado, sem dado real).
+
+O tipo de domínio `Product` (vitrine pública) **não muda** — os campos
+novos só existem em `AdminProduct` (`types/domain.ts`), consumido
+exclusivamente pelo Painel Administrativo.
+
 ### Storage (Sprint 5)
 
 Bucket público `store-assets` (`storage.buckets`), primeira vez que o
@@ -136,6 +151,10 @@ pertencem ao **mesmo tenant** no nível do banco.
   Storage (Sprint 5, Fase 0 — ver ADR 0008).
 - `0012_categories_admin_fields` — `categories` ganha `icon`, `color`,
   `is_available` (Sprint 5, Fase 1). Nenhuma mudança de RLS.
+- `0013_products_admin_fields` — `products` ganha `promo_price_cents`
+  (com `check`), `sku` (único parcial por tenant), `is_bestseller`,
+  `ingredients`/`allergens`/`tags` (`text[]`), `nutritional_info` (`jsonb`,
+  reservado). Sprint 5, Fase 2. Nenhuma mudança de RLS.
 
 ## Seed
 
