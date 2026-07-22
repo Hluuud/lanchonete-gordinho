@@ -1,55 +1,27 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { CategoryIcon } from "@/features/menu/category-icon";
+import { useScrollSpy } from "@/features/menu/use-scroll-spy";
+import { sectionAnchorId } from "@/features/menu/virtual-sections";
 import { cn } from "@/lib/utils";
 import type { MenuCategory } from "@/types/domain";
 
 /**
  * Navegação horizontal de categorias (estilo iFood): sticky, scroll suave,
- * indicador de categoria ativa via `IntersectionObserver`.
- *
- * A ativação usa uma "linha de detecção" de 1px logo abaixo da nav (altura
- * medida em runtime), em vez de uma margem percentual fixa — assim seções
- * curtas (poucos produtos) também disparam corretamente o estado ativo.
+ * indicador de categoria ativa via `useScrollSpy` (linha de detecção logo
+ * abaixo da nav, altura medida em runtime).
  */
 export function CategoryNav({ categories }: { categories: MenuCategory[] }) {
-  const [activeSlug, setActiveSlug] = useState(categories[0]?.slug);
   const navRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
-  useEffect(() => {
-    const sections = categories
-      .map((category) => document.getElementById(`categoria-${category.slug}`))
-      .filter((element): element is HTMLElement => element !== null);
-
-    if (sections.length === 0) return;
-
-    const lineOffset = (navRef.current?.offsetHeight ?? 64) + 1;
-    const bottomMargin = Math.max(window.innerHeight - lineOffset - 1, 0);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const active = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) => a.boundingClientRect.top - b.boundingClientRect.top,
-          )[0];
-
-        if (active) {
-          setActiveSlug(active.target.id.replace("categoria-", ""));
-        }
-      },
-      {
-        rootMargin: `-${lineOffset}px 0px -${bottomMargin}px 0px`,
-        threshold: 0,
-      },
-    );
-
-    for (const section of sections) observer.observe(section);
-    return () => observer.disconnect();
-  }, [categories]);
+  const activeId = useScrollSpy(
+    categories.map((category) => sectionAnchorId(category.slug)),
+    { topOffsetPx: () => navRef.current?.offsetHeight ?? 64 },
+  );
+  const activeSlug = activeId?.replace("categoria-", "");
 
   useEffect(() => {
     const activeLink = listRef.current?.querySelector<HTMLAnchorElement>(
