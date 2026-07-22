@@ -48,6 +48,28 @@ export type Menu = {
 };
 
 // ---------------------------------------------------------------------------
+// Painel Administrativo (Sprint 5) — superset de gestão, não exposto à
+// vitrine pública. `MenuCategory`/`Product` continuam o contrato do cliente.
+// ---------------------------------------------------------------------------
+
+export type AdminCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string | null;
+  color: string | null;
+  sortOrder: number;
+  /** Aparece no cardápio (equivalente a `is_published` de `Product`). */
+  isActive: boolean;
+  /** Pode ser pedida agora. */
+  isAvailable: boolean;
+  /** Quantidade de produtos vinculados — usado para proteger contra exclusão acidental. */
+  productCount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// ---------------------------------------------------------------------------
 // Pedidos (Painel da Cozinha — Sprint 2; Checkout — Sprint 3)
 // ---------------------------------------------------------------------------
 

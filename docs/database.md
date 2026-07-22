@@ -19,7 +19,7 @@ região `sa-east-1`). Migrations versionadas em `supabase/migrations/`.
 | -------------- | ----------------------------------------------------------------- |
 | `tenants`      | Restaurantes (unidade de isolamento do SaaS).                    |
 | `profiles`     | Liga `auth.users` → `tenant_id` + `role`.                        |
-| `categories`   | Seções do cardápio, por tenant.                                  |
+| `categories`   | Seções do cardápio, por tenant. Campos de gestão (Sprint 5): `icon`, `color`, `is_available`. |
 | `products`     | Itens do cardápio, por tenant. Preço em `price_cents`.           |
 | `orders`       | Pedidos, por tenant. Ver seção dedicada.                         |
 | `order_items`  | Itens de um pedido — snapshot de nome/preço, imutável após criar.|
@@ -79,6 +79,17 @@ RLS por linha inteira (não por coluna) — uma policy pública direto em
 `orders` vazaria PII de todos os pedidos. Ver
 [ADR 0006](./adr/0006-transactional-checkout-rpc.md) e `docs/security.md`.
 
+### `categories` — campos de gestão (Sprint 5, Fase 1)
+
+`icon` (nome de ícone lucide) e `color` (hex) são puramente cosméticos. O
+par `is_active`/`is_available` espelha exatamente `is_published`/
+`is_available` de `products`: `is_active` = aparece no cardápio,
+`is_available` = pode ser pedida agora. Exclusão é bloqueada pela camada de
+serviço (`services/admin/categories.service.ts`) quando a categoria ainda
+tem produtos — o FK `products.category_id → categories.id` é `on delete
+cascade` (existente desde `0001`, não alterado), então apagar sem essa
+proteção apagaria os produtos junto.
+
 ### Storage (Sprint 5)
 
 Bucket público `store-assets` (`storage.buckets`), primeira vez que o
@@ -123,6 +134,8 @@ pertencem ao **mesmo tenant** no nível do banco.
   então — ver `docs/checkout.md`, "Lacuna crítica").
 - `0011_store_assets_bucket` — cria o bucket `store-assets` e as policies de
   Storage (Sprint 5, Fase 0 — ver ADR 0008).
+- `0012_categories_admin_fields` — `categories` ganha `icon`, `color`,
+  `is_available` (Sprint 5, Fase 1). Nenhuma mudança de RLS.
 
 ## Seed
 

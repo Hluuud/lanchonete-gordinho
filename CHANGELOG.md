@@ -4,6 +4,33 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 1): CRUD de Categorias
+
+Primeiro CRUD administrativo ponta a ponta — valida o template inteiro
+(migration → repository → service → rota → schema Zod → formulário →
+tabela → confirmação) que as próximas fases (Produtos, Adicionais, Combos...)
+replicam.
+
+- `categories` ganha `icon`, `color`, `is_available`
+  (`0012_categories_admin_fields.sql`) — `is_active`/`is_available` passa a
+  espelhar o par já existente em `products`
+  (`is_published`/`is_available`).
+- `/admin/categorias`: listagem paginada/buscável/ordenável (server-side),
+  criar/editar (dialog único, `react-hook-form` + Zod), excluir (com
+  confirmação e bloqueio se a categoria ainda tiver produtos — o FK é `on
+  delete cascade`, apagaria os produtos junto).
+- Novas rotas `app/api/admin/categories` (`GET`/`POST`) e
+  `app/api/admin/categories/[id]` (`PATCH`/`DELETE`), seguindo o mesmo
+  padrão auth→Zod→service→erro-de-domínio já usado pela cozinha.
+- `AdminCategory` (novo tipo de domínio, `types/domain.ts`) — superset de
+  gestão de `MenuCategory`, não exposto à vitrine pública.
+- `lib/slug.ts` (`slugify`, testado): deriva o slug do nome, acento-
+  insensível, mesma técnica de normalização já usada em
+  `features/search/search-utils.ts`.
+- `features/admin/components/{admin-list-toolbar,admin-list-pagination}.tsx`:
+  busca (debounced) e paginação reutilizáveis por toda listagem
+  administrativa futura.
+
 ### Added — Sprint 5 (Fase 0): Fundação dos CRUDs administrativos
 
 Primeira fase da Sprint 5 ("Painel Administrativo como Sistema de Gestão")

@@ -39,7 +39,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     icon: UtensilsCrossed,
     ready: true,
   },
-  { href: "/admin/categorias", label: "Categorias", icon: Tags, ready: false },
+  { href: "/admin/categorias", label: "Categorias", icon: Tags, ready: true },
   { href: "/admin/clientes", label: "Clientes", icon: Users, ready: false },
   {
     href: "/admin/cupons",

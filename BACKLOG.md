@@ -5,6 +5,22 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Sprint 5 — Painel Administrativo como Sistema de Gestão
+
+- ☐ **Reordenação de categorias por arrastar-e-soltar**: hoje `sortOrder` é
+  um campo numérico no formulário; drag-and-drop (reaproveitando
+  `@dnd-kit`, já instalado para o board da cozinha) seria mais natural para
+  o lojista com muitas categorias.
+- ☐ **Validação manual de `/admin/categorias` com conta real** (criar,
+  editar, excluir, bloqueio de exclusão com produtos) — sem credenciais de
+  teste seedadas nesta sessão; coberto por build/lint/typecheck e revisão
+  de código, não por teste end-to-end real.
+- ☐ **Adicionais e Combos vendáveis na loja** (Sprint 6): Fases 3 e 4 desta
+  sprint só modelam/administram — o cliente ainda não escolhe adicionais
+  nem monta combos ao pedir. Exige mudanças em carrinho/checkout/
+  `order_items` (fora do escopo desta sprint, decisão registrada no plano
+  da Sprint 5).
+
 ## Sprint 4 — Redesign UX/UI: Cardápio de Autoatendimento
 
 - ☐ **Horário de funcionamento por tenant no banco**: hoje `BUSINESS_HOURS` é
