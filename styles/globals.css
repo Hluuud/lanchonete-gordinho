@@ -3,9 +3,11 @@
 
 /*
  * Design System — Lanchonete do Gordinho
- * Identidade: hamburgueria moderna (vermelho apetitoso + amarelo/âmbar).
+ * Identidade: paleta da logo — laranja vibrante (#FFA61E), preto e branco.
+ * Sobre o laranja da marca, texto escuro (branco sobre #FFA61E não atinge AA;
+ * preto sobre laranja rende ~10.7:1 e é a assinatura visual da logo).
  * Tokens em oklch para consistência perceptual e bom contraste (WCAG AA).
- * Dark mode habilitado via classe `.dark` (preparado, não obrigatório na Fase 0).
+ * `.dark` é a identidade do painel da cozinha (escopado por subárvore).
  */
 
 @custom-variant dark (&:is(.dark *));
@@ -13,30 +15,30 @@
 :root {
   --radius: 0.75rem;
 
-  /* Base neutra (quente, levemente creme para dar apetite) */
-  --background: oklch(0.995 0.004 90);
-  --foreground: oklch(0.22 0.02 40);
+  /* Base: branco com leve calor (muitos espaços em branco, estilo autoatendimento) */
+  --background: oklch(0.995 0.002 90);
+  --foreground: oklch(0.21 0.01 60);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.02 40);
+  --card-foreground: oklch(0.21 0.01 60);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.02 40);
+  --popover-foreground: oklch(0.21 0.01 60);
 
-  /* Primária: vermelho apetitoso */
-  --primary: oklch(0.586 0.222 27);
-  --primary-foreground: oklch(0.985 0.01 90);
+  /* Primária: laranja da logo (#FFA61E) — texto escuro por contraste */
+  --primary: oklch(0.79 0.165 68);
+  --primary-foreground: oklch(0.2 0.02 70);
 
   /* Secundária: neutro quente */
-  --secondary: oklch(0.96 0.012 80);
-  --secondary-foreground: oklch(0.28 0.03 40);
+  --secondary: oklch(0.96 0.01 85);
+  --secondary-foreground: oklch(0.27 0.02 60);
 
-  --muted: oklch(0.96 0.01 80);
-  --muted-foreground: oklch(0.52 0.02 50);
+  --muted: oklch(0.96 0.008 85);
+  --muted-foreground: oklch(0.5 0.02 60);
 
-  /* Acento: amarelo/âmbar (destaques, badges) */
-  --accent: oklch(0.86 0.16 85);
-  --accent-foreground: oklch(0.3 0.06 60);
+  /* Acento: âmbar/dourado (badges, contadores, destaques) */
+  --accent: oklch(0.86 0.15 82);
+  --accent-foreground: oklch(0.28 0.05 65);
 
   --destructive: oklch(0.577 0.245 27);
   --destructive-foreground: oklch(0.985 0.01 90);
@@ -47,47 +49,49 @@
   --warning: oklch(0.82 0.17 75);
   --warning-foreground: oklch(0.3 0.06 60);
 
-  --border: oklch(0.9 0.01 70);
-  --input: oklch(0.9 0.01 70);
-  --ring: oklch(0.586 0.222 27);
+  --border: oklch(0.91 0.01 80);
+  --input: oklch(0.91 0.01 80);
+  /* Foco: laranja escurecido — o laranja da marca não tem 3:1 sobre branco */
+  --ring: oklch(0.66 0.15 60);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
+/* Identidade do painel da cozinha: alto contraste sobre fundo quase preto */
 .dark {
-  --background: oklch(0.16 0.012 50);
-  --foreground: oklch(0.96 0.01 80);
+  --background: oklch(0.15 0.01 60);
+  --foreground: oklch(0.96 0.005 85);
 
-  --card: oklch(0.2 0.014 50);
-  --card-foreground: oklch(0.96 0.01 80);
+  --card: oklch(0.19 0.012 60);
+  --card-foreground: oklch(0.96 0.005 85);
 
-  --popover: oklch(0.2 0.014 50);
-  --popover-foreground: oklch(0.96 0.01 80);
+  --popover: oklch(0.19 0.012 60);
+  --popover-foreground: oklch(0.96 0.005 85);
 
-  --primary: oklch(0.65 0.2 28);
-  --primary-foreground: oklch(0.16 0.012 50);
+  --primary: oklch(0.79 0.165 68);
+  --primary-foreground: oklch(0.18 0.02 60);
 
-  --secondary: oklch(0.28 0.02 50);
-  --secondary-foreground: oklch(0.96 0.01 80);
+  --secondary: oklch(0.27 0.015 60);
+  --secondary-foreground: oklch(0.96 0.005 85);
 
-  --muted: oklch(0.28 0.02 50);
-  --muted-foreground: oklch(0.7 0.02 70);
+  --muted: oklch(0.27 0.015 60);
+  --muted-foreground: oklch(0.72 0.015 70);
 
-  --accent: oklch(0.82 0.16 85);
-  --accent-foreground: oklch(0.22 0.04 60);
+  --accent: oklch(0.84 0.15 82);
+  --accent-foreground: oklch(0.2 0.04 65);
 
   --destructive: oklch(0.65 0.2 28);
-  --destructive-foreground: oklch(0.16 0.012 50);
+  --destructive-foreground: oklch(0.98 0.005 85);
 
   --success: oklch(0.68 0.16 150);
   --success-foreground: oklch(0.16 0.012 150);
   --warning: oklch(0.82 0.17 75);
   --warning-foreground: oklch(0.22 0.04 60);
 
-  --border: oklch(0.3 0.014 50);
-  --input: oklch(0.32 0.014 50);
-  --ring: oklch(0.65 0.2 28);
+  --border: oklch(0.3 0.012 60);
+  --input: oklch(0.33 0.012 60);
+  --ring: oklch(0.79 0.165 68);
 }
 
 @theme inline {
