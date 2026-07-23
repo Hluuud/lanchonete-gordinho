@@ -197,6 +197,39 @@ segmento do path (`(storage.foldername(name))[1]`), ou `is_super_admin()`
 — mesmo formato de `categories_write`/`products_write`, só que o
 `tenant_id` vem do path em vez de uma coluna.
 
+### Usuários (Sprint 5, Fase 6)
+
+`profiles` ganha `email` (espelho de `auth.users.email`, escrito no convite
+— RLS não alcança o schema `auth`, evita `join` em toda leitura) e
+`is_active` (desativação lógica — `profiles.id` referencia `auth.users` com
+`on delete cascade`, então "excluir" apagaria a conta de autenticação; ver
+`0021_profiles_email.sql`/`0022_profiles_is_active.sql`).
+`lib/auth/session.ts#getCurrentUser` trata um perfil `is_active = false`
+como "sem perfil" — bloqueia todas as áreas guardadas (admin, cozinha) sem
+precisar tocar na sessão do Supabase Auth.
+
+Enum `user_role` ganha `'waiter'` (garçom) — `0020_add_waiter_role.sql`,
+isolada em migration própria (Postgres não permite usar um valor de enum
+recém-criado na mesma transação em que foi adicionado, mesmo padrão de
+`0006`).
+
+**Convite**: novo usuário é criado via Supabase Admin API
+(`auth.admin.inviteUserByEmail`, `services/admin/users.service.ts`) — ver
+[ADR 0009](./adr/0009-admin-api-user-invites.md). `super_admin` não é
+atribuível por este fluxo (`ASSIGNABLE_ROLES` em
+`features/admin/users/schema.ts`) — papel de plataforma, provisionamento
+continua manual.
+
+**Achado de segurança corrigido nesta fase**: a policy `profiles_update_self`
+(0002) só garantia `id = auth.uid()` no `with check`, sem restringir quais
+colunas mudam — um usuário autenticado comum podia alterar o próprio `role`
+ou `tenant_id` direto via update, sem passar por nenhuma rota de API
+(auto-escalação de privilégio pré-existente, não introduzida por esta
+sprint). `0023_protect_profile_privileged_fields.sql` fecha o buraco com um
+trigger que bloqueia mudança de `role`/`tenant_id`/`is_active` por quem não
+é `is_tenant_manager`/`is_super_admin` do tenant — mesmo padrão já usado em
+`0019` para `tenants`.
+
 ### Integridade multi-tenant
 
 `products` referencia `categories` por **FK composta** `(category_id, tenant_id)`
@@ -250,6 +283,15 @@ pertencem ao **mesmo tenant** no nível do banco.
 - `0019_tenant_config_rls` — policy de `UPDATE` para `is_tenant_manager`
   + trigger protegendo `slug`/`is_active` de quem não é `super_admin`.
   Sprint 5, Fase 5.
+- `0020_add_waiter_role` — enum `user_role` ganha `'waiter'`. Sprint 5,
+  Fase 6.
+- `0021_profiles_email` — `profiles` ganha `email` (espelho de
+  `auth.users.email`, escrito no convite). Sprint 5, Fase 6.
+- `0022_profiles_is_active` — `profiles` ganha `is_active` (desativação
+  lógica). Sprint 5, Fase 6.
+- `0023_protect_profile_privileged_fields` — trigger bloqueando
+  auto-alteração de `role`/`tenant_id`/`is_active` por quem não é gestão do
+  tenant (corrige achado de segurança pré-existente). Sprint 5, Fase 6.
 
 ## Seed
 

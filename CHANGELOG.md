@@ -4,6 +4,33 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 6): Usuários (RBAC)
+
+- `profiles` ganha `email` (`0021`, espelho de `auth.users.email` escrito no
+  convite) e `is_active` (`0022`, desativação lógica — `getCurrentUser()`
+  trata inativo como sem perfil, bloqueia todo guard sem tocar na sessão de
+  auth). Enum `user_role` ganha `'waiter'` (`0020`).
+- **Convite de usuário via Supabase Admin API**
+  (`auth.admin.inviteUserByEmail`) — primeira vez que o projeto cria contas
+  de `auth.users` a partir do backend; ver
+  [ADR 0009](docs/adr/0009-admin-api-user-invites.md). `super_admin` não é
+  atribuível pelo painel (papel de plataforma, provisionamento manual).
+- Novo `repositories/users.repository.ts`, `services/admin/users.service.ts`,
+  `features/admin/users/` (schema, mutations, `UserInviteDialog`,
+  `UsersManager`). Rotas `app/api/admin/users` (`GET`/`POST`) e
+  `app/api/admin/users/[id]` (`PATCH` — papel/nome/ativação, sem `DELETE`).
+- `/admin/funcionarios`: lista de usuários do tenant com papel e ativação
+  editáveis inline (Select/Switch), dialog de convite. Usuário não pode
+  alterar o próprio papel/ativação (`CannotModifySelfError`, bloqueado
+  também na UI).
+- **Achado de segurança corrigido**: `profiles_update_self` (0002) permitia
+  auto-escalação de privilégio (`role`/`tenant_id` mudáveis pelo próprio
+  usuário via update direto, sem passar por API) — pré-existente, não
+  introduzido nesta sprint. Corrigido em
+  `0023_protect_profile_privileged_fields.sql` (mesmo padrão de trigger já
+  usado em `0019` para `tenants`). Ver `docs/database.md`.
+- `AdminUser` (`types/domain.ts`).
+
 ### Added — Sprint 5 (Fase 5): Configuração da Loja
 
 - `tenants` ganha campos operacionais (`0018_tenant_store_config.sql`):

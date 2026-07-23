@@ -41,6 +41,27 @@ arquiteturais associadas.
   nem monta combos ao pedir. Exige mudanças em carrinho/checkout/
   `order_items` (fora do escopo desta sprint, decisão registrada no plano
   da Sprint 5).
+- ☐ **Usuário de auth órfão se o convite falhar entre `auth.admin.inviteUserByEmail`
+  e o `insert` em `profiles`** (Fase 6): o convite já foi enviado mas sem
+  perfil correspondente, o link fica inutilizável — sem rotina de
+  reenvio/limpeza ainda. Ver [ADR 0009](docs/adr/0009-admin-api-user-invites.md).
+- ☐ **`profiles.email` não sincroniza se o usuário trocar o email em
+  `auth.users`** (Fase 6): é uma cópia escrita no convite, não uma view —
+  RLS não alcança o schema `auth` para fazer `join` em toda leitura.
+- ☐ **Sem proteção contra remover o último `owner`/`manager` de um tenant**
+  (Fase 6): a UI permite desativar ou trocar o papel de qualquer usuário
+  (exceto o próprio ator) — nada impede desativar todos os gestores de uma
+  vez, deixando o tenant sem ninguém com acesso de gestão.
+- ☐ **Validação manual de `/admin/funcionarios` com conta real** (convite,
+  troca de papel, ativação/desativação) — sem credenciais de teste
+  seedadas nesta sessão; coberto por build/lint/typecheck e revisão de
+  código, não por teste end-to-end real (mesma limitação das fases
+  anteriores).
+- ☐ **`TenantNotFoundError` duplicada em cada `services/admin/*.service.ts`**:
+  cada service redefine a mesma classe de erro local — funcional (services
+  independentes, sem acoplamento entre módulos), mas é repetição literal
+  crescendo a cada fase (6 arquivos até aqui). Extrair para um módulo
+  compartilhado (`services/admin/errors.ts`) se crescer mais.
 
 ## Sprint 4 — Redesign UX/UI: Cardápio de Autoatendimento
 

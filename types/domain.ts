@@ -6,6 +6,8 @@
  * o que mantém o front desacoplado da estrutura de persistência.
  */
 
+import type { UserRole } from "@/types/database.types";
+
 export type Tenant = {
   id: string;
   slug: string;
@@ -172,6 +174,20 @@ export type AdminStoreSettings = {
   storeMode: StoreMode;
   /** `Record<0-6, {open,close}|null>` (0 = domingo) — mesmo formato de `features/menu/store-info.ts`. */
   businessHours: Record<number, { open: string; close: string } | null> | null;
+};
+
+/**
+ * Usuário do tenant (Sprint 5, Fase 6) — visão de gestão de `profiles`.
+ * `email` reflete o que foi escrito no convite (ver `users.repository.ts`),
+ * não é lido de `auth.users` (RLS não alcança o schema `auth`).
+ */
+export type AdminUser = {
+  id: string;
+  email: string | null;
+  fullName: string | null;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: string;
 };
 
 export type AdminCategory = {

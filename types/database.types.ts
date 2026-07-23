@@ -727,24 +727,30 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          email: string | null
           full_name: string | null
           id: string
+          is_active: boolean
           role: Database["public"]["Enums"]["user_role"]
           tenant_id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id: string
+          is_active?: boolean
           role?: Database["public"]["Enums"]["user_role"]
           tenant_id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
+          is_active?: boolean
           role?: Database["public"]["Enums"]["user_role"]
           tenant_id?: string
           updated_at?: string
@@ -867,7 +873,13 @@ export type Database = {
         | "completed"
         | "cancelled"
       order_type: "pickup" | "delivery" | "dine_in"
-      user_role: "super_admin" | "owner" | "manager" | "kitchen" | "cashier"
+      user_role:
+        | "super_admin"
+        | "owner"
+        | "manager"
+        | "kitchen"
+        | "cashier"
+        | "waiter"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1006,7 +1018,14 @@ export const Constants = {
         "cancelled",
       ],
       order_type: ["pickup", "delivery", "dine_in"],
-      user_role: ["super_admin", "owner", "manager", "kitchen", "cashier"],
+      user_role: [
+        "super_admin",
+        "owner",
+        "manager",
+        "kitchen",
+        "cashier",
+        "waiter",
+      ],
     },
   },
 } as const;

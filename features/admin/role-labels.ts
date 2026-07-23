@@ -6,4 +6,5 @@ export const ADMIN_ROLE_LABELS: Record<UserRole, string> = {
   manager: "Gerente",
   kitchen: "Cozinha",
   cashier: "Caixa",
+  waiter: "Garçom",
 };

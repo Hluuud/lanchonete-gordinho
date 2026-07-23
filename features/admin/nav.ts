@@ -78,6 +78,6 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     href: "/admin/funcionarios",
     label: "Funcionários",
     icon: UserCog,
-    ready: false,
+    ready: true,
   },
 ];
