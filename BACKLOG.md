@@ -80,6 +80,19 @@ arquiteturais associadas.
   7) — sem credenciais de teste seedadas nesta sessão; coberto por
   build/lint/typecheck e revisão de código, não por inspeção visual real
   dos números (mesma limitação das fases anteriores).
+- ☐ **Impressão real (ESC/POS)** (Fase 8): `printers` só persiste
+  configuração — nenhuma rota/serviço envia bytes para uma impressora de
+  verdade ainda. Próximo passo natural: um worker/serviço que reaja a
+  pedidos novos (`auto_print`) e monte o payload ESC/POS por `paper_width`/
+  `protocol`, respeitando `role` (cozinha/caixa/balcão) para rotear a
+  impressão certa.
+- ☐ **Sem teste de conectividade da impressora na UI** (Fase 8): o
+  formulário salva IP/porta mas não oferece um botão "testar conexão" —
+  só faz sentido depois que a impressão real existir.
+- ☐ **Validação manual de `/admin/impressoras` com conta real** (Fase 8) —
+  sem credenciais de teste seedadas nesta sessão; coberto por
+  build/lint/typecheck e revisão de código, não por teste end-to-end real
+  (mesma limitação das fases anteriores).
 
 ## Sprint 4 — Redesign UX/UI: Cardápio de Autoatendimento
 

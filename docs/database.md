@@ -230,6 +230,23 @@ trigger que bloqueia mudança de `role`/`tenant_id`/`is_active` por quem não
 é `is_tenant_manager`/`is_super_admin` do tenant — mesmo padrão já usado em
 `0019` para `tenants`.
 
+### Impressoras (Sprint 5, Fase 8)
+
+`printers` (nova tabela): `name`, `role` (`kitchen|cashier|counter`),
+`connection_type` (`usb|network|bluetooth`), `paper_width` (`58mm|80mm`),
+`protocol` (default `'escpos'`), `ip_address` (`inet`, nullable), `port`,
+`model`, `auto_print`, `allow_reprint`, `is_active`. `role`/
+`connection_type`/`paper_width` usam `text` + `check` em vez de enum
+Postgres — mesmo critério de `tenants.store_mode`: valores fechados o
+suficiente para `check`, sem a rigidez de uma migration isolada por opção
+nova. **Só persistência de configuração** — sem execução real de impressão
+(ESC/POS) nesta fase, ver `docs/printing.md`.
+
+**RLS**: leitura por qualquer staff do tenant (`is_tenant_staff` — cozinha/
+caixa vão precisar ler isso quando a impressão real existir), escrita só
+gestão (`is_tenant_manager`) — mesmo formato de `combos_select`/
+`combos_write` (0017).
+
 ### Integridade multi-tenant
 
 `products` referencia `categories` por **FK composta** `(category_id, tenant_id)`
@@ -292,6 +309,8 @@ pertencem ao **mesmo tenant** no nível do banco.
 - `0023_protect_profile_privileged_fields` — trigger bloqueando
   auto-alteração de `role`/`tenant_id`/`is_active` por quem não é gestão do
   tenant (corrige achado de segurança pré-existente). Sprint 5, Fase 6.
+- `0024_printers` — cria `printers`. Sprint 5, Fase 8.
+- `0025_printers_rls` — RLS leitura-staff/escrita-gestão. Sprint 5, Fase 8.
 
 ## Seed
 

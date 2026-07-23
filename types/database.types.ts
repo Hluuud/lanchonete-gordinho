@@ -588,6 +588,68 @@ export type Database = {
           },
         ]
       }
+      printers: {
+        Row: {
+          allow_reprint: boolean
+          auto_print: boolean
+          connection_type: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          is_active: boolean
+          model: string | null
+          name: string
+          paper_width: string
+          port: number | null
+          protocol: string
+          role: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          allow_reprint?: boolean
+          auto_print?: boolean
+          connection_type: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          model?: string | null
+          name: string
+          paper_width?: string
+          port?: number | null
+          protocol?: string
+          role: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          allow_reprint?: boolean
+          auto_print?: boolean
+          connection_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          model?: string | null
+          name?: string
+          paper_width?: string
+          port?: number | null
+          protocol?: string
+          role?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "printers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_modifier_groups: {
         Row: {
           created_at: string

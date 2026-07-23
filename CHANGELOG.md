@@ -4,6 +4,30 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 8): Impressoras
+
+- Nova tabela `printers` (`0024_printers.sql`): setor (cozinha/caixa/
+  balcão), conexão (USB/rede/Bluetooth), largura de papel (58mm/80mm),
+  protocolo (`escpos` por padrão), IP/porta (rede), modelo, impressão
+  automática, permite reimpressão, ativa. `role`/`connection_type`/
+  `paper_width` usam `text` + `check` (mesmo critério de
+  `tenants.store_mode`), não enum Postgres.
+- **RLS** (`0025_printers_rls.sql`): leitura por qualquer staff do tenant
+  (cozinha/caixa vão precisar quando a impressão real existir), escrita só
+  gestão — mesmo formato de `combos_select`/`combos_write`.
+- **Só persistência de configuração** — sem execução real de impressão
+  (ESC/POS) nesta fase, conforme escopo definido no plano da Sprint 5.
+- Novo `repositories/printers.repository.ts`,
+  `services/admin/printers.service.ts`, `features/admin/printers/`
+  (schema com `refine` exigindo IP para conexão de rede, labels,
+  mutations, `PrinterFormDialog`, `PrintersManager`). Rotas
+  `app/api/admin/printers` (`GET`/`POST`) e `app/api/admin/printers/[id]`
+  (`PATCH`/`DELETE`).
+- `/admin/impressoras`: CRUD completo com campos condicionais (IP/porta só
+  aparecem para conexão de rede).
+- `AdminPrinter`/`PrinterRole`/`PrinterConnectionType`/`PrinterPaperWidth`
+  (`types/domain.ts`).
+
 ### Added — Sprint 5 (Fase 7): Dashboard enriquecido
 
 - Novo `services/admin/dashboard.service.ts`: agrega, em memória, 9

@@ -1,15 +1,35 @@
-import { Printer } from "lucide-react";
+import { notFound } from "next/navigation";
 
-import { ComingSoon } from "@/features/admin/components/coming-soon";
+import { parseListParams, type RawSearchParams } from "@/features/admin/pagination";
+import { PrintersManager } from "@/features/admin/printers/components/printers-manager";
+import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
+import { TenantNotFoundError, listAdminPrinters } from "@/services/admin/printers.service";
 
 export const metadata = { title: "Impressoras" };
 
-export default function AdminImpressorasPage() {
-  return (
-    <ComingSoon
-      icon={Printer}
-      title="Impressoras"
-      description="Gestão de impressoras e impressão automática chega na Fase 3 do roadmap."
-    />
-  );
+const ALLOWED_SORT = ["name", "role", "created_at"] as const;
+
+/**
+ * Gestão de impressoras (Sprint 5, Fase 8): só persistência de configuração
+ * — a execução real de impressão (ESC/POS) é evolução futura.
+ */
+export default async function AdminImpressorasPage({
+  searchParams,
+}: {
+  searchParams: Promise<RawSearchParams>;
+}) {
+  const rawParams = await searchParams;
+  const params = parseListParams(rawParams, {
+    allowedSort: ALLOWED_SORT,
+    defaultSort: "name",
+  });
+
+  const slug = await resolveTenantSlug();
+
+  const result = await listAdminPrinters(slug, params).catch((error: unknown) => {
+    if (error instanceof TenantNotFoundError) notFound();
+    throw error;
+  });
+
+  return <PrintersManager result={result} />;
 }

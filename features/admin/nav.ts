@@ -72,7 +72,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     href: "/admin/impressoras",
     label: "Impressoras",
     icon: Printer,
-    ready: false,
+    ready: true,
   },
   {
     href: "/admin/funcionarios",

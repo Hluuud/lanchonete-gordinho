@@ -331,3 +331,28 @@ export type PublicOrderTracking = {
   cancelledAt: string | null;
   items: OrderItem[];
 };
+
+export type PrinterRole = "kitchen" | "cashier" | "counter";
+export type PrinterConnectionType = "usb" | "network" | "bluetooth";
+export type PrinterPaperWidth = "58mm" | "80mm";
+
+/**
+ * Configuração de impressora (Sprint 5, Fase 8) — só persistência, sem
+ * execução real de impressão ainda (ver `docs/printing.md`).
+ */
+export type AdminPrinter = {
+  id: string;
+  name: string;
+  role: PrinterRole;
+  connectionType: PrinterConnectionType;
+  paperWidth: PrinterPaperWidth;
+  protocol: string;
+  ipAddress: string | null;
+  port: number | null;
+  model: string | null;
+  autoPrint: boolean;
+  allowReprint: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
