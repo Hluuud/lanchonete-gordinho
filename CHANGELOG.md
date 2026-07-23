@@ -4,6 +4,25 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 4): Combos
+
+- Novas tabelas `combos`, `combo_slots`, `combo_slot_products`
+  (`0016_combos.sql`, `0017_combos_rls.sql`) — RLS staff-only, sem policy
+  pública (mesma decisão de escopo dos Adicionais: modelagem/CRUD
+  administrativo apenas, o cliente ainda não compra combos nesta sprint).
+- `/admin/combos`: CRUD de combos (produto principal fixo + slots de
+  escolha, ex. "Escolha uma bebida"), com slots e seus produtos elegíveis
+  editados inline via `useFieldArray` aninhado (`combo-slot-fields.tsx`,
+  componente próprio por slot — hooks não podem ser chamados em loop).
+  Preço fixo opcional (`null` = calculado, sem cálculo real ainda) e
+  sobrescrita de preço por produto dentro de um slot.
+- Novas rotas `app/api/admin/combos` (`GET`/`POST`) e
+  `app/api/admin/combos/[id]` (`PATCH`/`DELETE`).
+- `AdminCombo`/`AdminComboSlot`/`AdminComboSlotProduct`
+  (`types/domain.ts`); novo `repositories/combos.repository.ts` e
+  `listProductOptions` (`services/admin/products.service.ts`) para
+  popular os selects de produto do formulário de combo.
+
 ### Added — Sprint 5 (Fase 3): Grupos de Adicionais
 
 - Novas tabelas `modifier_groups`, `modifier_options`,

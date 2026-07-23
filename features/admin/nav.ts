@@ -2,6 +2,7 @@ import {
   BarChart3,
   ClipboardList,
   Layers,
+  Layers3,
   LayoutDashboard,
   Printer,
   Settings,
@@ -47,6 +48,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     icon: Layers,
     ready: true,
   },
+  { href: "/admin/combos", label: "Combos", icon: Layers3, ready: true },
   { href: "/admin/clientes", label: "Clientes", icon: Users, ready: false },
   {
     href: "/admin/cupons",

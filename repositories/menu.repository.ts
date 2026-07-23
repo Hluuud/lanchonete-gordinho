@@ -217,6 +217,18 @@ export async function deleteCategory(
   if (error) throw error;
 }
 
+/** Pares `{id, name}` de todos os produtos do tenant — para selects de combo (produto principal, produtos elegíveis por slot). */
+export async function findProductOptions(client: Client, tenantId: string) {
+  const { data, error } = await client
+    .from("products")
+    .select("id, name")
+    .eq("tenant_id", tenantId)
+    .order("sort_order", { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
 /** Pares `{id, name}` de todas as categorias do tenant — para popular o `Select` do formulário de produto. */
 export async function findCategoryOptions(client: Client, tenantId: string) {
   const { data, error } = await client

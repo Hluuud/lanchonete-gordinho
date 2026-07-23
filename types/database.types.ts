@@ -82,6 +82,169 @@ export type Database = {
           },
         ]
       }
+      combo_slot_products: {
+        Row: {
+          created_at: string
+          id: string
+          price_override_cents: number | null
+          product_id: string
+          slot_id: string
+          sort_order: number
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          price_override_cents?: number | null
+          product_id: string
+          slot_id: string
+          sort_order?: number
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          price_override_cents?: number | null
+          product_id?: string
+          slot_id?: string
+          sort_order?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combo_slot_products_product_id_tenant_id_fkey"
+            columns: ["product_id", "tenant_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id", "tenant_id"]
+          },
+          {
+            foreignKeyName: "combo_slot_products_slot_id_tenant_id_fkey"
+            columns: ["slot_id", "tenant_id"]
+            isOneToOne: false
+            referencedRelation: "combo_slots"
+            referencedColumns: ["id", "tenant_id"]
+          },
+          {
+            foreignKeyName: "combo_slot_products_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      combo_slots: {
+        Row: {
+          combo_id: string
+          created_at: string
+          id: string
+          is_required: boolean
+          max_selections: number
+          min_selections: number
+          name: string
+          sort_order: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          combo_id: string
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          max_selections?: number
+          min_selections?: number
+          name: string
+          sort_order?: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          combo_id?: string
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          max_selections?: number
+          min_selections?: number
+          name?: string
+          sort_order?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combo_slots_combo_id_tenant_id_fkey"
+            columns: ["combo_id", "tenant_id"]
+            isOneToOne: false
+            referencedRelation: "combos"
+            referencedColumns: ["id", "tenant_id"]
+          },
+          {
+            foreignKeyName: "combo_slots_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      combos: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_available: boolean
+          main_product_id: string | null
+          name: string
+          price_cents: number | null
+          sort_order: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          main_product_id?: string | null
+          name: string
+          price_cents?: number | null
+          sort_order?: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          main_product_id?: string | null
+          name?: string
+          price_cents?: number | null
+          sort_order?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combos_main_product_id_tenant_id_fkey"
+            columns: ["main_product_id", "tenant_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id", "tenant_id"]
+          },
+          {
+            foreignKeyName: "combos_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       modifier_groups: {
         Row: {
           created_at: string

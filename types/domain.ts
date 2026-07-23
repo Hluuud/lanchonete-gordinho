@@ -108,6 +108,45 @@ export type AdminModifierGroup = {
   productCount: number;
 };
 
+/**
+ * Combo (Sprint 5, Fase 4) — produto principal fixo + slots de escolha
+ * (ex. "Escolha uma bebida"). Modelagem/CRUD administrativo apenas: o
+ * cliente ainda não compra combos (ver BACKLOG).
+ */
+export type AdminComboSlotProduct = {
+  productId: string;
+  productName: string;
+  /** Sobrescreve o preço normal do produto dentro deste slot, quando definido. */
+  priceOverrideCents: number | null;
+  sortOrder: number;
+};
+
+export type AdminComboSlot = {
+  id: string;
+  name: string;
+  isRequired: boolean;
+  minSelections: number;
+  maxSelections: number;
+  sortOrder: number;
+  products: AdminComboSlotProduct[];
+};
+
+export type AdminCombo = {
+  id: string;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+  /** `null` = preço calculado (principal + seleções); futuro, sem cálculo real ainda. */
+  priceCents: number | null;
+  mainProductId: string | null;
+  mainProductName: string | null;
+  isAvailable: boolean;
+  sortOrder: number;
+  slots: AdminComboSlot[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AdminCategory = {
   id: string;
   name: string;

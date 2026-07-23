@@ -28,6 +28,9 @@ região `sa-east-1`). Migrations versionadas em `supabase/migrations/`.
 | `modifier_groups` | Grupos de adicionais reutilizáveis por tenant (Sprint 5, Fase 3). Staff-only. |
 | `modifier_options` | Opções de um grupo de adicionais (Sprint 5, Fase 3). Staff-only. |
 | `product_modifier_groups` | Vínculo N:N entre produtos e grupos de adicionais (Sprint 5, Fase 3). Staff-only. |
+| `combos` | Combos: produto principal fixo + slots de escolha (Sprint 5, Fase 4). Staff-only. |
+| `combo_slots` | Slots de escolha de um combo (ex. "Escolha uma bebida"), Fase 4. Staff-only. |
+| `combo_slot_products` | Produtos elegíveis de um slot de combo, Fase 4. Staff-only. |
 
 `user_role` (enum): `super_admin`, `owner`, `manager`, `kitchen`, `cashier`.
 
@@ -134,6 +137,25 @@ apaga tudo e reinsere do zero a cada save, em vez de diff/upsert — seguro
 porque nenhuma outra tabela referencia `modifier_options`/
 `product_modifier_groups` ainda.
 
+### Combos (Sprint 5, Fase 4)
+
+Estrutura: `combos.main_product_id` (nullable, FK composta a `products`,
+`on delete cascade` — sem o produto principal o combo não faz sentido,
+mesma filosofia de "sem referência pendurada" do resto do schema) é o
+"Produto Principal" fixo; `combo_slots` modela as escolhas ("Escolha uma
+bebida"), cada slot com `min_selections`/`max_selections`/`is_required`
+(mesmos checks de `modifier_groups`); `combo_slot_products` lista os
+produtos elegíveis por slot, com `price_override_cents` opcional
+(sobrescreve o preço normal do produto dentro do combo). `combos.price_cents`
+nullable: `null` = preço calculado (principal + seleções, sem cálculo real
+implementado ainda — fica para o checkout da Sprint 6), valor = preço fixo.
+
+Mesma decisão de escopo dos Adicionais (0014): **RLS staff-only, sem
+policy pública** — modelagem/CRUD administrativo apenas, o cliente ainda
+não compra combos. Mesma estratégia de substituição completa
+(`replaceComboSlots`, `repositories/combos.repository.ts`) para
+slots+produtos a cada save.
+
 ### Storage (Sprint 5)
 
 Bucket público `store-assets` (`storage.buckets`), primeira vez que o
@@ -189,6 +211,10 @@ pertencem ao **mesmo tenant** no nível do banco.
   Fase 3.
 - `0015_product_modifiers_rls` — RLS staff-only das três tabelas acima
   (sem policy pública). Sprint 5, Fase 3.
+- `0016_combos` — cria `combos`, `combo_slots`, `combo_slot_products`.
+  Sprint 5, Fase 4.
+- `0017_combos_rls` — RLS staff-only das três tabelas acima. Sprint 5,
+  Fase 4.
 
 ## Seed
 

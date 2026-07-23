@@ -7,6 +7,7 @@ import {
   deleteProduct,
   findAllProductsByTenant,
   findProductById,
+  findProductOptions,
   updateProduct,
   type AdminProductRow,
 } from "@/repositories/menu.repository";
@@ -98,6 +99,14 @@ export async function listAdminProducts(
 
   const { rows, total } = await findAllProductsByTenant(supabase, tenant.id, params);
   return buildPaginated(rows.map(toAdminProduct), total, params.page, params.pageSize);
+}
+
+/** Pares `{id, name}` de todos os produtos — para selects de combo (produto principal, produtos elegíveis por slot). */
+export async function listProductOptions(
+  tenantSlug: string,
+): Promise<{ id: string; name: string }[]> {
+  const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+  return findProductOptions(supabase, tenant.id);
 }
 
 export async function createAdminProduct(
