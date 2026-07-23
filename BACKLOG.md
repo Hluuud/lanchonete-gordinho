@@ -35,9 +35,16 @@ arquiteturais associadas.
   normalização de string vazia) — não confirmado, só suspeita por ser o
   mesmo padrão (`z.string().url().optional().nullable()`); investigar na
   Fase 6 (revisão de segurança) desta sprint.
-- ☐ **Sem paginação/exportação de auditoria além do já existente** —
-  Fase 3 (exportação de dados) já cobre `audit_logs` como um dos recursos
-  exportáveis; nenhuma pendência nova aqui, só cross-referência.
+- ☐ **Exportação de pedidos usa janela fixa de 30 dias** (Fase 3) — a rota
+  aceita `from`/`to` via query string, mas a UI (`/admin/configuracoes`)
+  não oferece seletor de período, só o link com o padrão. Adicionar um
+  seletor de data é uma melhoria de UX natural se o período fixo não for
+  suficiente na prática.
+- ☐ **`EXPORT_PAGE_SIZE = 10_000` é um limite implícito** (Fase 3) — se um
+  tenant algum dia tiver mais de 10 mil produtos/logs de auditoria, a
+  exportação trunca silenciosamente em vez de paginar ou avisar. Não é um
+  risco real no volume de uma lanchonete de porte único, mas fica
+  registrado.
 
 ## Login e primeiro acesso
 

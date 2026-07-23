@@ -4,6 +4,25 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5.5 (Fase 3): Exportação de dados de negócio
+
+- Nova rota `GET /api/admin/export?resource=orders|products|settings|audit-logs&format=json|csv`
+  — guardada por `getAdminApiUser` (só gestão). Reusa as listagens
+  administrativas já existentes (`listAdminProducts`, `getAdminStoreSettings`,
+  `listAdminAuditLogs`, `findOrdersInDateRange` da Fase 7 do Sprint 5) em
+  vez de repositórios novos.
+- Novo `lib/export/to-csv.ts` — conversor JSON→CSV próprio (sem
+  dependência nova), com 6 testes cobrindo escaping e valores aninhados.
+- `/admin/configuracoes` ganha a seção "Exportar dados" — download direto
+  via link `<a download>`, sem JavaScript adicional.
+- **Escopo explícito**: isto é exportação de dados de negócio para uso
+  operacional, não backup do banco — o backup em si é responsabilidade do
+  Supabase (backups automáticos/PITR do plano). Documentado em
+  `docs/backup.md` (novo), incluindo como verificar se está ativo.
+- Verificado via `fetch()` real no navegador logado: os 5 pares
+  recurso/formato testados retornaram 200 com conteúdo correto (incluindo
+  um evento de auditoria real da Fase 1 aparecendo no CSV exportado).
+
 ### Added — Sprint 5.5 (Fase 1): Auditoria
 
 - Nova tabela `audit_logs` (append-only) — login/logout, criação/

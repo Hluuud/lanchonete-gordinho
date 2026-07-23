@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { ExportDataSection } from "@/features/admin/export/components/export-data-section";
 import { StoreSettingsForm } from "@/features/admin/store-settings/components/store-settings-form";
 import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
 import {
@@ -22,5 +23,10 @@ export default async function AdminConfiguracoesPage() {
     throw error;
   });
 
-  return <StoreSettingsForm settings={settings} tenantId={settings.id} />;
+  return (
+    <div className="flex flex-col divide-y">
+      <StoreSettingsForm settings={settings} tenantId={settings.id} />
+      <ExportDataSection />
+    </div>
+  );
 }
