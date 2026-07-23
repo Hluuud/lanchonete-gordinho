@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import { Volume2, VolumeX, Wifi, WifiOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import type { KitchenConnectionStatus } from "@/features/kitchen/use-kitchen-realtime";
 import {
   isSoundEnabled,
@@ -58,20 +59,23 @@ export function KitchenHeader({
         </p>
       </div>
 
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={toggleSound}
-        aria-label={
-          soundOn ? "Desativar som de novo pedido" : "Ativar som de novo pedido"
-        }
-      >
-        {soundOn ? (
-          <Volume2 className="size-4" aria-hidden />
-        ) : (
-          <VolumeX className="size-4" aria-hidden />
-        )}
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleSound}
+          aria-label={
+            soundOn ? "Desativar som de novo pedido" : "Ativar som de novo pedido"
+          }
+        >
+          {soundOn ? (
+            <Volume2 className="size-4" aria-hidden />
+          ) : (
+            <VolumeX className="size-4" aria-hidden />
+          )}
+        </Button>
+        <SignOutButton />
+      </div>
     </div>
   );
 }

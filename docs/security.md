@@ -51,8 +51,28 @@ ver `docs/checkout.md`), nunca `orders` diretamente.
 - Validação com **Zod** compartilhada client/server; o backend **sempre**
   revalida (`features/*/schema.ts`).
 - `requireRole()` protege route groups restritos antes mesmo da RLS.
+  Redireciona para `/login?redirect=<origem>` quando não há sessão/papel
+  adequado (antes redirecionava para `/`, silencioso demais — não havia
+  como voltar a tentar entrar).
 - Sessão validada com `auth.getUser()` (valida token no servidor), nunca
-  confiando apenas no cookie.
+  confiando apenas no cookie. `proxy.ts` (convenção do Next 16 para o antigo
+  "middleware") revalida/renova o cookie a cada request.
+
+### Login
+
+`/login` (`features/auth/`) é único para todos os papéis — email/senha via
+`supabase.auth.signInWithPassword`, client-side. Depois de autenticar, o
+formulário lê o `role` do próprio perfil (`profiles_select` já permite
+`id = auth.uid()`) e decide o destino (`lib/auth/landing-path.ts`):
+`super_admin`/`owner`/`manager` → `/admin`, `kitchen` → `/cozinha`, os
+demais papéis (`cashier`/`waiter`) → `/` (sem painel dedicado ainda).
+
+**Bootstrap do primeiro usuário**: como convidar alguém (Fase 6, ADR 0009)
+exige já estar logado como `owner`/`manager`, o *primeiro* usuário de um
+tenant não pode nascer pelo próprio painel — é uma limitação estrutural,
+não um bug. Provisionamento inicial é uma operação manual (Supabase Admin
+API `auth.admin.createUser` + `insert` em `profiles` com `role = 'owner'`),
+feita uma única vez por tenant, fora do fluxo normal do produto.
 
 ## Advisors — trade-offs aceitos nesta fase
 

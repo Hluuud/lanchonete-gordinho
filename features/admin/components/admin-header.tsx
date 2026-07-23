@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { ADMIN_NAV_ITEMS } from "@/features/admin/nav";
 import { ADMIN_ROLE_LABELS } from "@/features/admin/role-labels";
 import { cn } from "@/lib/utils";
@@ -29,11 +30,14 @@ export function AdminHeader({
         <h1 className="truncate text-lg font-bold">
           {current?.label ?? "Painel Administrativo"}
         </h1>
-        <div className="text-right">
-          <p className="truncate text-sm font-semibold">{userName}</p>
-          <p className="text-xs text-muted-foreground">
-            {ADMIN_ROLE_LABELS[userRole]}
-          </p>
+        <div className="flex items-center gap-2">
+          <div className="text-right">
+            <p className="truncate text-sm font-semibold">{userName}</p>
+            <p className="text-xs text-muted-foreground">
+              {ADMIN_ROLE_LABELS[userRole]}
+            </p>
+          </div>
+          <SignOutButton />
         </div>
       </div>
 

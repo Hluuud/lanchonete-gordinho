@@ -5,6 +5,23 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Login e primeiro acesso
+
+- ☐ **Sem "esqueci minha senha" na tela de login**: `/login` só cobre o
+  caminho feliz (email/senha corretos); não há link de recuperação
+  (`supabase.auth.resetPasswordForEmail`) nem tela para definir nova senha.
+- ☐ **Bootstrap do primeiro usuário é manual** (fora do painel): documentado
+  em `docs/security.md`, mas seria natural ter um comando/script oficial
+  (`npm run seed:owner` ou similar) em vez de um script ad-hoc a cada novo
+  tenant.
+- ☐ **Sem rate limiting em `/login`**: mesma lacuna já registrada para
+  `/api/checkout` desde a Sprint 1 — um script poderia tentar senhas em
+  loop contra `signInWithPassword` (o próprio Supabase Auth aplica algum
+  rate limit por padrão, mas não há camada adicional do lado do app).
+- ☐ **`cashier`/`waiter` não têm painel dedicado**: `resolveLandingPath`
+  manda esses papéis para `/` (loja pública) após o login, por não existir
+  ainda uma tela de caixa/garçom — revisar quando essas telas existirem.
+
 ## Sprint 5 — Painel Administrativo como Sistema de Gestão
 
 - ☐ **Reordenação de categorias por arrastar-e-soltar**: hoje `sortOrder` é

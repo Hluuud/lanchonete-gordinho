@@ -16,7 +16,7 @@ export const metadata = { title: "Cozinha" };
  * a atualizá-los via Supabase Realtime — ver `docs/kitchen-panel.md`.
  */
 export default async function KitchenHomePage() {
-  await requireRole(KITCHEN_STAFF_ROLES);
+  await requireRole(KITCHEN_STAFF_ROLES, "/login?redirect=/cozinha");
 
   return (
     <Suspense fallback={<KitchenBoardSkeleton />}>

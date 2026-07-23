@@ -4,6 +4,24 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Login e primeiro acesso
+
+- **`/login`**: até aqui não existia nenhuma tela de autenticação — `/admin`
+  e `/cozinha` estavam com guards funcionais mas inacessíveis na prática
+  (`requireRole` redirecionava para `/`, e não havia como logar). Novo
+  `features/auth/` (schema, `LoginForm`, `SignOutButton`), email/senha via
+  `supabase.auth.signInWithPassword`; destino pós-login decidido pelo papel
+  (`lib/auth/landing-path.ts`): admin → `/admin`, cozinha → `/cozinha`.
+- `requireRole()` agora redireciona para `/login?redirect=<origem>` (antes:
+  `/`) — preserva a rota de origem para voltar direto após autenticar.
+- Botão "Sair" adicionado ao `AdminHeader` e ao `KitchenHeader`
+  (`SignOutButton`) — também inexistente até aqui.
+- **Achado**: convite de usuário (Fase 6) exige já estar logado como
+  gestor — o primeiro usuário de um tenant não pode nascer pelo próprio
+  painel. Documentado como limitação estrutural em `docs/security.md`
+  ("Bootstrap do primeiro usuário"); provisionamento inicial via Admin API
+  é uma operação manual, feita uma vez por tenant.
+
 ### Added — Sprint 5 (Fase 8): Impressoras
 
 - Nova tabela `printers` (`0024_printers.sql`): setor (cozinha/caixa/

@@ -15,7 +15,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await requireRole(ADMIN_ROLES);
+  const user = await requireRole(ADMIN_ROLES, "/login?redirect=/admin");
   const slug = await resolveTenantSlug();
   const tenant = await getTenantBySlug(slug);
 

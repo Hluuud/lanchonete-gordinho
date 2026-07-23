@@ -49,7 +49,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
  */
 export async function requireRole(
   roles: UserRole[],
-  redirectTo = "/",
+  redirectTo = "/login",
 ): Promise<CurrentUser> {
   const user = await getCurrentUser();
 
