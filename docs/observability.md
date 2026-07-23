@@ -85,6 +85,22 @@ volume de erros reais em produção justificar o esforço de configurar.
 
 Todos os três chamam `logger.error` (que já encaminha ao Sentry).
 
+## Health checks
+
+Três rotas públicas (sem autenticação — são infraestrutura, não painel),
+excluídas do `proxy.ts` (não faz sentido revalidar sessão de auth numa
+requisição que não usa sessão nenhuma, e monitores externos podem pingar
+com alta frequência):
+
+- **`/live`** — só confirma que o processo está respondendo, sem checar
+  nada. Sinal para reiniciar o processo se parar de responder.
+- **`/ready`** — checa se o banco responde (`select id from tenants
+  limit 1`). `{ready: false}` + 503 quando não. Pensada para
+  orquestradores decidirem se mandam tráfego para esta instância.
+- **`/health`** — checagem mais detalhada (banco **e** Storage), resposta
+  com `checks` por dependência — pensada para monitores externos
+  (UptimeRobot, Better Uptime), não para orquestradores.
+
 ## O que ainda não existe (ver `BACKLOG.md`)
 
 - `logger.info`/`logger.warn` não são usados em nenhum ponto do código

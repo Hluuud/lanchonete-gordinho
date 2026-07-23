@@ -53,6 +53,10 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Exclui também /health, /ready, /live (Sprint 5.5, Fase 4) — monitores
+    // externos podem pingar essas rotas com alta frequência, e elas não
+    // usam sessão nenhuma; revalidar cookie de auth a cada ping seria
+    // trabalho descartado.
+    "/((?!_next/static|_next/image|favicon.ico|health$|ready$|live$|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

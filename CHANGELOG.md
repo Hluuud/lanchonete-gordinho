@@ -4,6 +4,19 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5.5 (Fase 4): Health checks
+
+- `/live` (processo respondendo, sem checar dependências), `/ready`
+  (banco responde, `503` quando não — para orquestradores) e `/health`
+  (banco + Storage, resposta detalhada — para monitores externos tipo
+  UptimeRobot). Todas públicas, sem autenticação.
+- `proxy.ts` passa a excluir essas três rotas do matcher — não usam
+  sessão, e podem ser pingadas com alta frequência por um monitor
+  externo; revalidar cookie de auth nelas seria trabalho descartado.
+- Verificado via `curl` real contra o dev server: as três respondem 200
+  com o banco/Storage realmente acessíveis, e `/health` confirmadamente
+  não recebe mais `x-request-id` (prova de que o proxy está pulando a rota).
+
 ### Added — Sprint 5.5 (Fase 3): Exportação de dados de negócio
 
 - Nova rota `GET /api/admin/export?resource=orders|products|settings|audit-logs&format=json|csv`
