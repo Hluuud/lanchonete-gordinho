@@ -4,6 +4,30 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 5): Configuração da Loja
+
+- `tenants` ganha campos operacionais (`0018_tenant_store_config.sql`):
+  contato (telefone/WhatsApp/Instagram/Facebook/endereço), aparência
+  (logo/banners/cores), mensagens (inicial/final), tempo médio de preparo,
+  `store_mode` (aberto/fechado/férias/manutenção) e `business_hours`
+  (mesmo formato já usado por `features/menu/store-info.ts` na Sprint 4).
+- **RLS**: `0019_tenant_config_rls.sql` libera `UPDATE` para
+  `is_tenant_manager` (antes só `super_admin` podia escrever em
+  `tenants`) + trigger que protege `slug`/`is_active` de alteração por
+  quem não é `super_admin` — proteção por coluna que RLS sozinha não
+  oferece.
+- `/admin/configuracoes`: formulário único com seções (Identidade,
+  Contato, Horário, Aparência, Modo da loja); horário editado por dia da
+  semana (`BusinessHoursEditor`); logo/banners via upload real
+  (`ImageUpload`, Fase 0).
+- Nova rota `app/api/admin/store-settings` (`GET`/`PATCH` — recurso
+  singular, sem lista/paginação).
+- `AdminStoreSettings`/`StoreMode` (`types/domain.ts`).
+- **Conexão com o storefront registrada no BACKLOG**, não feita nesta
+  etapa: o backend já está pronto, falta ligar
+  `StoreOpenBadge`/`StoreTopbar` ao dado real do tenant em vez da
+  constante `BUSINESS_HOURS` da Sprint 4.
+
 ### Added — Sprint 5 (Fase 4): Combos
 
 - Novas tabelas `combos`, `combo_slots`, `combo_slot_products`

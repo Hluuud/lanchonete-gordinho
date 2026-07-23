@@ -29,6 +29,13 @@ arquiteturais associadas.
   filtro "todos os produtos com glúten" nem autocompletar entre produtos.
   Migrar para tabelas normalizadas (`tags`, `allergens` + tabelas de
   vínculo) se precisar de reuso/filtro entre produtos.
+- ☐ **Conectar o storefront à configuração real da loja** (Fase 5): o
+  backend já está pronto (`tenants.business_hours`/`store_mode`/
+  `avg_prep_time_minutes`, `getAdminStoreSettings`) — falta passar esses
+  dados de `app/(store)/page.tsx` até `StoreOpenBadge`/`StoreTopbar` em
+  vez da constante `BUSINESS_HOURS` (`features/menu/store-info.ts`,
+  Sprint 4). Também aplicar `logo_url`/`primary_color`/`secondary_color`
+  reais em vez dos valores fixos da Sprint 4.
 - ☐ **Adicionais e Combos vendáveis na loja** (Sprint 6): Fases 3 e 4 desta
   sprint só modelam/administram — o cliente ainda não escolhe adicionais
   nem monta combos ao pedir. Exige mudanças em carrinho/checkout/

@@ -147,6 +147,33 @@ export type AdminCombo = {
   updatedAt: string;
 };
 
+export type StoreMode = "open" | "closed" | "vacation" | "maintenance";
+
+/**
+ * Configuração operacional da loja (Sprint 5, Fase 5) — 1:1 com `tenants`.
+ * Superset de gestão; o `Tenant` público (vitrine) continua minimalista.
+ */
+export type AdminStoreSettings = {
+  id: string;
+  name: string;
+  phone: string | null;
+  whatsapp: string | null;
+  instagram: string | null;
+  facebook: string | null;
+  address: string | null;
+  logoUrl: string | null;
+  bannerUrl: string | null;
+  promoBannerUrl: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  welcomeMessage: string | null;
+  closingMessage: string | null;
+  avgPrepTimeMinutes: number | null;
+  storeMode: StoreMode;
+  /** `Record<0-6, {open,close}|null>` (0 = domingo) — mesmo formato de `features/menu/store-info.ts`. */
+  businessHours: Record<number, { open: string; close: string } | null> | null;
+};
+
 export type AdminCategory = {
   id: string;
   name: string;

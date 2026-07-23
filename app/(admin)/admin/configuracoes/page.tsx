@@ -1,15 +1,26 @@
-import { Settings } from "lucide-react";
+import { notFound } from "next/navigation";
 
-import { ComingSoon } from "@/features/admin/components/coming-soon";
+import { StoreSettingsForm } from "@/features/admin/store-settings/components/store-settings-form";
+import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
+import {
+  TenantNotFoundError,
+  getAdminStoreSettings,
+} from "@/services/admin/store-settings.service";
 
 export const metadata = { title: "Configurações" };
 
-export default function AdminConfiguracoesPage() {
-  return (
-    <ComingSoon
-      icon={Settings}
-      title="Configurações"
-      description="Configurações da loja (horário, taxas, identidade) chegam em uma próxima etapa."
-    />
-  );
+/**
+ * Configuração operacional da loja (Sprint 5, Fase 5): identidade, contato,
+ * horário de funcionamento, aparência e modo da loja. Fecha uma dívida
+ * técnica da Sprint 4 (horário/tempo médio deixam de ser constante client).
+ */
+export default async function AdminConfiguracoesPage() {
+  const slug = await resolveTenantSlug();
+
+  const settings = await getAdminStoreSettings(slug).catch((error: unknown) => {
+    if (error instanceof TenantNotFoundError) notFound();
+    throw error;
+  });
+
+  return <StoreSettingsForm settings={settings} tenantId={settings.id} />;
 }

@@ -761,28 +761,73 @@ export type Database = {
       }
       tenants: {
         Row: {
+          address: string | null
+          avg_prep_time_minutes: number | null
+          banner_url: string | null
+          business_hours: Json | null
+          closing_message: string | null
           created_at: string
+          facebook: string | null
           id: string
+          instagram: string | null
           is_active: boolean
+          logo_url: string | null
           name: string
+          phone: string | null
+          primary_color: string | null
+          promo_banner_url: string | null
+          secondary_color: string | null
           slug: string
+          store_mode: string
           updated_at: string
+          welcome_message: string | null
+          whatsapp: string | null
         }
         Insert: {
+          address?: string | null
+          avg_prep_time_minutes?: number | null
+          banner_url?: string | null
+          business_hours?: Json | null
+          closing_message?: string | null
           created_at?: string
+          facebook?: string | null
           id?: string
+          instagram?: string | null
           is_active?: boolean
+          logo_url?: string | null
           name: string
+          phone?: string | null
+          primary_color?: string | null
+          promo_banner_url?: string | null
+          secondary_color?: string | null
           slug: string
+          store_mode?: string
           updated_at?: string
+          welcome_message?: string | null
+          whatsapp?: string | null
         }
         Update: {
+          address?: string | null
+          avg_prep_time_minutes?: number | null
+          banner_url?: string | null
+          business_hours?: Json | null
+          closing_message?: string | null
           created_at?: string
+          facebook?: string | null
           id?: string
+          instagram?: string | null
           is_active?: boolean
+          logo_url?: string | null
           name?: string
+          phone?: string | null
+          primary_color?: string | null
+          promo_banner_url?: string | null
+          secondary_color?: string | null
           slug?: string
+          store_mode?: string
           updated_at?: string
+          welcome_message?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }

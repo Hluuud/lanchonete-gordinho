@@ -17,7 +17,7 @@ região `sa-east-1`). Migrations versionadas em `supabase/migrations/`.
 
 | Tabela         | Papel                                                            |
 | -------------- | ----------------------------------------------------------------- |
-| `tenants`      | Restaurantes (unidade de isolamento do SaaS).                    |
+| `tenants`      | Restaurantes (unidade de isolamento do SaaS). Campos de configuração operacional (Sprint 5, Fase 5). |
 | `profiles`     | Liga `auth.users` → `tenant_id` + `role`.                        |
 | `categories`   | Seções do cardápio, por tenant. Campos de gestão (Sprint 5): `icon`, `color`, `is_available`. |
 | `products`     | Itens do cardápio, por tenant. Preço em `price_cents`. Campos de gestão (Sprint 5): `promo_price_cents`, `sku`, `is_bestseller`, `ingredients`, `allergens`, `tags`, `nutritional_info`. |
@@ -156,6 +156,35 @@ não compra combos. Mesma estratégia de substituição completa
 (`replaceComboSlots`, `repositories/combos.repository.ts`) para
 slots+produtos a cada save.
 
+### Configuração operacional do tenant (Sprint 5, Fase 5)
+
+`tenants` ganha campos de identidade/contato/aparência/horário
+(`phone`, `whatsapp`, `instagram`, `facebook`, `address`, `logo_url`,
+`banner_url`, `promo_banner_url`, `primary_color`, `secondary_color`,
+`welcome_message`, `closing_message`, `avg_prep_time_minutes`,
+`store_mode`, `business_hours`). `store_mode` (`check`:
+`open|closed|vacation|maintenance`) controla o badge Aberto/Fechado
+independente do horário. `business_hours` (`jsonb`) usa o mesmo formato
+já validado em `features/menu/store-info.ts` (Sprint 4): chaves `"0"`–`"6"`
+(`Date#getDay()`, domingo primeiro), `{open,close}` em `"HH:MM"` ou `null`
+(fechado o dia todo).
+
+**RLS**: a policy `tenants_write_super_admin` (0002) restringia *toda*
+escrita a `super_admin` — correta para `slug`/`is_active`
+(provisionamento da plataforma), errada para estes campos operacionais,
+que o dono/gerente precisa editar no dia a dia. `0019_tenant_config_rls.sql`
+adiciona uma policy de `UPDATE` para `is_tenant_manager` (RLS combina
+policies permissivas do mesmo comando com OR) **e** um trigger
+(`protect_tenant_platform_fields`) que bloqueia alteração de `slug`/
+`is_active` por quem não é `super_admin` — proteção por coluna que RLS
+sozinha não oferece.
+
+**Storefront**: a conexão do badge Aberto/Fechado
+(`features/menu/components/store-open-badge.tsx`) e do tempo médio de
+preparo a este dado real fica registrada no BACKLOG — o backend já está
+pronto (`getAdminStoreSettings`), falta só o encanamento de props na
+loja pública.
+
 ### Storage (Sprint 5)
 
 Bucket público `store-assets` (`storage.buckets`), primeira vez que o
@@ -215,6 +244,12 @@ pertencem ao **mesmo tenant** no nível do banco.
   Sprint 5, Fase 4.
 - `0017_combos_rls` — RLS staff-only das três tabelas acima. Sprint 5,
   Fase 4.
+- `0018_tenant_store_config` — `tenants` ganha campos de configuração
+  operacional (identidade, contato, aparência, horário, modo da loja).
+  Sprint 5, Fase 5.
+- `0019_tenant_config_rls` — policy de `UPDATE` para `is_tenant_manager`
+  + trigger protegendo `slug`/`is_active` de quem não é `super_admin`.
+  Sprint 5, Fase 5.
 
 ## Seed
 
