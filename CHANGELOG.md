@@ -4,6 +4,26 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5 (Fase 7): Dashboard enriquecido
+
+- Novo `services/admin/dashboard.service.ts`: agrega, em memória, 9
+  métricas a partir de uma única consulta de `orders`/`order_items`
+  (`repositories/orders.repository.ts#findOrdersInDateRange`, nova) — sem
+  tabela nova, sem dado fabricado. Pedidos hoje/em andamento/finalizados
+  hoje/cancelados hoje/ticket médio são escopados ao dia atual; produtos
+  mais vendidos/horário de pico/pedidos por hora ativa/tempo médio de
+  preparo usam uma janela de 30 dias para ter amostra (`WINDOW_DAYS`).
+  Agregação em memória por decisão explícita de YAGNI — volume de uma
+  lanchonete não justifica `group by` em SQL ainda; registrado no
+  `BACKLOG.md` como evolução se o volume crescer.
+- `/admin` (Dashboard) reescrito: 6 cards de pedidos/ticket/preparo, lista
+  de produtos mais vendidos (`TopProductsList`), gráfico de barras CSS
+  (sem lib nova) de pedidos por horário (`HourlyOrdersChart`) com pico e
+  média de pedidos/hora — mantém os 3 cards de catálogo já existentes
+  (produtos publicados/indisponíveis, categorias).
+- `AdminDashboardMetrics`/`AdminTopProduct`/`AdminHourlyOrderCount`
+  (`types/domain.ts`).
+
 ### Added — Sprint 5 (Fase 6): Usuários (RBAC)
 
 - `profiles` ganha `email` (`0021`, espelho de `auth.users.email` escrito no

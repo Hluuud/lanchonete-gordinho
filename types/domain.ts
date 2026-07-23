@@ -190,6 +190,45 @@ export type AdminUser = {
   createdAt: string;
 };
 
+export type AdminTopProduct = {
+  productId: string | null;
+  name: string;
+  quantity: number;
+};
+
+export type AdminHourlyOrderCount = {
+  /** 0–23. */
+  hour: number;
+  count: number;
+};
+
+/**
+ * Métricas do Dashboard (Sprint 5, Fase 7) — agregadas em memória a partir
+ * de `orders`/`order_items` já existentes, sem tabela nova. `ordersToday`/
+ * `completedToday`/`cancelledToday`/`avgTicketCents` são escopados ao dia
+ * atual; `topProducts`/`hourlyOrderCounts`/`peakHour`/`ordersPerHour`/
+ * `avgPrepTimeMinutes` usam uma janela mais ampla (`windowDays`) para ter
+ * amostra estatística — ver `services/admin/dashboard.service.ts`.
+ */
+export type AdminDashboardMetrics = {
+  ordersToday: number;
+  /** Pedidos não finalizados/cancelados, de qualquer dia (fila atual). */
+  inProgress: number;
+  completedToday: number;
+  cancelledToday: number;
+  /** Ticket médio de hoje, excluindo cancelados. */
+  avgTicketCents: number;
+  topProducts: AdminTopProduct[];
+  hourlyOrderCounts: AdminHourlyOrderCount[];
+  /** Hora do dia (0–23) com mais pedidos na janela — `null` sem dados. */
+  peakHour: number | null;
+  /** Média de pedidos por hora, considerando só horas com pelo menos 1 pedido na janela. */
+  ordersPerHour: number;
+  /** Média de `ready_at - preparing_at` dos pedidos concluídos na janela — `null` sem dados. */
+  avgPrepTimeMinutes: number | null;
+  windowDays: number;
+};
+
 export type AdminCategory = {
   id: string;
   name: string;

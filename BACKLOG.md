@@ -60,8 +60,26 @@ arquiteturais associadas.
 - ☐ **`TenantNotFoundError` duplicada em cada `services/admin/*.service.ts`**:
   cada service redefine a mesma classe de erro local — funcional (services
   independentes, sem acoplamento entre módulos), mas é repetição literal
-  crescendo a cada fase (6 arquivos até aqui). Extrair para um módulo
+  crescendo a cada fase (7 arquivos até aqui). Extrair para um módulo
   compartilhado (`services/admin/errors.ts`) se crescer mais.
+- ☐ **Dashboard: agregação em memória, sem `group by` em SQL** (Fase 7):
+  `getAdminDashboard` busca até 30 dias de pedidos e agrega em JS —
+  aceitável para uma lanchonete de porte único (decisão explícita de
+  YAGNI, ver ADR/CHANGELOG da fase), mas não escala para tenants de alto
+  volume; migrar para agregação em SQL (`group by`/views materializadas)
+  quando o volume justificar.
+- ☐ **Dashboard não tem seletor de período**: a janela de 30 dias
+  (`WINDOW_DAYS`) é fixa no service — sem UI para o lojista escolher
+  "hoje"/"semana"/"mês"/intervalo customizado.
+- ☐ **"Pedidos por hora ativa" pode enganar em dias de baixíssimo volume**:
+  a métrica divide o total de pedidos pelas horas com pelo menos 1 pedido
+  na janela — uma única hora isolada com 1 pedido em 30 dias conta como
+  "hora ativa", inflando a média num tenant com poucos dados. Efeito
+  diminui com volume real; sem correção nesta fase (YAGNI).
+- ☐ **Validação manual do Dashboard com conta real e pedidos reais** (Fase
+  7) — sem credenciais de teste seedadas nesta sessão; coberto por
+  build/lint/typecheck e revisão de código, não por inspeção visual real
+  dos números (mesma limitação das fases anteriores).
 
 ## Sprint 4 — Redesign UX/UI: Cardápio de Autoatendimento
 

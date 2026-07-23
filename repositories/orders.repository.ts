@@ -50,6 +50,29 @@ export async function findActiveOrdersByTenant(
   return data ?? [];
 }
 
+/**
+ * Pedidos de um intervalo de datas, **todos os status** (inclui `completed`
+ * e `cancelled`) — diferente de `findActiveOrdersByTenant`, que exclui
+ * `completed` de propósito (board ativo da cozinha). Usada pelo Dashboard
+ * (Sprint 5, Fase 7), que precisa do histórico para métricas.
+ */
+export async function findOrdersInDateRange(
+  client: Client,
+  tenantId: string,
+  range: { from: string; to: string },
+) {
+  const { data, error } = await client
+    .from("orders")
+    .select(ORDER_WITH_ITEMS_SELECT)
+    .eq("tenant_id", tenantId)
+    .gte("created_at", range.from)
+    .lt("created_at", range.to)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function findOrderById(
   client: Client,
   tenantId: string,
