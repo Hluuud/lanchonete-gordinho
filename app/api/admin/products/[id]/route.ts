@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { productUpdateSchema } from "@/features/admin/products/schema";
@@ -37,12 +39,22 @@ export async function PATCH(
     const product = await updateAdminProduct(slug, id, parsed.data);
     return NextResponse.json(product);
   } catch (error) {
-    if (error instanceof TenantNotFoundError || error instanceof ProductNotFoundError) {
+    if (
+      error instanceof TenantNotFoundError ||
+      error instanceof ProductNotFoundError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
-    if (error instanceof DuplicateSkuError || error instanceof InvalidPromoPriceError) {
+    if (
+      error instanceof DuplicateSkuError ||
+      error instanceof InvalidPromoPriceError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }
@@ -64,9 +76,16 @@ export async function DELETE(
     await deleteAdminProduct(slug, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    if (error instanceof TenantNotFoundError || error instanceof ProductNotFoundError) {
+    if (
+      error instanceof TenantNotFoundError ||
+      error instanceof ProductNotFoundError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

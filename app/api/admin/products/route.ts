@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { productInputSchema } from "@/features/admin/products/schema";
@@ -12,7 +14,12 @@ import {
   listAdminProducts,
 } from "@/services/admin/products.service";
 
-const ALLOWED_SORT = ["name", "price_cents", "sort_order", "created_at"] as const;
+const ALLOWED_SORT = [
+  "name",
+  "price_cents",
+  "sort_order",
+  "created_at",
+] as const;
 
 /** Lista produtos (paginada/buscável/filtrável) — visão de gestão, inclui não publicados/indisponíveis. */
 export async function GET(request: Request) {
@@ -37,14 +44,20 @@ export async function GET(request: Request) {
     const result = await listAdminProducts(slug, {
       ...params,
       categoryId,
-      isAvailable: isAvailableParam === null ? undefined : isAvailableParam === "true",
-      isFeatured: isFeaturedParam === null ? undefined : isFeaturedParam === "true",
+      isAvailable:
+        isAvailableParam === null ? undefined : isAvailableParam === "true",
+      isFeatured:
+        isFeaturedParam === null ? undefined : isFeaturedParam === "true",
     });
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof TenantNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }
@@ -73,9 +86,16 @@ export async function POST(request: Request) {
     if (error instanceof TenantNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
-    if (error instanceof DuplicateSkuError || error instanceof InvalidPromoPriceError) {
+    if (
+      error instanceof DuplicateSkuError ||
+      error instanceof InvalidPromoPriceError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { updateOrderStatusSchema } from "@/features/kitchen/schema";
@@ -46,6 +48,10 @@ export async function PATCH(
     if (error instanceof InvalidOrderTransitionError) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

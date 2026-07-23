@@ -5,6 +5,27 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Sprint 5.5 — Hardening
+
+- ☐ **`logger.info`/`logger.warn` sem uso ainda** (Fase 0): só
+  `logger.error` foi conectado, no ponto onde já havia lacuna clara (rotas
+  de API sem log nenhum). Instrumentar pontos de sucesso relevantes é
+  decisão para quando surgir necessidade real de observar algo
+  específico, não preventiva.
+- ☐ **npm audit aponta 2 vulnerabilidades (postcss/sharp)**, achado ao
+  instalar `@sentry/nextjs` (Fase 0) — ambas são dependências transitivas
+  do próprio Next.js, e `npm audit fix --force` sugeriria downgrade para
+  `next@9.x` (claramente errado). Rastrear se uma versão futura do Next
+  resolve nativamente antes de qualquer ação manual.
+- ☐ **Sem upload de source maps ao Sentry**: precisaria de `org`/
+  `project`/`authToken` novos no `withSentryConfig` — eventos chegam sem
+  stack trace desminificado por ora. Ver `docs/observability.md`.
+- ☐ **Auditoria de "impressão" não implementada** (decisão de escopo, ver
+  o plano da sprint): não existe nenhum código de execução real de
+  impressão ainda (Sprint 5, Fase 8, foi só persistência de configuração)
+  — criar um evento de auditoria para uma ação inexistente seria simular
+  dado. Vira gancho natural quando a impressão real (ESC/POS) existir.
+
 ## Login e primeiro acesso
 
 - ☐ **Sem "esqueci minha senha" na tela de login**: `/login` só cobre o

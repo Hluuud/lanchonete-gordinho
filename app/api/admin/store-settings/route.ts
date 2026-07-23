@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { storeSettingsInputSchema } from "@/features/admin/store-settings/schema";
@@ -25,6 +27,10 @@ export async function GET() {
     if (error instanceof TenantNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }
@@ -52,6 +58,10 @@ export async function PATCH(request: Request) {
     if (error instanceof TenantNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

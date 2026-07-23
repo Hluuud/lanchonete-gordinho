@@ -4,6 +4,30 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5.5 (Fase 0): Observabilidade base
+
+- **Sentry** (`@sentry/nextjs`): `instrumentation.ts` (servidor) +
+  `instrumentation-client.ts` (browser), convenção do SDK v10+. DSN em
+  `NEXT_PUBLIC_SENTRY_DSN`, no-op se ausente. `tracesSampleRate: 0.1`
+  (amostragem baixa, cota do plano gratuito).
+- **Logs estruturados**: novo `lib/observability/logger.ts` —
+  `logger.error` sempre encaminha ao Sentry; no servidor imprime JSON por
+  linha (indexado nativamente pela Vercel), no browser imprime legível no
+  DevTools.
+- **Request ID**: `proxy.ts` gera `x-request-id` por requisição (respeita
+  valor de upstream se já vier setado), propaga no request (lido via
+  `lib/observability/request-id.ts#getRequestId()`) e na resposta.
+  Correlaciona logs + Sentry + auditoria futura da mesma requisição —
+  tratado como o mesmo conceito de "correlation ID" do pedido original
+  (ver justificativa em `docs/observability.md`).
+- Todos os ~16 route handlers de `app/api/*` agora chamam `logger.error`
+  antes do `throw error;` final (erro não reconhecido) — antes disso,
+  zero logging existia em qualquer rota da aplicação.
+- Novos `app/error.tsx` (raiz) e `app/global-error.tsx` — antes só
+  `(store)` tinha boundary de erro; `(admin)`/`(kitchen)`/`/login`
+  caíam no boundary genérico do Next sem nenhum log.
+- Novo `docs/observability.md`.
+
 ### Added — Login e primeiro acesso
 
 - **`/login`**: até aqui não existia nenhuma tela de autenticação — `/admin`

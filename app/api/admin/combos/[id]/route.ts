@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { comboInputSchema } from "@/features/admin/combos/schema";
@@ -35,9 +37,16 @@ export async function PATCH(
     const combo = await updateAdminCombo(slug, id, parsed.data);
     return NextResponse.json(combo);
   } catch (error) {
-    if (error instanceof TenantNotFoundError || error instanceof ComboNotFoundError) {
+    if (
+      error instanceof TenantNotFoundError ||
+      error instanceof ComboNotFoundError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }
@@ -59,9 +68,16 @@ export async function DELETE(
     await deleteAdminCombo(slug, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    if (error instanceof TenantNotFoundError || error instanceof ComboNotFoundError) {
+    if (
+      error instanceof TenantNotFoundError ||
+      error instanceof ComboNotFoundError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

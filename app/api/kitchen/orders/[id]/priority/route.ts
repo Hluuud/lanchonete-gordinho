@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { updateOrderPrioritySchema } from "@/features/kitchen/schema";
@@ -36,6 +38,10 @@ export async function PATCH(
     if (error instanceof OrderNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

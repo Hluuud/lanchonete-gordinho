@@ -2,15 +2,26 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { env } from "@/lib/env";
+import { REQUEST_ID_HEADER } from "@/lib/observability/request-id";
 
 /**
  * Proxy de sessão (convenção do Next 16, ex-"middleware"): mantém o cookie de
- * Auth do Supabase atualizado a cada request (refresh de token). Não decide
- * autorização — isso fica nos guards de rota (`requireRole`) e na RLS.
- * Roda em todas as rotas exceto assets estáticos.
+ * Auth do Supabase atualizado a cada request (refresh de token) e garante um
+ * `x-request-id` por requisição — respeita um valor de upstream se já vier
+ * setado (ex. um futuro load balancer), gera um novo caso contrário.
+ * Correlaciona logs estruturados, Sentry e auditoria da mesma requisição
+ * (ver `docs/observability.md`). Não decide autorização — isso fica nos
+ * guards de rota (`requireRole`) e na RLS. Roda em todas as rotas exceto
+ * assets estáticos.
  */
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  const requestId = request.headers.get(REQUEST_ID_HEADER) ?? crypto.randomUUID();
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(REQUEST_ID_HEADER, requestId);
+
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set(REQUEST_ID_HEADER, requestId);
 
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -24,7 +35,8 @@ export async function proxy(request: NextRequest) {
           for (const { name, value } of cookiesToSet) {
             request.cookies.set(name, value);
           }
-          response = NextResponse.next({ request });
+          response = NextResponse.next({ request: { headers: requestHeaders } });
+          response.headers.set(REQUEST_ID_HEADER, requestId);
           for (const { name, value, options } of cookiesToSet) {
             response.cookies.set(name, value, options);
           }

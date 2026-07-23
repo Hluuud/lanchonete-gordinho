@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { modifierGroupInputSchema } from "@/features/admin/modifiers/schema";
@@ -35,9 +37,16 @@ export async function PATCH(
     const group = await updateAdminModifierGroup(slug, id, parsed.data);
     return NextResponse.json(group);
   } catch (error) {
-    if (error instanceof TenantNotFoundError || error instanceof ModifierGroupNotFoundError) {
+    if (
+      error instanceof TenantNotFoundError ||
+      error instanceof ModifierGroupNotFoundError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }
@@ -59,9 +68,16 @@ export async function DELETE(
     await deleteAdminModifierGroup(slug, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    if (error instanceof TenantNotFoundError || error instanceof ModifierGroupNotFoundError) {
+    if (
+      error instanceof TenantNotFoundError ||
+      error instanceof ModifierGroupNotFoundError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

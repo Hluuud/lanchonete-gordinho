@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { categoryInputSchema } from "@/features/admin/categories/schema";
@@ -35,6 +37,10 @@ export async function GET(request: Request) {
     if (error instanceof TenantNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }
@@ -66,6 +72,10 @@ export async function POST(request: Request) {
     if (error instanceof DuplicateCategoryNameError) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

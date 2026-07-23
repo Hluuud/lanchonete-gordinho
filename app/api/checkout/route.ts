@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { checkoutInputSchema } from "@/features/checkout/schema";
@@ -41,6 +43,10 @@ export async function POST(request: Request) {
     if (error instanceof CheckoutValidationError) {
       return NextResponse.json({ error: error.message }, { status: 422 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }

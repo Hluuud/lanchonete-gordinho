@@ -1,3 +1,5 @@
+import { logger } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { NextResponse } from "next/server";
 
 import { userUpdateSchema } from "@/features/admin/users/schema";
@@ -35,12 +37,19 @@ export async function PATCH(
     const updated = await updateAdminUser(slug, user.id, id, parsed.data);
     return NextResponse.json(updated);
   } catch (error) {
-    if (error instanceof TenantNotFoundError || error instanceof UserNotFoundError) {
+    if (
+      error instanceof TenantNotFoundError ||
+      error instanceof UserNotFoundError
+    ) {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
     if (error instanceof CannotModifySelfError) {
       return NextResponse.json({ error: error.message }, { status: 403 });
     }
+    logger.error("Erro não tratado em rota de API", {
+      error,
+      requestId: await getRequestId(),
+    });
     throw error;
   }
 }
