@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { checkDatabase } from "@/lib/observability/health-checks";
 
 /**
  * Readiness: confirma que o processo consegue de fato servir tráfego (o
@@ -10,13 +10,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
  * instância. Pública, sem autenticação.
  */
 export async function GET() {
-  try {
-    const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.from("tenants").select("id").limit(1);
-    if (error) throw error;
-
-    return NextResponse.json({ ready: true });
-  } catch {
-    return NextResponse.json({ ready: false }, { status: 503 });
-  }
+  const database = await checkDatabase();
+  return NextResponse.json({ ready: database.ok }, { status: database.ok ? 200 : 503 });
 }

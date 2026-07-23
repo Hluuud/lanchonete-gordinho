@@ -1,4 +1,5 @@
 import {
+  Activity,
   BarChart3,
   ClipboardList,
   Layers,
@@ -85,6 +86,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     href: "/admin/auditoria",
     label: "Auditoria",
     icon: ScrollText,
+    ready: true,
+  },
+  {
+    href: "/admin/sistema",
+    label: "Sistema",
+    icon: Activity,
     ready: true,
   },
 ];

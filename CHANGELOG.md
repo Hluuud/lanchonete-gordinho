@@ -4,6 +4,22 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5.5 (Fase 5): Painel de Status
+
+- Novo `/admin/sistema`: 3 cards de status real (banco de dados, Storage,
+  Realtime — checagens reais reusadas de `/health`, Fase 4, via novo
+  `lib/observability/health-checks.ts` compartilhado) + links para os
+  dashboards nativos da Vercel e do Supabase (URL do projeto derivada de
+  `NEXT_PUBLIC_SUPABASE_URL`, não hardcoded).
+- **Sem CPU/memória fabricados** — decisão de escopo confirmada com o
+  usuário antes de planejar esta sprint: não existe processo próprio para
+  medir isso em serverless, e os dashboards nativos já fazem isso melhor.
+- Novo `features/admin/system-status/use-realtime-status.ts` — canal
+  Realtime "sonda" (sem tabela/evento) só para testar conectividade, sem
+  lógica de negócio.
+- Verificado no navegador: os 3 cards mostraram "Operacional" com dados
+  reais (banco/Storage/Realtime realmente conectados).
+
 ### Added — Sprint 5.5 (Fase 4): Health checks
 
 - `/live` (processo respondendo, sem checar dependências), `/ready`
