@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   const slug = await resolveTenantSlug();
 
   try {
-    const group = await createAdminModifierGroup(slug, parsed.data);
+    const group = await createAdminModifierGroup(slug, user, parsed.data);
     return NextResponse.json(group, { status: 201 });
   } catch (error) {
     if (error instanceof TenantNotFoundError) {

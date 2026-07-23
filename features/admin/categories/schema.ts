@@ -11,7 +11,10 @@ export const categoryInputSchema = z.object({
   color: z
     .string()
     .trim()
-    .regex(/^#[0-9a-fA-F]{6}$/, "Cor inválida (use #rrggbb)")
+    // Aceita string vazia (sem cor definida) além do hex — sem isso, o campo
+    // opcional falhava a validação sempre que o usuário deixava em branco,
+    // já que "" não é `undefined`/`null` no momento em que o regex roda.
+    .regex(/^(#[0-9a-fA-F]{6})?$/, "Cor inválida (use #rrggbb)")
     .optional()
     .nullable(),
   sortOrder: z.number().int().min(0).default(0),

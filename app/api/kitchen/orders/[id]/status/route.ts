@@ -37,7 +37,7 @@ export async function PATCH(
   const slug = await resolveTenantSlug();
 
   try {
-    const order = await changeOrderStatus(slug, id, parsed.data.status, {
+    const order = await changeOrderStatus(slug, user, id, parsed.data.status, {
       cancelledReason: parsed.data.cancelledReason,
     });
     return NextResponse.json(order);

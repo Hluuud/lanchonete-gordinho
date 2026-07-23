@@ -52,7 +52,7 @@ export async function PATCH(request: Request) {
   const slug = await resolveTenantSlug();
 
   try {
-    const settings = await updateAdminStoreSettings(slug, parsed.data);
+    const settings = await updateAdminStoreSettings(slug, user, parsed.data);
     return NextResponse.json(settings);
   } catch (error) {
     if (error instanceof TenantNotFoundError) {

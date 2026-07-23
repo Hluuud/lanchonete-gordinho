@@ -36,7 +36,7 @@ export async function PATCH(
   const slug = await resolveTenantSlug();
 
   try {
-    const category = await updateAdminCategory(slug, id, parsed.data);
+    const category = await updateAdminCategory(slug, user, id, parsed.data);
     return NextResponse.json(category);
   } catch (error) {
     if (
@@ -70,7 +70,7 @@ export async function DELETE(
   const slug = await resolveTenantSlug();
 
   try {
-    await deleteAdminCategory(slug, id);
+    await deleteAdminCategory(slug, user, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (

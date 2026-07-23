@@ -247,6 +247,41 @@ caixa vão precisar ler isso quando a impressão real existir), escrita só
 gestão (`is_tenant_manager`) — mesmo formato de `combos_select`/
 `combos_write` (0017).
 
+### Auditoria (Sprint 5.5, Fase 1)
+
+`audit_logs` (nova tabela, append-only): `actor_id` (FK `profiles`, `on
+delete set null` — apagar um perfil não apaga o histórico que ele gerou),
+`actor_email`/`actor_role` (snapshot do momento da ação, mesmo espírito de
+`profiles.email` espelhando `auth.users.email`), `action` (`check`:
+`login|logout|create|update|delete|price_change|cancel`), `entity_type`/
+`entity_id` (nulos para `login`/`logout` — a "entidade" é a própria
+sessão), `before`/`after`/`metadata` (`jsonb` livre).
+
+Instrumentado em todos os `services/admin/*.service.ts` de
+create/update/delete e em `kitchen-orders.service.ts#changeOrderStatus`
+(só a transição para `cancelled`). Todo `updateAdmin*` passou a buscar o
+estado "antes" da escrita (só os `delete` faziam isso até aqui, para
+checagem de existência) — necessário para `before`/`after` fazerem sentido
+na auditoria. `price_change` é emitido em vez de `update` quando os campos
+de preço realmente mudam (produtos, combos, opções de adicionais).
+
+Gravação é "best effort" (`services/admin/audit.service.ts#recordAuditLog`):
+se o insert falhar, loga o erro (`logger.error`, Fase 0) e **não** propaga
+— a operação de negócio que motivou o evento já aconteceu com sucesso, uma
+falha só no registro de auditoria não deveria derrubar a requisição
+inteira.
+
+**RLS**: leitura só gestão (`is_tenant_manager`/`is_super_admin` —
+cozinha/caixa/garçom não têm motivo para ver quem mudou preços ou papéis),
+escrita para todo staff (`is_tenant_staff`, cobre login/logout de qualquer
+papel). **Sem policy de `update`/`delete`** — log é append-only, ninguém
+edita pela app, nem `super_admin`.
+
+**Não implementado nesta fase**: auditoria de "impressão" — não existe
+execução real de impressão ainda (Fase 8 da Sprint 5 foi só persistência
+de config); vira gancho natural quando ESC/POS real existir. Ver
+`BACKLOG.md`.
+
 ### Integridade multi-tenant
 
 `products` referencia `categories` por **FK composta** `(category_id, tenant_id)`
@@ -311,6 +346,9 @@ pertencem ao **mesmo tenant** no nível do banco.
   tenant (corrige achado de segurança pré-existente). Sprint 5, Fase 6.
 - `0024_printers` — cria `printers`. Sprint 5, Fase 8.
 - `0025_printers_rls` — RLS leitura-staff/escrita-gestão. Sprint 5, Fase 8.
+- `0026_audit_logs` — cria `audit_logs`. Sprint 5.5, Fase 1.
+- `0027_audit_logs_rls` — RLS leitura-gestão/escrita-staff, append-only.
+  Sprint 5.5, Fase 1.
 
 ## Seed
 

@@ -25,6 +25,19 @@ arquiteturais associadas.
   impressão ainda (Sprint 5, Fase 8, foi só persistência de configuração)
   — criar um evento de auditoria para uma ação inexistente seria simular
   dado. Vira gancho natural quando a impressão real (ESC/POS) existir.
+- ☐ **Auditoria de cancelamento cobre só a transição para `cancelled`**
+  (Fase 1) — generalizar para toda transição de status do pedido
+  (`changeOrderStatus`) é uma extensão natural se der valor rastrear todo
+  o ciclo, não só o cancelamento.
+- ☐ **Verificar se campos de URL (`logoUrl`/`bannerUrl`/`promoBannerUrl`
+  em Configuração da Loja, `imageUrl` em Produtos/Combos) têm o mesmo bug
+  que o campo "Cor" tinha** (regex/validação rodando antes da
+  normalização de string vazia) — não confirmado, só suspeita por ser o
+  mesmo padrão (`z.string().url().optional().nullable()`); investigar na
+  Fase 6 (revisão de segurança) desta sprint.
+- ☐ **Sem paginação/exportação de auditoria além do já existente** —
+  Fase 3 (exportação de dados) já cobre `audit_logs` como um dos recursos
+  exportáveis; nenhuma pendência nova aqui, só cross-referência.
 
 ## Login e primeiro acesso
 

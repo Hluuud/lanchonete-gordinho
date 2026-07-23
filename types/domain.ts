@@ -356,3 +356,31 @@ export type AdminPrinter = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type AuditAction =
+  | "login"
+  | "logout"
+  | "create"
+  | "update"
+  | "delete"
+  | "price_change"
+  | "cancel";
+
+/**
+ * Entrada de auditoria (Sprint 5.5, Fase 1) — append-only, nunca editada
+ * pela aplicação. `before`/`after` são snapshots livres (o formato depende
+ * de quem gravou, ver `services/admin/audit.service.ts`).
+ */
+export type AdminAuditLog = {
+  id: string;
+  actorId: string | null;
+  actorEmail: string | null;
+  actorRole: UserRole | null;
+  action: AuditAction;
+  entityType: string | null;
+  entityId: string | null;
+  before: unknown;
+  after: unknown;
+  metadata: unknown;
+  createdAt: string;
+};

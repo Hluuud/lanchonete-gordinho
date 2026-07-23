@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   const slug = await resolveTenantSlug();
 
   try {
-    const printer = await createAdminPrinter(slug, parsed.data);
+    const printer = await createAdminPrinter(slug, user, parsed.data);
     return NextResponse.json(printer, { status: 201 });
   } catch (error) {
     if (error instanceof TenantNotFoundError) {

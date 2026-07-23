@@ -7,6 +7,7 @@ import {
   updateTenantSettings,
   type TenantSettingsRow,
 } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type { AdminStoreSettings, StoreMode } from "@/types/domain";
 import type { StoreSettingsInput } from "@/features/admin/store-settings/schema";
 
@@ -59,9 +60,14 @@ export async function getAdminStoreSettings(
 
 export async function updateAdminStoreSettings(
   tenantSlug: string,
+  actor: AuditActor,
   input: StoreSettingsInput,
 ): Promise<AdminStoreSettings> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+
+  const beforeRow = await findTenantSettingsById(supabase, tenant.id);
+  if (!beforeRow) throw new TenantNotFoundError();
+  const before = toAdminStoreSettings(beforeRow);
 
   const row = await updateTenantSettings(supabase, tenant.id, {
     name: input.name,
@@ -82,5 +88,16 @@ export async function updateAdminStoreSettings(
     businessHours: input.businessHours,
   });
   if (!row) throw new TenantNotFoundError();
-  return toAdminStoreSettings(row);
+  const settings = toAdminStoreSettings(row);
+
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "update",
+    entityType: "store_settings",
+    entityId: tenant.id,
+    before,
+    after: settings,
+  });
+  return settings;
 }

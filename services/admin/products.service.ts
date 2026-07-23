@@ -13,6 +13,7 @@ import {
 } from "@/repositories/menu.repository";
 import { setProductModifierGroups } from "@/repositories/modifiers.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type { AdminProduct } from "@/types/domain";
 import type {
   ProductInput,
@@ -111,6 +112,7 @@ export async function listProductOptions(
 
 export async function createAdminProduct(
   tenantSlug: string,
+  actor: AuditActor,
   input: ProductInput,
 ): Promise<AdminProduct> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -137,7 +139,19 @@ export async function createAdminProduct(
       tags: input.tags,
     });
     await setProductModifierGroups(supabase, tenant.id, row.id, input.modifierGroupIds);
-    return toAdminProduct({ ...row, product_modifier_groups: input.modifierGroupIds.map((groupId) => ({ group_id: groupId })) });
+    const product = toAdminProduct({
+      ...row,
+      product_modifier_groups: input.modifierGroupIds.map((groupId) => ({ group_id: groupId })),
+    });
+    await recordAuditLog(supabase, {
+      tenantId: tenant.id,
+      actor,
+      action: "create",
+      entityType: "product",
+      entityId: product.id,
+      after: product,
+    });
+    return product;
   } catch (error) {
     throw translateWriteError(error, input.sku ?? null);
   }
@@ -145,10 +159,15 @@ export async function createAdminProduct(
 
 export async function updateAdminProduct(
   tenantSlug: string,
+  actor: AuditActor,
   productId: string,
   input: ProductUpdateInput,
 ): Promise<AdminProduct> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+
+  const beforeRow = await findProductById(supabase, tenant.id, productId);
+  if (!beforeRow) throw new ProductNotFoundError();
+  const before = toAdminProduct(beforeRow);
 
   try {
     const row = await updateProduct(supabase, tenant.id, productId, {
@@ -172,14 +191,30 @@ export async function updateAdminProduct(
     });
     if (!row) throw new ProductNotFoundError();
 
-    if (input.modifierGroupIds !== undefined) {
-      await setProductModifierGroups(supabase, tenant.id, productId, input.modifierGroupIds);
-      return toAdminProduct({
+    const modifierGroupIds = input.modifierGroupIds;
+    let product: AdminProduct;
+    if (modifierGroupIds !== undefined) {
+      await setProductModifierGroups(supabase, tenant.id, productId, modifierGroupIds);
+      product = toAdminProduct({
         ...row,
-        product_modifier_groups: input.modifierGroupIds.map((groupId) => ({ group_id: groupId })),
+        product_modifier_groups: modifierGroupIds.map((groupId) => ({ group_id: groupId })),
       });
+    } else {
+      product = toAdminProduct(row);
     }
-    return toAdminProduct(row);
+
+    const priceChanged =
+      before.priceCents !== product.priceCents || before.promoPriceCents !== product.promoPriceCents;
+    await recordAuditLog(supabase, {
+      tenantId: tenant.id,
+      actor,
+      action: priceChanged ? "price_change" : "update",
+      entityType: "product",
+      entityId: product.id,
+      before,
+      after: product,
+    });
+    return product;
   } catch (error) {
     if (error instanceof ProductNotFoundError) throw error;
     throw translateWriteError(error, input.sku ?? null);
@@ -188,6 +223,7 @@ export async function updateAdminProduct(
 
 export async function deleteAdminProduct(
   tenantSlug: string,
+  actor: AuditActor,
   productId: string,
 ): Promise<void> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -196,6 +232,14 @@ export async function deleteAdminProduct(
   if (!existing) throw new ProductNotFoundError();
 
   await deleteProduct(supabase, tenant.id, productId);
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "delete",
+    entityType: "product",
+    entityId: productId,
+    before: toAdminProduct(existing),
+  });
 }
 
 function translateWriteError(error: unknown, sku: string | null): Error {

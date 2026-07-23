@@ -34,7 +34,7 @@ export async function PATCH(
   const slug = await resolveTenantSlug();
 
   try {
-    const updated = await updateAdminUser(slug, user.id, id, parsed.data);
+    const updated = await updateAdminUser(slug, user, id, parsed.data);
     return NextResponse.json(updated);
   } catch (error) {
     if (

@@ -12,6 +12,7 @@ import {
   type AdminUserRow,
 } from "@/repositories/users.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type { AdminUser } from "@/types/domain";
 import type { UserInviteInput, UserUpdateInput } from "@/features/admin/users/schema";
 
@@ -87,6 +88,7 @@ export async function listAdminUsers(
  */
 export async function inviteAdminUser(
   tenantSlug: string,
+  actor: AuditActor,
   input: UserInviteInput,
 ): Promise<AdminUser> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -107,23 +109,34 @@ export async function inviteAdminUser(
     fullName: input.fullName ?? null,
     role: input.role,
   });
-  return toAdminUser(row);
+  const invitedUser = toAdminUser(row);
+
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "create",
+    entityType: "user",
+    entityId: invitedUser.id,
+    after: invitedUser,
+  });
+  return invitedUser;
 }
 
 export async function updateAdminUser(
   tenantSlug: string,
-  actorId: string,
+  actor: AuditActor,
   userId: string,
   input: UserUpdateInput,
 ): Promise<AdminUser> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
 
-  if (userId === actorId && (input.role !== undefined || input.isActive !== undefined)) {
+  if (userId === actor.id && (input.role !== undefined || input.isActive !== undefined)) {
     throw new CannotModifySelfError();
   }
 
   const existing = await findUserById(supabase, tenant.id, userId);
   if (!existing) throw new UserNotFoundError();
+  const before = toAdminUser(existing);
 
   const row = await updateProfile(supabase, tenant.id, userId, {
     fullName: input.fullName,
@@ -131,5 +144,16 @@ export async function updateAdminUser(
     isActive: input.isActive,
   });
   if (!row) throw new UserNotFoundError();
-  return toAdminUser(row);
+  const updatedUser = toAdminUser(row);
+
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "update",
+    entityType: "user",
+    entityId: updatedUser.id,
+    before,
+    after: updatedUser,
+  });
+  return updatedUser;
 }

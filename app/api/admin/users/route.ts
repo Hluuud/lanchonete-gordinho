@@ -65,7 +65,7 @@ export async function POST(request: Request) {
   const slug = await resolveTenantSlug();
 
   try {
-    const invited = await inviteAdminUser(slug, parsed.data);
+    const invited = await inviteAdminUser(slug, user, parsed.data);
     return NextResponse.json(invited, { status: 201 });
   } catch (error) {
     if (error instanceof TenantNotFoundError) {

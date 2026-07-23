@@ -63,7 +63,7 @@ export async function POST(request: Request) {
   const slug = await resolveTenantSlug();
 
   try {
-    const category = await createAdminCategory(slug, parsed.data);
+    const category = await createAdminCategory(slug, user, parsed.data);
     return NextResponse.json(category, { status: 201 });
   } catch (error) {
     if (error instanceof TenantNotFoundError) {

@@ -80,7 +80,7 @@ export async function POST(request: Request) {
   const slug = await resolveTenantSlug();
 
   try {
-    const product = await createAdminProduct(slug, parsed.data);
+    const product = await createAdminProduct(slug, user, parsed.data);
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     if (error instanceof TenantNotFoundError) {

@@ -36,7 +36,7 @@ export async function PATCH(
   const slug = await resolveTenantSlug();
 
   try {
-    const product = await updateAdminProduct(slug, id, parsed.data);
+    const product = await updateAdminProduct(slug, user, id, parsed.data);
     return NextResponse.json(product);
   } catch (error) {
     if (
@@ -73,7 +73,7 @@ export async function DELETE(
   const slug = await resolveTenantSlug();
 
   try {
-    await deleteAdminProduct(slug, id);
+    await deleteAdminProduct(slug, user, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (

@@ -14,6 +14,7 @@ import {
   type AdminCategoryRow,
 } from "@/repositories/menu.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type { AdminCategory } from "@/types/domain";
 import type { CategoryInput, CategoryUpdateInput } from "@/features/admin/categories/schema";
 
@@ -94,6 +95,7 @@ export async function listCategoryOptions(
 
 export async function createAdminCategory(
   tenantSlug: string,
+  actor: AuditActor,
   input: CategoryInput,
 ): Promise<AdminCategory> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -109,7 +111,16 @@ export async function createAdminCategory(
       isActive: input.isActive,
       isAvailable: input.isAvailable,
     });
-    return toAdminCategory(row);
+    const category = toAdminCategory(row);
+    await recordAuditLog(supabase, {
+      tenantId: tenant.id,
+      actor,
+      action: "create",
+      entityType: "category",
+      entityId: category.id,
+      after: category,
+    });
+    return category;
   } catch (error) {
     if (isUniqueViolation(error)) throw new DuplicateCategoryNameError(input.name);
     throw error;
@@ -118,10 +129,14 @@ export async function createAdminCategory(
 
 export async function updateAdminCategory(
   tenantSlug: string,
+  actor: AuditActor,
   categoryId: string,
   input: CategoryUpdateInput,
 ): Promise<AdminCategory> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+
+  const before = await findCategoryById(supabase, tenant.id, categoryId);
+  if (!before) throw new CategoryNotFoundError();
 
   try {
     const row = await updateCategory(supabase, tenant.id, categoryId, {
@@ -134,7 +149,17 @@ export async function updateAdminCategory(
       isAvailable: input.isAvailable,
     });
     if (!row) throw new CategoryNotFoundError();
-    return toAdminCategory(row);
+    const category = toAdminCategory(row);
+    await recordAuditLog(supabase, {
+      tenantId: tenant.id,
+      actor,
+      action: "update",
+      entityType: "category",
+      entityId: category.id,
+      before: toAdminCategory(before),
+      after: category,
+    });
+    return category;
   } catch (error) {
     if (isUniqueViolation(error)) {
       throw new DuplicateCategoryNameError(input.name ?? "");
@@ -145,6 +170,7 @@ export async function updateAdminCategory(
 
 export async function deleteAdminCategory(
   tenantSlug: string,
+  actor: AuditActor,
   categoryId: string,
 ): Promise<void> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -156,6 +182,14 @@ export async function deleteAdminCategory(
   if (productCount > 0) throw new CategoryHasProductsError(productCount);
 
   await deleteCategory(supabase, tenant.id, categoryId);
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "delete",
+    entityType: "category",
+    entityId: categoryId,
+    before: toAdminCategory(existing),
+  });
 }
 
 function isUniqueViolation(error: unknown): boolean {

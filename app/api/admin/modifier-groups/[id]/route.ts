@@ -34,7 +34,7 @@ export async function PATCH(
   const slug = await resolveTenantSlug();
 
   try {
-    const group = await updateAdminModifierGroup(slug, id, parsed.data);
+    const group = await updateAdminModifierGroup(slug, user, id, parsed.data);
     return NextResponse.json(group);
   } catch (error) {
     if (
@@ -65,7 +65,7 @@ export async function DELETE(
   const slug = await resolveTenantSlug();
 
   try {
-    await deleteAdminModifierGroup(slug, id);
+    await deleteAdminModifierGroup(slug, user, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (

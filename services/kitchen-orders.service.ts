@@ -13,6 +13,7 @@ import {
   updateOrderStatus,
 } from "@/repositories/orders.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type { Order, OrderStatus, Tenant } from "@/types/domain";
 
 /** Transição de status não permitida pela máquina de estados (`lib/kitchen/order-status.ts`). */
@@ -68,6 +69,7 @@ export async function getKitchenOrderById(
  */
 export async function changeOrderStatus(
   tenantSlug: string,
+  actor: AuditActor,
   orderId: string,
   nextStatus: OrderStatus,
   options?: { cancelledReason?: string },
@@ -95,7 +97,24 @@ export async function changeOrderStatus(
   );
   if (!updated) throw new OrderNotFoundError();
 
-  return toOrder(updated);
+  const order = toOrder(updated);
+
+  // Só "cancelamento" é auditado nesta fase (escopo do pedido) — generalizar
+  // para toda transição de status fica registrado no BACKLOG.
+  if (nextStatus === "cancelled") {
+    await recordAuditLog(supabase, {
+      tenantId: tenant.id,
+      actor,
+      action: "cancel",
+      entityType: "order",
+      entityId: orderId,
+      before: { status: current.status, orderNumber: current.order_number },
+      after: { status: order.status, orderNumber: order.orderNumber },
+      metadata: { cancelledReason: options?.cancelledReason ?? null },
+    });
+  }
+
+  return order;
 }
 
 export async function setOrderPriority(

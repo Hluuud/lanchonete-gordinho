@@ -34,7 +34,7 @@ export async function PATCH(
   const slug = await resolveTenantSlug();
 
   try {
-    const combo = await updateAdminCombo(slug, id, parsed.data);
+    const combo = await updateAdminCombo(slug, user, id, parsed.data);
     return NextResponse.json(combo);
   } catch (error) {
     if (
@@ -65,7 +65,7 @@ export async function DELETE(
   const slug = await resolveTenantSlug();
 
   try {
-    await deleteAdminCombo(slug, id);
+    await deleteAdminCombo(slug, user, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (

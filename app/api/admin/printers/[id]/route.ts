@@ -34,7 +34,7 @@ export async function PATCH(
   const slug = await resolveTenantSlug();
 
   try {
-    const printer = await updateAdminPrinter(slug, id, parsed.data);
+    const printer = await updateAdminPrinter(slug, user, id, parsed.data);
     return NextResponse.json(printer);
   } catch (error) {
     if (
@@ -65,7 +65,7 @@ export async function DELETE(
   const slug = await resolveTenantSlug();
 
   try {
-    await deleteAdminPrinter(slug, id);
+    await deleteAdminPrinter(slug, user, id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (

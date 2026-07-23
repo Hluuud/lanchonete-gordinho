@@ -5,6 +5,7 @@ import {
   Layers3,
   LayoutDashboard,
   Printer,
+  ScrollText,
   Settings,
   Tags,
   TicketPercent,
@@ -78,6 +79,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     href: "/admin/funcionarios",
     label: "Funcionários",
     icon: UserCog,
+    ready: true,
+  },
+  {
+    href: "/admin/auditoria",
+    label: "Auditoria",
+    icon: ScrollText,
     ready: true,
   },
 ];

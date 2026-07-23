@@ -11,6 +11,7 @@ import {
   type AdminPrinterRow,
 } from "@/repositories/printers.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type {
   AdminPrinter,
   PrinterConnectionType,
@@ -71,6 +72,7 @@ export async function listAdminPrinters(
 
 export async function createAdminPrinter(
   tenantSlug: string,
+  actor: AuditActor,
   input: PrinterInput,
 ): Promise<AdminPrinter> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -88,15 +90,30 @@ export async function createAdminPrinter(
     allowReprint: input.allowReprint,
     isActive: input.isActive,
   });
-  return toAdminPrinter(row);
+  const printer = toAdminPrinter(row);
+
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "create",
+    entityType: "printer",
+    entityId: printer.id,
+    after: printer,
+  });
+  return printer;
 }
 
 export async function updateAdminPrinter(
   tenantSlug: string,
+  actor: AuditActor,
   printerId: string,
   input: PrinterInput,
 ): Promise<AdminPrinter> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+
+  const beforeRow = await findPrinterById(supabase, tenant.id, printerId);
+  if (!beforeRow) throw new PrinterNotFoundError();
+  const before = toAdminPrinter(beforeRow);
 
   const row = await updatePrinter(supabase, tenant.id, printerId, {
     name: input.name,
@@ -112,14 +129,37 @@ export async function updateAdminPrinter(
     isActive: input.isActive,
   });
   if (!row) throw new PrinterNotFoundError();
-  return toAdminPrinter(row);
+  const printer = toAdminPrinter(row);
+
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "update",
+    entityType: "printer",
+    entityId: printer.id,
+    before,
+    after: printer,
+  });
+  return printer;
 }
 
-export async function deleteAdminPrinter(tenantSlug: string, printerId: string): Promise<void> {
+export async function deleteAdminPrinter(
+  tenantSlug: string,
+  actor: AuditActor,
+  printerId: string,
+): Promise<void> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
 
   const existing = await findPrinterById(supabase, tenant.id, printerId);
   if (!existing) throw new PrinterNotFoundError();
 
   await deletePrinter(supabase, tenant.id, printerId);
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "delete",
+    entityType: "printer",
+    entityId: printerId,
+    before: toAdminPrinter(existing),
+  });
 }

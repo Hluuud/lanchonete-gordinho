@@ -13,6 +13,7 @@ import {
   type ComboSlotInput,
 } from "@/repositories/combos.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type { AdminCombo } from "@/types/domain";
 import type { ComboInput } from "@/features/admin/combos/schema";
 
@@ -82,6 +83,15 @@ function toAdminCombo(row: ComboRow): AdminCombo {
   };
 }
 
+/** Assinatura de preços (combo + overrides por produto) — usada só para detectar `price_change` na auditoria. */
+function comboPriceSignature(combo: AdminCombo): string {
+  const slotProductPrices = combo.slots
+    .flatMap((slot) => slot.products.map((product) => `${product.productId}:${product.priceOverrideCents}`))
+    .sort()
+    .join("|");
+  return `${combo.priceCents}::${slotProductPrices}`;
+}
+
 async function resolveTenantOrThrow(tenantSlug: string) {
   const supabase = await createSupabaseServerClient();
   const tenant = await findTenantBySlug(supabase, tenantSlug);
@@ -101,6 +111,7 @@ export async function listAdminCombos(
 
 export async function createAdminCombo(
   tenantSlug: string,
+  actor: AuditActor,
   input: ComboInput,
 ): Promise<AdminCombo> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -120,15 +131,30 @@ export async function createAdminCombo(
 
   const row = await findComboById(supabase, tenant.id, comboId);
   if (!row) throw new ComboNotFoundError();
-  return toAdminCombo(row);
+  const combo = toAdminCombo(row);
+
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "create",
+    entityType: "combo",
+    entityId: combo.id,
+    after: combo,
+  });
+  return combo;
 }
 
 export async function updateAdminCombo(
   tenantSlug: string,
+  actor: AuditActor,
   comboId: string,
   input: ComboInput,
 ): Promise<AdminCombo> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+
+  const beforeRow = await findComboById(supabase, tenant.id, comboId);
+  if (!beforeRow) throw new ComboNotFoundError();
+  const before = toAdminCombo(beforeRow);
 
   const updated = await updateCombo(supabase, tenant.id, comboId, {
     name: input.name,
@@ -145,14 +171,38 @@ export async function updateAdminCombo(
 
   const row = await findComboById(supabase, tenant.id, comboId);
   if (!row) throw new ComboNotFoundError();
-  return toAdminCombo(row);
+  const combo = toAdminCombo(row);
+
+  const priceChanged = comboPriceSignature(before) !== comboPriceSignature(combo);
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: priceChanged ? "price_change" : "update",
+    entityType: "combo",
+    entityId: combo.id,
+    before,
+    after: combo,
+  });
+  return combo;
 }
 
-export async function deleteAdminCombo(tenantSlug: string, comboId: string): Promise<void> {
+export async function deleteAdminCombo(
+  tenantSlug: string,
+  actor: AuditActor,
+  comboId: string,
+): Promise<void> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
 
   const existing = await findComboById(supabase, tenant.id, comboId);
   if (!existing) throw new ComboNotFoundError();
 
   await deleteCombo(supabase, tenant.id, comboId);
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "delete",
+    entityType: "combo",
+    entityId: comboId,
+    before: toAdminCombo(existing),
+  });
 }

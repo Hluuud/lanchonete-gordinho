@@ -22,16 +22,18 @@ export const storeSettingsInputSchema = z.object({
   logoUrl: z.string().trim().url().optional().nullable(),
   bannerUrl: z.string().trim().url().optional().nullable(),
   promoBannerUrl: z.string().trim().url().optional().nullable(),
+  // Aceita string vazia (sem cor definida) além do hex — sem isso, o campo
+  // opcional falhava a validação sempre que o usuário deixava em branco.
   primaryColor: z
     .string()
     .trim()
-    .regex(/^#[0-9a-fA-F]{6}$/, "Cor inválida (use #rrggbb)")
+    .regex(/^(#[0-9a-fA-F]{6})?$/, "Cor inválida (use #rrggbb)")
     .optional()
     .nullable(),
   secondaryColor: z
     .string()
     .trim()
-    .regex(/^#[0-9a-fA-F]{6}$/, "Cor inválida (use #rrggbb)")
+    .regex(/^(#[0-9a-fA-F]{6})?$/, "Cor inválida (use #rrggbb)")
     .optional()
     .nullable(),
   welcomeMessage: optionalText(200),

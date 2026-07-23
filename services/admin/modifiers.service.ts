@@ -13,6 +13,7 @@ import {
   type ModifierGroupRow,
 } from "@/repositories/modifiers.repository";
 import { findTenantBySlug } from "@/repositories/tenant.repository";
+import { recordAuditLog, type AuditActor } from "@/services/admin/audit.service";
 import type { AdminModifierGroup } from "@/types/domain";
 import type { ModifierGroupInput } from "@/features/admin/modifiers/schema";
 
@@ -53,6 +54,14 @@ function toAdminModifierGroup(row: ModifierGroupRow): AdminModifierGroup {
   };
 }
 
+/** Assinatura de preços das opções — usada só para detectar `price_change` na auditoria. */
+function optionsPriceSignature(options: AdminModifierGroup["options"]): string {
+  return options
+    .map((option) => `${option.id}:${option.priceCents}`)
+    .sort()
+    .join("|");
+}
+
 async function resolveTenantOrThrow(tenantSlug: string) {
   const supabase = await createSupabaseServerClient();
   const tenant = await findTenantBySlug(supabase, tenantSlug);
@@ -80,6 +89,7 @@ export async function listModifierGroupOptions(
 
 export async function createAdminModifierGroup(
   tenantSlug: string,
+  actor: AuditActor,
   input: ModifierGroupInput,
 ): Promise<AdminModifierGroup> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -98,15 +108,30 @@ export async function createAdminModifierGroup(
 
   const row = await findModifierGroupById(supabase, tenant.id, groupId);
   if (!row) throw new ModifierGroupNotFoundError();
-  return toAdminModifierGroup(row);
+  const group = toAdminModifierGroup(row);
+
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "create",
+    entityType: "modifier_group",
+    entityId: group.id,
+    after: group,
+  });
+  return group;
 }
 
 export async function updateAdminModifierGroup(
   tenantSlug: string,
+  actor: AuditActor,
   groupId: string,
   input: ModifierGroupInput,
 ): Promise<AdminModifierGroup> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
+
+  const beforeRow = await findModifierGroupById(supabase, tenant.id, groupId);
+  if (!beforeRow) throw new ModifierGroupNotFoundError();
+  const before = toAdminModifierGroup(beforeRow);
 
   const updated = await updateModifierGroup(supabase, tenant.id, groupId, {
     name: input.name,
@@ -122,11 +147,24 @@ export async function updateAdminModifierGroup(
 
   const row = await findModifierGroupById(supabase, tenant.id, groupId);
   if (!row) throw new ModifierGroupNotFoundError();
-  return toAdminModifierGroup(row);
+  const group = toAdminModifierGroup(row);
+
+  const priceChanged = optionsPriceSignature(before.options) !== optionsPriceSignature(group.options);
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: priceChanged ? "price_change" : "update",
+    entityType: "modifier_group",
+    entityId: group.id,
+    before,
+    after: group,
+  });
+  return group;
 }
 
 export async function deleteAdminModifierGroup(
   tenantSlug: string,
+  actor: AuditActor,
   groupId: string,
 ): Promise<void> {
   const { supabase, tenant } = await resolveTenantOrThrow(tenantSlug);
@@ -135,4 +173,12 @@ export async function deleteAdminModifierGroup(
   if (!existing) throw new ModifierGroupNotFoundError();
 
   await deleteModifierGroup(supabase, tenant.id, groupId);
+  await recordAuditLog(supabase, {
+    tenantId: tenant.id,
+    actor,
+    action: "delete",
+    entityType: "modifier_group",
+    entityId: groupId,
+    before: toAdminModifierGroup(existing),
+  });
 }

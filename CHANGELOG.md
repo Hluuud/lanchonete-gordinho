@@ -4,6 +4,31 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 5.5 (Fase 1): Auditoria
+
+- Nova tabela `audit_logs` (append-only) — login/logout, criação/
+  alteração/exclusão de entidades administrativas, mudança de preço
+  (variante de "alteração" quando os campos que mudaram incluem preço) e
+  cancelamento de pedido. RLS: leitura só gestão, escrita todo staff, sem
+  `update`/`delete` (ninguém edita o log pela app).
+- Novo `services/admin/audit.service.ts#recordAuditLog` — "best effort":
+  falha ao gravar não derruba a operação de negócio que a motivou, só loga
+  o erro (via `logger.error` da Fase 0, que já encaminha ao Sentry).
+- Instrumentado em `categories`, `products`, `modifiers`, `combos`,
+  `store-settings`, `users`, `printers` (todos os `services/admin/*`) e em
+  `kitchen-orders.service.ts` (cancelamento de pedido). Todo `updateAdmin*`
+  passou a buscar o estado "antes" da escrita — antes só os `delete`
+  faziam essa busca.
+- Novo `/admin/auditoria`: lista paginada somente-leitura, filtros por
+  ação/entidade, dialog de detalhes com `before`/`after`/`metadata`.
+- **Achado e corrigido durante a instrumentação**: o campo "Cor" de
+  Categorias e Configuração da Loja rejeitava string vazia mesmo sendo
+  opcional (`z.string().regex(...).optional().nullable()` — o regex roda
+  antes da normalização `"" → null`, então salvar sem preencher a cor
+  sempre falhava a validação). Corrigido tornando a parte hexadecimal do
+  regex opcional dentro do próprio padrão.
+- `AdminAuditLog`/`AuditAction` (`types/domain.ts`).
+
 ### Added — Sprint 5.5 (Fase 0): Observabilidade base
 
 - **Sentry** (`@sentry/nextjs`): `instrumentation.ts` (servidor) +

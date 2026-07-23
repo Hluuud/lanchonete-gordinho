@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   const slug = await resolveTenantSlug();
 
   try {
-    const combo = await createAdminCombo(slug, parsed.data);
+    const combo = await createAdminCombo(slug, user, parsed.data);
     return NextResponse.json(combo, { status: 201 });
   } catch (error) {
     if (error instanceof TenantNotFoundError) {
