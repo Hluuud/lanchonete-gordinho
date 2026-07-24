@@ -5,6 +5,43 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Pré-Sprint 6 — Auditoria Técnica
+
+Achados novos da auditoria completa (Principal Engineer, 2026-07-24) — ver
+relatório detalhado em [`docs/audit-pre-sprint-6.md`](docs/audit-pre-sprint-6.md)
+com file:line e plano de ação. Itens que já existiam neste backlog (rate
+limiting, DI nos services, dashboard sem `GROUP BY`, etc.) permanecem nas
+seções originais abaixo, só ganharam referência cruzada no relatório.
+
+- ☐ **Multi-tenant é hoje mono-tenant hardcoded** (🔴 crítico): tenant
+  resolvido só via `NEXT_PUBLIC_DEFAULT_TENANT_SLUG`
+  (`lib/tenant/get-tenant-context.ts`), sem roteamento por subdomínio/path.
+  RLS e `tenant_id` estão prontos no schema, mas não há mecanismo real de
+  rotear dois hosts de produção para tenants diferentes. Maior gap contra o
+  objetivo declarado de SaaS multi-tenant (Fase 6 do roadmap) — decidir
+  conscientemente (ADR) se a Sprint 6 endereça isso ou adia.
+- ☐ **Sem cache/revalidation no cardápio público** (🟡 importante):
+  `app/(store)/page.tsx` e `app/api/menu/route.ts` fazem round-trip completo
+  ao DB em toda visita, sem `revalidate`/`unstable_cache`. Candidato a ISR
+  por tenant quando tráfego real justificar.
+- ☐ **`exportOrders` sem nenhum cap** (🟡 importante):
+  `services/admin/export.service.ts` chama `findOrdersInDateRange` direto,
+  sem o `EXPORT_PAGE_SIZE = 10_000` que protege os outros exports — para
+  range de data amplo é consulta ilimitada. Estende o item já rastreado
+  abaixo sobre `EXPORT_PAGE_SIZE`.
+- ☐ **`findActiveOrdersByTenant` sem `LIMIT`** (🟡 importante): board da
+  cozinha busca todos pedidos ativos do tenant sem teto
+  (`repositories/orders.repository.ts`). Distinto da virtualização de lista
+  já rastreada (que é sobre renderização, não a query).
+- ☐ **Inconsistência de camada services/repositories** (🟡 importante):
+  `login-form.tsx` e `image-upload.tsx` acessam o client Supabase direto no
+  componente, pulando services/repositories usado no resto do projeto.
+  Extrair `auth.service.ts` e mover lógica de upload para um service.
+- ☐ **Sem posição documentada sobre connection pooling / limites
+  serverless** (🟡 importante): nenhum `vercel.json`, nenhuma decisão
+  registrada sobre modo de pooling do lado Supabase. Vale um parágrafo em
+  `docs/deployment.md` (arquivo esperado pelo `CLAUDE.md`, ainda não criado).
+
 ## Sprint 5.5 — Hardening
 
 - ☐ **`logger.info`/`logger.warn` sem uso ainda** (Fase 0): só
