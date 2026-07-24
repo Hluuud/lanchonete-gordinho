@@ -40,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# graphify (generated knowledge graph, regenerate via /graphify)
+/graphify-out/
+
+# pnpm (project uses npm — package-lock.json is the source of truth)
+pnpm-lock.yaml
+pnpm-workspace.yaml
