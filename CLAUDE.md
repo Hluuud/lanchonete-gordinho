@@ -1,661 +1,317 @@
-# CLAUDE.md — Guia do Projeto
+# Gerenciamento de Contexto e Memória
 
-> Guia operacional para o Claude (e qualquer outro agente de IA) trabalhar neste repositório.
->
-> Este documento define as regras, responsabilidades e princípios do projeto.
-> Toda documentação técnica detalhada deverá viver na pasta `/docs`.
->
-> Este arquivo é a fonte principal de contexto para qualquer implementação.
+Este projeto utiliza múltiplas fontes de conhecimento. Cada uma possui uma responsabilidade específica e deve ser utilizada corretamente para minimizar consumo de contexto, evitar retrabalho e preservar conhecimento entre sessões.
 
----
+## Hierarquia de fontes
 
-# Visão geral do projeto
+O Claude deve utilizar as fontes na seguinte ordem:
 
-Este projeto consiste no desenvolvimento de uma plataforma profissional para gerenciamento de pedidos de restaurantes, iniciando pela **Lanchonete do Gordinho**.
+1. Graphify (memória do projeto)
+2. CLAUDE.md
+3. Documentação em `/docs`
+4. Código-fonte
+5. Histórico da conversa (último recurso)
 
-Embora exista um único cliente inicialmente, **o objetivo NÃO é desenvolver um sistema personalizado**.
-
-A arquitetura deve ser construída desde o início para suportar dezenas ou centenas de restaurantes, funcionando futuramente como um SaaS (Software as a Service).
-
-Todo o desenvolvimento deve considerar escalabilidade, manutenção e evolução de longo prazo.
-
----
-
-# Objetivos
-
-O objetivo principal é construir uma plataforma moderna que una:
-
-- Cardápio Digital
-- Autoatendimento
-- Painel da cozinha
-- Painel administrativo
-- Impressão automática
-- Gestão de pedidos
-- Gestão de produtos
-- Dashboard operacional
-- Plataforma preparada para múltiplos restaurantes
-
-O foco é criar um produto de alta qualidade, evitando decisões que gerem retrabalho futuramente.
-
----
-
-# Filosofia do projeto
-
-Este projeto NÃO é um MVP descartável.
-
-Também NÃO deve sofrer overengineering.
-
-Toda decisão deve buscar equilíbrio entre:
-
-- simplicidade
-- escalabilidade
-- facilidade de manutenção
-- performance
-- excelente experiência do usuário
-
----
-
-# Visão de longo prazo
-
-A arquitetura deve permitir futuramente:
-
-- múltiplos restaurantes
-- múltiplas unidades
-- aplicativo do cliente
-- aplicativo do entregador
-- aplicativo da cozinha
-- sistema para garçom
-- sistema para caixa
-- integração com WhatsApp
-- integração com iFood
-- integração com Mercado Pago
-- integração PIX
-- emissão fiscal
-- controle de estoque
-- controle financeiro
-- CRM
-- BI
-- Inteligência Artificial
-- API pública
-- Marketplace de integrações
-
-Mesmo que essas funcionalidades não sejam implementadas agora, a arquitetura deve permitir sua evolução natural.
-
----
-
-# Tecnologias
-
-## Frontend
-
-- Next.js
-- React
-- TypeScript
-- TailwindCSS
-- shadcn/ui
-- TanStack Query
-- React Hook Form
-- Zod
-- Framer Motion
-
-## Backend
-
-- Supabase
-- PostgreSQL
-- Supabase Auth
-- Supabase Realtime
-- Supabase Storage
-
-## Infraestrutura
-
-- Vercel
-- GitHub
-- GitHub Actions
-
-Sempre utilizar versões estáveis mais recentes.
-
-Nunca limitar o projeto a versões específicas.
-
----
-
-# Arquitetura
-
-O sistema deve seguir uma arquitetura organizada e preparada para crescimento.
-
-Priorizar:
-
-- Modularização
-- Componentização
-- Separação de responsabilidades
-- Clean Architecture sempre que fizer sentido
-- SOLID
-- DRY
-- KISS
-- Baixo acoplamento
-- Alta coesão
-
-Evitar criar dependências desnecessárias entre módulos.
-
----
-
-# Regras arquiteturais obrigatórias
-
-Estas regras são obrigatórias.
-
-## 1.
-
-Toda regra de negócio deve estar centralizada.
-
-A interface nunca deve decidir regras críticas.
-
----
-
-## 2.
-
-O frontend deve ser apenas responsável pela experiência do usuário.
-
-Toda lógica importante deve ser validada pelo backend.
-
----
-
-## 3.
-
-Nenhum componente deve conhecer detalhes internos de outro módulo.
-
-Comunicação apenas através de interfaces bem definidas.
-
----
-
-## 4.
-
-Não duplicar código.
-
-Sempre reutilizar componentes, hooks, serviços e utilitários existentes.
-
----
-
-## 5.
-
-Toda funcionalidade deve ser reutilizável.
-
-Se um componente pode servir para mais de um lugar, ele deve ser genérico.
-
----
-
-## 6.
-
-Nunca misturar:
-
-- UI
-- regra de negócio
-- acesso ao banco
-- integrações externas
-
-Cada responsabilidade possui seu próprio lugar.
-
----
-
-## 7.
-
-Nunca acessar diretamente o Supabase dentro de componentes visuais.
-
-Criar camadas de abstração.
-
----
-
-## 8.
-
-Nenhuma informação sensível deve ficar exposta no frontend.
-
----
-
-## 9.
-
-Toda implementação deve considerar acessibilidade.
-
----
-
-## 10.
-
-Performance faz parte da funcionalidade.
-
-Uma funcionalidade lenta é considerada incompleta.
-
----
-
-# Experiência do usuário
-
-Toda interface deve transmitir:
-
-- rapidez
-- simplicidade
-- organização
-- confiança
-
-Inspirar-se em:
-
-- iFood
-- McDonald's
-- Burger King
-- Goomer
-
-Sem copiar nenhum deles.
-
-A identidade deve ser própria da Lanchonete do Gordinho.
-
----
-
-# Qualidade Visual
-
-Priorizar:
-
-- excelente tipografia
-- bom espaçamento
-- hierarquia visual
-- animações sutis
-- skeleton loading
-- feedback imediato
-- transições suaves
-- design consistente
-
-Toda tela deve parecer um produto profissional.
-
----
-
-# Performance
-
-Sempre aplicar quando fizer sentido:
-
-- Lazy Loading
-- Code Splitting
-- Image Optimization
-- Suspense
-- Server Components
-- Cache inteligente
-- Revalidação
-- Memoização
-- Virtualização de listas grandes
-
----
-
-# Segurança
-
-Sempre considerar:
-
-- validação com Zod
-- sanitização
-- proteção contra XSS
-- proteção contra CSRF
-- Row Level Security
-- autenticação segura
-- autorização por permissões
-- princípio do menor privilégio
-
----
-
-# Banco de dados
-
-O banco deve ser preparado para evolução.
-
-Evitar alterações destrutivas.
-
-Toda mudança estrutural deve ocorrer através de migrations.
-
-Sempre pensar na escalabilidade futura.
-
----
-
-# Tempo real
-
-Sempre que possível utilizar Supabase Realtime para:
-
-- pedidos
-- painel da cozinha
-- acompanhamento do pedido
-- dashboards em tempo real
-
-Evitar WebSockets próprios sem necessidade.
-
----
-
-# Impressão
-
-A arquitetura deve prever:
-
-- impressão automática
-- múltiplas impressoras
-- ESC/POS
-- impressão por setor
-- QR Code
-- reimpressão
-
-Mesmo que parte da implementação seja futura.
-
----
-
-# Organização do projeto
-
-O código deve ser organizado em módulos.
-
-Evitar diretórios gigantes.
-
-Cada módulo deve possuir responsabilidade clara.
-
-Exemplo:
-
-app/
-
-components/
-
-features/
-
-hooks/
-
-services/
-
-repositories/
-
-lib/
-
-types/
-
-utils/
-
-styles/
-
----
-
-# Estrutura da documentação
-
-Toda documentação deverá ficar em:
-
-docs/
-
-Exemplos:
-
-architecture.md
-
-database.md
-
-frontend.md
-
-backend.md
-
-deployment.md
-
-roadmap.md
-
-decisions.md
-
-security.md
-
-conventions.md
-
-testing.md
-
-printing.md
-
-kitchen-panel.md
-
-admin-panel.md
-
-ux.md
-
----
-
-# Roadmap
-
-O desenvolvimento deverá seguir esta ordem:
-
-## Fase 0
-
-Fundação
-
-Arquitetura
-
-Design System
-
-Componentes
-
-Autenticação
-
-Banco
-
-Infraestrutura
-
----
-
-## Fase 1
-
-Cardápio Digital
-
-Produtos
-
-Categorias
-
-Carrinho
-
-Checkout
-
-Autoatendimento
-
----
-
-## Fase 2
-
-Painel da Cozinha
-
-Pedidos em tempo real
-
-Fila
-
-Kanban
-
-Status
-
----
-
-## Fase 3
-
-Impressão automática
-
-ESC/POS
-
-QR Code
-
-Reimpressão
-
----
-
-## Fase 4
-
-Painel Administrativo
-
-Relatórios
-
-Dashboard
-
-Financeiro
-
-Indicadores
-
----
-
-## Fase 5
-
-Recursos Premium
-
-Favoritos
-
-Combos
-
-Upsell
-
-Histórico
-
-Cupons
-
-Promoções
-
----
-
-## Fase 6
-
-Expansão SaaS
-
-Multiempresa
-
-Multiunidade
-
-Permissões
-
-API Pública
-
-Marketplace
-
----
-
-# Como o Claude deve trabalhar
-
-Claude NÃO atua apenas como gerador de código.
-
-Ele assume simultaneamente os papéis de:
-
-- CTO
-- Principal Software Engineer
-- Staff Full Stack Engineer
-- Software Architect
-- Tech Lead
-- UX Specialist
-- Product Designer
-- DevOps Engineer
-- Database Specialist
-- Security Engineer
-- QA Engineer
-- Performance Engineer
-
----
-
-# Comportamento esperado
-
-Claude deve:
-
-- questionar decisões ruins;
-- propor alternativas melhores;
-- explicar trade-offs;
-- identificar riscos futuros;
-- sugerir melhorias arquiteturais;
-- evitar dívida técnica;
-- pensar como mantenedor do projeto pelos próximos cinco anos.
-
-Nunca implementar algo apenas porque foi solicitado.
-
-Caso exista solução melhor, apresentá-la primeiro.
-
----
-
-# Critérios de qualidade
-
-Antes de considerar qualquer tarefa concluída, verificar:
-
-- Arquitetura
-- Performance
-- Segurança
-- UX
-- Responsividade
-- Acessibilidade
-- Organização
-- Escalabilidade
-- Reutilização
-- Legibilidade
-
----
-
-# Definition of Done de Sprint/Fase
-
-Ao concluir qualquer Sprint ou Fase, executar nesta ordem:
-
-1. Atualizar documentação relacionada (`docs/`)
-2. Atualizar `CHANGELOG.md`
-3. Atualizar `BACKLOG.md`
-4. Criar/atualizar ADR quando houver decisão arquitetural relevante
-5. Executar build
-6. Executar typecheck
-7. Executar lint
-8. Executar testes existentes
-9. Realizar revisão crítica como Principal Engineer (ver seção "Revisão final")
-10. Criar commit automaticamente, seguindo Conventional Commits
-
-**Não perguntar se deve realizar commit.** O commit faz parte da Definition
-of Done de toda sprint/fase concluída — é automático, não opcional. Isso não
-dispensa confirmação para ações fora do escopo da sprint (push, force-push,
-alterações destrutivas), que seguem as regras normais de confirmação.
-
-## Sprint Report
-
-Toda sprint/fase deve terminar com um Sprint Report, no seguinte formato:
-
-```
-## Sprint Report — <nome da sprint>
-
-### Resumo
-### Arquivos modificados
-### Novos componentes / hooks / services / repositories
-### Mudanças arquiteturais
-### Performance
-### Riscos
-### Dívida técnica
-### Melhorias futuras
-### Commit realizado
-### Checklist DoD
-```
-
-## Revisão final
-
-Antes de encerrar a sprint, revisar criticamente como Principal Engineer.
-Identificar (e registrar no `BACKLOG.md`, nunca omitir):
-
-- gargalos;
-- oportunidades de simplificação;
-- possíveis problemas de escalabilidade;
-- melhorias arquiteturais;
-- riscos futuros.
-
-Não implementar funcionalidades apenas porque são "bonitas". Toda
-funcionalidade deve resolver um problema operacional do restaurante ou
-preparar a plataforma para sua evolução como SaaS.
-
----
-
-# BACKLOG.md
-
-Pendências, dívida técnica e melhorias futuras vivem em `BACKLOG.md` (raiz do
-projeto), organizado por sprint/fase, nunca apenas mencionadas em conversa.
-Todo item identificado na revisão final de uma sprint deve ser registrado lá
-antes de encerrar a sprint.
-
----
-
-# Governança da documentação
-
-Toda alteração relevante deve atualizar a documentação correspondente.
-
-Sempre que uma decisão arquitetural mudar, criar ou atualizar um ADR.
-
-Nunca permitir que código e documentação fiquem divergentes.
+O histórico da conversa nunca deve ser considerado a principal fonte de verdade.
 
 Antes de iniciar qualquer implementação:
 
-1. Ler o CLAUDE.md.
-2. Ler a documentação relacionada.
-3. Validar se a implementação está de acordo.
-4. Atualizar a documentação quando necessário.
-
-Documentação desatualizada é considerada um bug do projeto.
+1. Consultar o Graphify para recuperar o contexto arquitetural.
+2. Identificar quais documentos realmente precisam ser lidos.
+3. Ler apenas os documentos necessários em `/docs`.
+4. Evitar leitura desnecessária de documentação já representada no Graphify.
 
 ---
 
-# Regra de Ouro
+# Regras Gerais
 
-Sempre desenvolver como se este projeto fosse se tornar a principal plataforma de gestão para restaurantes do Brasil.
+Antes de iniciar qualquer implementação:
 
-Toda decisão deve facilitar a evolução do sistema pelos próximos anos, evitando retrabalho e mantendo alta qualidade técnica.
+1. Consultar o Graphify para recuperar o contexto arquitetural.
+2. Identificar quais documentos realmente precisam ser lidos.
+3. Ler apenas os documentos necessários em `/docs`.
+4. Evitar leitura desnecessária de documentação já representada no Graphify.
+
+---
+
+# Graphify
+
+## Objetivo
+
+O Graphify é o segundo cérebro deste projeto.
+
+Ele armazena conhecimento estruturado sobre a arquitetura, relações entre módulos e decisões técnicas para reduzir consumo de contexto e evitar que o projeto dependa da memória da conversa.
+
+O Graphify complementa a documentação, mas não substitui os ADRs nem os documentos em `/docs`.
+
+---
+
+## Quando consultar o Graphify
+
+Antes de iniciar qualquer Sprint, Fase ou tarefa relevante, consultar obrigatoriamente o Graphify para recuperar:
+
+- arquitetura relacionada;
+- módulos envolvidos;
+- componentes existentes;
+- hooks reutilizáveis;
+- services existentes;
+- repositories existentes;
+- entidades;
+- relações entre entidades;
+- decisões arquiteturais;
+- ADRs relacionados;
+- dependências;
+- backlog relacionado;
+- dívidas técnicas;
+- funcionalidades já implementadas;
+- integrações existentes;
+- fluxos de negócio.
+
+Nunca assumir que o contexto atual da conversa representa o estado completo do projeto.
+
+---
+
+## Durante a implementação
+
+Sempre consultar o Graphify antes de criar:
+
+- novo módulo;
+- novo componente;
+- novo hook;
+- novo repository;
+- novo service;
+- nova entidade;
+- nova API;
+- novo fluxo.
+
+Primeiro verificar se já existe algo reutilizável.
+
+Evitar duplicação de conhecimento.
+
+---
+
+## Atualização do Graphify
+
+Ao concluir qualquer Sprint ou Fase, atualizar obrigatoriamente o Graphify registrando:
+
+### Arquitetura
+
+- novos módulos;
+- novos componentes;
+- novas APIs;
+- novos hooks;
+- novos repositories;
+- novos services;
+- novas entidades;
+- novos relacionamentos.
+
+### Negócio
+
+- novas regras;
+- novos fluxos;
+- novas validações;
+- mudanças de comportamento.
+
+### Engenharia
+
+- decisões arquiteturais;
+- novos ADRs;
+- trade-offs;
+- riscos conhecidos;
+- limitações;
+- dívida técnica.
+
+### Roadmap
+
+- funcionalidades concluídas;
+- pendências;
+- backlog;
+- próximos passos.
+
+---
+
+## O que deve ir para o Graphify
+
+Registrar conhecimento de alto valor.
+
+Exemplos:
+
+- arquitetura;
+- relações entre módulos;
+- entidades;
+- fluxos;
+- eventos;
+- integrações;
+- APIs;
+- permissões;
+- multi-tenancy;
+- RLS;
+- padrões arquiteturais;
+- decisões importantes;
+- dependências entre módulos;
+- backlog;
+- dívida técnica.
+
+---
+
+## O que NÃO deve ir para o Graphify
+
+Não utilizar Graphify como armazenamento de código.
+
+Não registrar:
+
+- arquivos completos;
+- código-fonte;
+- componentes completos;
+- CSS;
+- JSX;
+- HTML;
+- commits;
+- changelog;
+- logs;
+- builds;
+- documentação duplicada.
+
+Essas informações já pertencem ao Git e à documentação tradicional.
+
+---
+
+## Objetivo principal
+
+O objetivo do Graphify é permitir que futuras tarefas recuperem contexto arquitetural utilizando poucos tokens.
+
+Sempre preferir recuperar conhecimento do Graphify em vez de reconstruí-lo lendo dezenas de arquivos.
+
+---
+
+# Uso obrigatório do Graphify
+
+O Graphify é o segundo cérebro do projeto.
+
+Seu objetivo NÃO é substituir a documentação, mas reduzir consumo de contexto e preservar coerência arquitetural.
+
+## Política de consulta
+
+Antes de ler qualquer documentação do projeto, consulte o Graphify.
+
+Utilize-o como primeira fonte para descobrir:
+
+- arquitetura relacionada
+- ADRs
+- migrations
+- services
+- repositories
+- entidades
+- decisões anteriores
+- módulos afetados
+- dependências entre arquivos
+- histórico de implementação
+
+Se o Graphify fornecer contexto suficiente, NÃO leia a documentação completa.
+
+Leia apenas os arquivos especificamente apontados pelo Graphify quando forem realmente necessários.
+
+O Graphify deve ser utilizado para localizar informação, e não para reconstruir todo o contexto do projeto.
+
+## Política de atualização
+
+Atualize o Graphify somente quando ocorrerem mudanças estruturais.
+
+Exemplos:
+
+- nova sprint
+- nova ADR
+- nova migration
+- novo módulo
+- nova entidade
+- alteração arquitetural
+- mudança significativa de fluxo
+
+Não execute atualização após pequenas alterações locais como:
+
+- ajustes visuais
+- correções de lint
+- mudanças de texto
+- pequenos refactors
+- alterações de CSS
+
+## Eficiência
+
+Priorize sempre:
+
+1. Consultar Graphify.
+2. Recuperar apenas os nós relevantes.
+3. Ler somente os arquivos realmente necessários.
+4. Implementar.
+5. Atualizar Graphify apenas se houve alteração estrutural.
+
+Evite reconstruir contexto lendo README, BACKLOG, ADRs e documentação completa quando o Graphify já responder à dúvida.
+
+O objetivo é minimizar consumo de tokens, preservar coerência arquitetural e manter continuidade entre as sprints.
+
+---
+
+# Documentação
+
+A documentação em `/docs` continua sendo a referência oficial para explicações detalhadas.
+
+Responsabilidades:
+
+- Architecture
+- Database
+- Backend
+- Frontend
+- Security
+- Deployment
+- Testing
+- Roadmap
+- ADRs
+
+O Graphify deve conter apenas um resumo estruturado dessas informações e seus relacionamentos.
+
+---
+
+# Definition of Done
+
+Ao concluir qualquer Sprint ou Fase executar obrigatoriamente:
+
+1. Atualizar documentação (`docs/`)
+2. Atualizar CHANGELOG.md
+3. Atualizar BACKLOG.md
+4. Atualizar Graphify
+5. Criar/Atualizar ADR quando necessário
+6. Executar Build
+7. Executar Typecheck
+8. Executar Lint
+9. Executar Testes
+10. Revisão crítica
+11. Sprint Report
+12. Commit automático seguindo Conventional Commits
+
+Uma Sprint não é considerada concluída enquanto o Graphify não estiver sincronizado.
+
+---
+
+# Fluxo obrigatório de trabalho
+
+Antes de qualquer implementação:
+
+1. Ler o CLAUDE.md
+2. Consultar o Graphify
+3. Recuperar o contexto relacionado
+4. Ler apenas a documentação necessária em `/docs`
+5. Analisar o código existente
+6. Planejar a solução
+7. Implementar
+
+Após concluir:
+
+1. Atualizar código
+2. Atualizar documentação
+3. Atualizar Graphify
+4. Atualizar BACKLOG
+5. Atualizar CHANGELOG
+6. Criar ADR quando necessário
+7. Executar validações
+8. Gerar Sprint Report
+9. Commit automático
