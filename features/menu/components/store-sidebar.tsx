@@ -1,11 +1,12 @@
 "use client";
 
-import { ArrowRight, Home } from "lucide-react";
+import { ArrowRight, Home, Info, Phone } from "lucide-react";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
+import { SLOGAN } from "@/features/menu/contact-info";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
 import { useScrollSpy } from "@/features/menu/use-scroll-spy";
 import {
@@ -14,8 +15,6 @@ import {
 } from "@/features/menu/virtual-sections";
 import { SearchBar } from "@/features/search/components/search-bar";
 import { cn } from "@/lib/utils";
-
-const SLOGAN = "Sabor que aquece, feito com carinho";
 
 /**
  * Sidebar fixa do autoatendimento (desktop/totem, `lg:+`): identidade da
@@ -35,7 +34,12 @@ export function StoreSidebar({
   onQueryChange: (query: string) => void;
 }) {
   const activeId = useScrollSpy(
-    ["home", ...sections.map((section) => sectionAnchorId(section.slug))],
+    [
+      "home",
+      "sobre",
+      "contato",
+      ...sections.map((section) => sectionAnchorId(section.slug)),
+    ],
     // Linha de detecção logo abaixo do `lg:scroll-mt-20` (80px) das seções —
     // garante que a seção clicada fique ativa ao final do scroll suave.
     { topOffsetPx: 84 },
@@ -97,6 +101,46 @@ export function StoreSidebar({
             >
               <Home className="size-5" aria-hidden />
               <span className="flex-1 truncate">Home</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="#sobre"
+              onClick={(event) => {
+                event.preventDefault();
+                scrollToSection("sobre");
+              }}
+              aria-current={activeId === "sobre" ? "true" : undefined}
+              className={cn(
+                "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                activeId === "sobre"
+                  ? "bg-primary font-semibold text-primary-foreground"
+                  : "text-foreground hover:bg-primary/10 hover:text-primary",
+              )}
+            >
+              <Info className="size-5" aria-hidden />
+              <span className="flex-1 truncate">Sobre Nós</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="#contato"
+              onClick={(event) => {
+                event.preventDefault();
+                scrollToSection("contato");
+              }}
+              aria-current={activeId === "contato" ? "true" : undefined}
+              className={cn(
+                "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                activeId === "contato"
+                  ? "bg-primary font-semibold text-primary-foreground"
+                  : "text-foreground hover:bg-primary/10 hover:text-primary",
+              )}
+            >
+              <Phone className="size-5" aria-hidden />
+              <span className="flex-1 truncate">Contato</span>
             </a>
           </li>
 
