@@ -1,7 +1,11 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
+
 import { BrandLogo } from "@/components/brand-logo";
+import { Button } from "@/components/ui/button";
 import { CategoryIcon } from "@/features/menu/category-icon";
+import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
 import { useScrollSpy } from "@/features/menu/use-scroll-spy";
 import {
@@ -11,10 +15,13 @@ import {
 import { SearchBar } from "@/features/search/components/search-bar";
 import { cn } from "@/lib/utils";
 
+const SLOGAN = "Sabor que aquece, feito com carinho";
+
 /**
- * Sidebar fixa do autoatendimento (desktop/totem, `lg:+`): logo, busca e
- * navegação vertical de seções com destaque da seção ativa (ScrollSpy).
- * No mobile a navegação de categorias é a `CategoryNav` horizontal.
+ * Sidebar fixa do autoatendimento (desktop/totem, `lg:+`): identidade da
+ * marca, CTA de pedido, busca e navegação vertical de categorias com
+ * destaque da seção ativa (ScrollSpy). No mobile a navegação equivalente é
+ * a `StoreMobileNav` (Drawer).
  */
 export function StoreSidebar({
   tenantName,
@@ -36,14 +43,28 @@ export function StoreSidebar({
 
   return (
     <aside className="sticky top-0 hidden h-dvh flex-col border-r bg-card lg:flex">
-      <div className="flex items-center gap-3 px-5 pt-6 pb-4">
-        <BrandLogo size="lg" priority />
-        <div className="min-w-0">
-          <p className="text-base leading-tight font-extrabold">
-            {tenantName}
-          </p>
-          <p className="text-xs text-muted-foreground">Cardápio digital</p>
+      <div className="flex flex-col gap-4 px-5 pt-6 pb-4">
+        <div className="flex items-center gap-3">
+          <BrandLogo size="lg" priority />
+          <div className="min-w-0">
+            <p className="text-lg leading-tight font-extrabold">
+              {tenantName}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {SLOGAN}
+            </p>
+          </div>
         </div>
+
+        <Button
+          type="button"
+          size="lg"
+          className="w-full rounded-full"
+          onClick={() => scrollToSection("cardapio")}
+        >
+          Peça Agora
+          <ArrowRight className="size-4" aria-hidden />
+        </Button>
       </div>
 
       <div className="px-5 pb-4">
@@ -56,7 +77,7 @@ export function StoreSidebar({
 
       <nav
         aria-label="Seções do cardápio"
-        className="flex-1 overflow-y-auto px-3 pb-6"
+        className="flex-1 overflow-y-auto px-3 pb-4"
       >
         <ul className="flex flex-col gap-1">
           {sections.map((section) => {
@@ -97,6 +118,8 @@ export function StoreSidebar({
           })}
         </ul>
       </nav>
+
+      <StoreContactFooter />
     </aside>
   );
 }
