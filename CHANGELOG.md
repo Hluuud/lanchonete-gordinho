@@ -4,6 +4,25 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 6 (Fase 4): Redesign da Experiência do Cliente — Cardápio Premium
+
+- `ProductCard`: imagem mais alta (`aspect-5/4`→`aspect-4/3`), hover com
+  leve "levantada" 3D (`hover:scale-[1.01]` somado a `-translate-y-1`/
+  `shadow-xl` já existentes).
+- `MenuSection`: cabeçalho de categoria mais forte — ícone maior
+  (`size-12`/`rounded-2xl`), título `text-2xl font-black` (`sm:text-3xl`),
+  separador `border-b` entre categorias.
+- Novo item de navegação "Cardápio" (ícone `UtensilsCrossed`) acima da
+  lista de categorias, na sidebar desktop e no drawer mobile — visual
+  discreto de cabeçalho de grupo, rola até `#cardapio`, sem estado ativo
+  próprio (as categorias abaixo já mostram o delas).
+- Fora de escopo (confirmado com o usuário, mesma categoria de restrição
+  da Fase 1): tags "Mais Vendido"/"Promoção"/"Artesanal" e descrição/
+  imagem por categoria — dado não existe no service/repository público do
+  cardápio. Registrado no BACKLOG.
+- Escopo: quarta de 5 fases do redesign da área do cliente — ver
+  `docs/superpowers/specs/2026-07-25-client-menu-polish-design.md`.
+
 ### Added — Sprint 6 (Fase 3): Redesign da Experiência do Cliente — Sobre Nós/Contato/Footer
 
 - Nova seção `#sobre` (`StoreAbout`): história, missão, qualidade dos
