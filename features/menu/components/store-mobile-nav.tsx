@@ -3,7 +3,7 @@
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { BrandLogo } from "@/components/brand-logo";
 import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
-import { Home } from "lucide-react";
+import { Home, Info, Phone } from "lucide-react";
 
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
@@ -41,6 +41,16 @@ export function StoreMobileNav({
     window.setTimeout(() => scrollToSection("home"), 200);
   }
 
+  function goToSobre() {
+    onOpenChange(false);
+    window.setTimeout(() => scrollToSection("sobre"), 200);
+  }
+
+  function goToContato() {
+    onOpenChange(false);
+    window.setTimeout(() => scrollToSection("contato"), 200);
+  }
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
@@ -70,6 +80,28 @@ export function StoreMobileNav({
               >
                 <Home className="size-5" aria-hidden />
                 <span className="flex-1 truncate">Home</span>
+              </button>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                onClick={goToSobre}
+                className="flex min-h-12 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary active:bg-primary/15"
+              >
+                <Info className="size-5" aria-hidden />
+                <span className="flex-1 truncate">Sobre Nós</span>
+              </button>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                onClick={goToContato}
+                className="flex min-h-12 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary active:bg-primary/15"
+              >
+                <Phone className="size-5" aria-hidden />
+                <span className="flex-1 truncate">Contato</span>
               </button>
             </li>
 
