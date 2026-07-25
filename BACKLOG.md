@@ -5,11 +5,22 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
-## Sprint 6 — Redesign da Experiência do Cliente (Fase 1: Sidebar)
+## Sprint 6 — Redesign da Experiência do Cliente (Fases 1-2: Sidebar, Home/Hero)
 
 Ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
-(spec) e `docs/superpowers/plans/2026-07-24-client-sidebar-redesign.md`
-(plano). Achados do review final da Fase 1 (branch `dev`):
+(spec geral) e specs/plans por fase. Achados dos reviews finais (branch
+`dev`):
+
+- ☐ **`useScrollSpy` sem nenhum teste** (achado no review da Fase 2):
+  `features/menu/use-scroll-spy.ts` não tem `use-scroll-spy.test.ts` —
+  cobertura zero no hook que toda a navegação por âncora (sidebar, drawer,
+  agora também "Home") depende. Pré-existente, não introduzido pela Fase
+  1/2, mas vale testar isoladamente (ids observados, `topOffsetPx`,
+  cruzamento de seções) já que o hook ganhou mais um consumidor.
+- ☐ **Import do ícone `Home` inconsistente entre sidebar e drawer**
+  (achado Minor, Fase 2): `store-sidebar.tsx` agrupa com o import externo
+  de `lucide-react`; `store-mobile-nav.tsx` ficou solto no meio dos
+  imports internos. Cosmético, lint não acusa.
 
 - ☐ **TikTok sem ícone no rodapé de contato**: não existe campo no banco
   (`tenants` não tem coluna de TikTok) — decisão de escopo (sprint é
@@ -248,11 +259,17 @@ seções originais abaixo, só ganharam referência cruzada no relatório.
   Pedidos**: a página atual só mostra pedidos ativos (mesma fonte da
   cozinha) sem realtime; consultar pedidos `completed` é BACKLOG desde a
   Sprint 2.
-- ☐ **Home separada do cardápio, estilo New Dog**: pedido do usuário
-  (2026-07-22), agora formalizado como Fase 2 do redesign da experiência do
-  cliente — ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
-  (Fase 1 — Sidebar — já implementada). Aguarda vídeo/fotos reais dos
-  produtos (placeholder elegante previsto no design).
+- ☑ **Home separada do cardápio, estilo New Dog**: pedido do usuário
+  (2026-07-22) — Fase 2 do redesign implementada (`#home`, `StoreHero`, ver
+  `docs/superpowers/specs/2026-07-24-client-home-hero-design.md`). Segue
+  como placeholder gradiente até existir vídeo/fotos reais dos produtos —
+  `StoreHero` já aceita `videoUrl` pronta para o asset futuro.
+- ☐ **Verificação de interação real (clique/scroll/highlight) da Home e
+  nav "Home" pendente**: `claude-in-chrome` indisponível nesta sessão para
+  Fases 1-2 (mesma limitação já registrada) — validado por
+  build/typecheck/lint/testes + fetch de HTML real do dev server, não por
+  interação de fato. Recomenda-se conferência manual antes do merge
+  `dev` → `main`.
 
 ## Sprint 1 — Experiência da Loja (UX)
 

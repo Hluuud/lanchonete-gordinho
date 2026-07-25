@@ -4,6 +4,18 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 6 (Fase 2): Redesign da Experiência do Cliente — Home/Hero
+
+- Nova seção `#home` (`StoreHero`) acima do cardápio: título "O Hambúrguer
+  que vai conquistar seu dia.", subtítulo, CTAs "Ver Cardápio" (rola até
+  `#cardapio`) e "Fazer Pedido" (abre o carrinho) — placeholder gradiente
+  com ícone (nenhum produto tem foto real ainda), prop `videoUrl` já
+  preparada para receber vídeo local/CDN no futuro.
+- "Home" vira o primeiro item de navegação na sidebar desktop e no drawer
+  mobile, reaproveitando o `useScrollSpy`/`scrollToSection` já existentes.
+- Escopo: segunda de 5 fases do redesign da área do cliente — ver
+  `docs/superpowers/specs/2026-07-24-client-home-hero-design.md`.
+
 ### Added — Sprint 6 (Fase 1): Redesign da Experiência do Cliente — Sidebar
 
 - Sidebar do autoatendimento redesenhada: cabeçalho com slogan, botão "Peça
