@@ -3,6 +3,8 @@
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { BrandLogo } from "@/components/brand-logo";
 import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
+import { Home } from "lucide-react";
+
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
 import { sectionAnchorId, type StoreSection } from "@/features/menu/virtual-sections";
@@ -34,6 +36,11 @@ export function StoreMobileNav({
     window.setTimeout(() => scrollToSection(sectionAnchorId(slug)), 200);
   }
 
+  function goToHome() {
+    onOpenChange(false);
+    window.setTimeout(() => scrollToSection("home"), 200);
+  }
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
@@ -55,6 +62,17 @@ export function StoreMobileNav({
           className="min-h-0 flex-1 overflow-y-auto px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)]"
         >
           <ul className="flex flex-col gap-1">
+            <li>
+              <button
+                type="button"
+                onClick={goToHome}
+                className="flex min-h-12 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary active:bg-primary/15"
+              >
+                <Home className="size-5" aria-hidden />
+                <span className="flex-1 truncate">Home</span>
+              </button>
+            </li>
+
             {sections.map((section) => (
               <li key={section.id}>
                 <button
