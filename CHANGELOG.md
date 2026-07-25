@@ -4,6 +4,25 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 6 (Fase 1): Redesign da Experiência do Cliente — Sidebar
+
+- Sidebar do autoatendimento redesenhada: cabeçalho com slogan, botão "Peça
+  Agora" (rola até `#cardapio`) e rodapé de contato compartilhado
+  (`StoreContactFooter`) entre a sidebar desktop e o drawer mobile —
+  WhatsApp/Instagram/Facebook, telefone, endereço (link "Como chegar") e
+  status de horário. Lista de categorias (ScrollSpy) mantida sem alteração
+  de comportamento.
+- Novo `features/menu/contact-info.ts`: dados reais de contato/redes como
+  constante frontend (mesmo padrão de `BUSINESS_HOURS`) — repository/service
+  público do cardápio ainda não busca esses campos do tenant, ver BACKLOG.
+- `BUSINESS_HOURS` corrigido para o horário real da loja (terça a domingo,
+  13:00–00:00, segunda fechado).
+- Novo `features/menu/social-icons.tsx` (ícones de Instagram/Facebook,
+  desenhados à mão — a versão instalada de `lucide-react` não inclui ícones
+  de marca).
+- Escopo: primeira de 5 fases do redesign da área do cliente — ver
+  `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`.
+
 ### Added — Sprint 5.5 (Fase 5): Painel de Status
 
 - Novo `/admin/sistema`: 3 cards de status real (banco de dados, Storage,

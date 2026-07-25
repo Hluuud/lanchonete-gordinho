@@ -5,6 +5,36 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Sprint 6 — Redesign da Experiência do Cliente (Fase 1: Sidebar)
+
+Ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
+(spec) e `docs/superpowers/plans/2026-07-24-client-sidebar-redesign.md`
+(plano). Achados do review final da Fase 1 (branch `dev`):
+
+- ☐ **TikTok sem ícone no rodapé de contato**: não existe campo no banco
+  (`tenants` não tem coluna de TikTok) — decisão de escopo (sprint é
+  frontend-only, sem alterar schema). Adicionar quando o campo existir.
+- ☐ **WhatsApp usa ícone genérico (`MessageCircle`), não um ícone de marca**:
+  `features/menu/social-icons.tsx` já tem `InstagramIcon`/`FacebookIcon`
+  desenhados à mão (lucide-react instalado não tem ícones de marca) — um
+  `WhatsAppIcon` no mesmo padrão deixaria o rodapé visualmente consistente
+  (hoje lê como "chat, Instagram, Facebook" em vez de três marcas).
+- ☐ **Rodapé de contato mobile sem `safe-area-inset-bottom`**:
+  `StoreContactFooter` dentro do `StoreMobileNav` (Drawer) só tem `py-4`;
+  a lista de categorias anterior tinha
+  `pb-[calc(env(safe-area-inset-bottom)+1rem)]` para não colidir com a
+  barra de gestos do iOS. Baixo impacto (~16px de folga), mas vale ajustar.
+- ☐ **Dados reais de contato ainda não vêm do banco**: telefone, WhatsApp,
+  Instagram, Facebook e endereço (`features/menu/contact-info.ts`) são
+  constantes frontend, não `tenants.phone/whatsapp/instagram/facebook/address`
+  — mesma pendência já registrada abaixo ("Conectar o storefront à
+  configuração real da loja"), que também cobre esses campos agora.
+- ☐ **Verificação visual real (browser) não realizada**: `claude-in-chrome`
+  indisponível nesta sessão para a Fase 1 (mesma limitação já registrada em
+  sprints anteriores) — validado só por build/typecheck/lint/testes (98/98)
+  e revisão de código; recomenda-se conferência manual em navegador/device
+  antes ou logo após o merge de `dev` para `main`.
+
 ## Pré-Sprint 6 — Auditoria Técnica
 
 Achados novos da auditoria completa (Principal Engineer, 2026-07-24) — ver
@@ -219,9 +249,10 @@ seções originais abaixo, só ganharam referência cruzada no relatório.
   cozinha) sem realtime; consultar pedidos `completed` é BACKLOG desde a
   Sprint 2.
 - ☐ **Home separada do cardápio, estilo New Dog**: pedido do usuário
-  (2026-07-22) para uma futura tela de vitrine (hero fullscreen com fotos
-  de produtos + carrossel), acessada ao clicar na logo/nome da loja —
-  ainda não implementada nesta sprint, aguarda fotos reais dos produtos.
+  (2026-07-22), agora formalizado como Fase 2 do redesign da experiência do
+  cliente — ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
+  (Fase 1 — Sidebar — já implementada). Aguarda vídeo/fotos reais dos
+  produtos (placeholder elegante previsto no design).
 
 ## Sprint 1 — Experiência da Loja (UX)
 
