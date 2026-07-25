@@ -9,6 +9,9 @@ import { MenuSection } from "@/features/menu/components/menu-section";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreHero } from "@/features/menu/components/store-hero";
 import { StoreTopbar } from "@/features/menu/components/store-topbar";
+import { StoreAbout } from "@/features/menu/components/store-about";
+import { StoreContactSection } from "@/features/menu/components/store-contact-section";
+import { StoreFooter } from "@/features/menu/components/store-footer";
 import { getAverageMenuPrepTimeMinutes } from "@/features/menu/store-info";
 import { buildStoreSections } from "@/features/menu/virtual-sections";
 import { FilterBar } from "@/features/search/components/filter-bar";
@@ -138,6 +141,10 @@ export function StoreExperience({ menu }: { menu: Menu }) {
             )}
           </div>
         </div>
+
+        <StoreAbout />
+        <StoreContactSection />
+        <StoreFooter />
       </div>
     </div>
   );
