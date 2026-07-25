@@ -4,6 +4,24 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 6 (Fase 3): Redesign da Experiência do Cliente — Sobre Nós/Contato/Footer
+
+- Nova seção `#sobre` (`StoreAbout`): história, missão, qualidade dos
+  ingredientes e especialidade da casa (texto aprovado), grid de 3 itens,
+  placeholders de imagem (ambiente/lanches — nenhuma foto real ainda).
+- Nova seção `#contato` (`StoreContactSection`): mapa do Google embutido
+  (sem chave de API), cards de endereço/telefone/horário (reaproveitando
+  `StoreOpenBadge`) e redes sociais, botão "Como chegar".
+- Novo rodapé institucional (`StoreFooter`), uma vez só no fim da página:
+  Empresa/Contato/Links úteis (âncoras internas)/Redes sociais/Direitos
+  autorais (ano dinâmico + CNPJ real).
+- `SLOGAN` centralizado em `contact-info.ts` (antes duplicado só na
+  sidebar); novo `MAPS_EMBED_LINK` derivado do endereço real.
+- "Sobre Nós" e "Contato" viram 2º/3º itens de navegação na sidebar
+  desktop e no drawer mobile.
+- Escopo: terceira de 5 fases do redesign da área do cliente — ver
+  `docs/superpowers/specs/2026-07-24-client-about-contact-footer-design.md`.
+
 ### Added — Sprint 6 (Fase 2): Redesign da Experiência do Cliente — Home/Hero
 
 - Nova seção `#home` (`StoreHero`) acima do cardápio: título "O Hambúrguer

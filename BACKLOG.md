@@ -5,7 +5,7 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
-## Sprint 6 — Redesign da Experiência do Cliente (Fases 1-2: Sidebar, Home/Hero)
+## Sprint 6 — Redesign da Experiência do Cliente (Fases 1-3: Sidebar, Home/Hero, Sobre/Contato/Footer)
 
 Ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
 (spec geral) e specs/plans por fase. Achados dos reviews finais (branch
@@ -21,6 +21,15 @@ Ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
   (achado Minor, Fase 2): `store-sidebar.tsx` agrupa com o import externo
   de `lucide-react`; `store-mobile-nav.tsx` ficou solto no meio dos
   imports internos. Cosmético, lint não acusa.
+- ☐ **`SOCIAL_LINK_CLASS` duplicada em 2 arquivos** (achado Minor, Fase
+  3): `store-contact-section.tsx` e `store-footer.tsx` redeclaram a mesma
+  string utilitária (só o tamanho do ícone difere, `size-11` vs
+  `size-10`). Extrair pra `social-icons.tsx` com um prop de tamanho se um
+  terceiro consumidor aparecer.
+- ☐ **Texto de "Sobre Nós" é rascunho aprovado, não conteúdo revisado
+  pelo lojista**: história/missão/especialidade em `store-about.tsx`
+  foram escritos nesta sessão baseados no tom das referências visuais do
+  usuário — trocar pelo texto definitivo quando o lojista revisar.
 
 - ☐ **TikTok sem ícone no rodapé de contato**: não existe campo no banco
   (`tenants` não tem coluna de TikTok) — decisão de escopo (sprint é
