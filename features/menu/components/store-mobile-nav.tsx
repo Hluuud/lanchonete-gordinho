@@ -3,7 +3,7 @@
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { BrandLogo } from "@/components/brand-logo";
 import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
-import { Home, Info, Phone } from "lucide-react";
+import { Home, Info, Phone, UtensilsCrossed } from "lucide-react";
 
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
@@ -49,6 +49,11 @@ export function StoreMobileNav({
   function goToContato() {
     onOpenChange(false);
     window.setTimeout(() => scrollToSection("contato"), 200);
+  }
+
+  function goToCardapio() {
+    onOpenChange(false);
+    window.setTimeout(() => scrollToSection("cardapio"), 200);
   }
 
   return (
@@ -102,6 +107,17 @@ export function StoreMobileNav({
               >
                 <Phone className="size-5" aria-hidden />
                 <span className="flex-1 truncate">Contato</span>
+              </button>
+            </li>
+
+            <li className="pt-2">
+              <button
+                type="button"
+                onClick={goToCardapio}
+                className="flex w-full items-center gap-2 rounded-xl px-3 py-1.5 text-left text-xs font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:text-primary"
+              >
+                <UtensilsCrossed className="size-4" aria-hidden />
+                Cardápio
               </button>
             </li>
 
