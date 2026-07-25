@@ -8,6 +8,7 @@ import { CategoryNav } from "@/features/menu/components/category-nav";
 import { MenuSection } from "@/features/menu/components/menu-section";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreHero } from "@/features/menu/components/store-hero";
+import { StorePromoBanner } from "@/features/menu/components/store-promo-banner";
 import { StoreTopbar } from "@/features/menu/components/store-topbar";
 import { StoreAbout } from "@/features/menu/components/store-about";
 import { StoreContactSection } from "@/features/menu/components/store-contact-section";
@@ -100,6 +101,8 @@ export function StoreExperience({ menu }: { menu: Menu }) {
         />
 
         <StoreHero />
+
+        <StorePromoBanner />
 
         <div id="cardapio" className="mx-auto w-full max-w-6xl px-4 py-4 pb-24">
           <div className="lg:hidden">
