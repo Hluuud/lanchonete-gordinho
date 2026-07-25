@@ -23,13 +23,13 @@ export function MenuSection({ section }: { section: StoreSection }) {
       // CategoryNav mobile: 130px) para a seção clicada ativar no destino.
       className="scroll-mt-32 lg:scroll-mt-20"
     >
-      <div className="mb-5 flex items-center gap-3">
-        <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
-          <CategoryIcon slug={section.slug} className="size-5" />
+      <div className="mb-6 flex items-center gap-3 border-b pb-4">
+        <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+          <CategoryIcon slug={section.slug} className="size-6" />
         </span>
         <h2
           id={`titulo-${section.slug}`}
-          className="text-xl font-bold tracking-tight sm:text-2xl"
+          className="text-2xl font-black tracking-tight sm:text-3xl"
         >
           {section.title}
         </h2>
