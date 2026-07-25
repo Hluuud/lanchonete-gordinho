@@ -4,6 +4,21 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 6 (Fase 5): Redesign da Experiência do Cliente — Promoções
+
+- Nova faixa full-width `StorePromoBanner` (`#promocoes`), entre a Home e o
+  Cardápio: gradiente laranja/preto (mesma paleta do Hero), ícone
+  `Sparkles`, título "Fique de olho nas nossas promoções", botão "Ver
+  Cardápio" (rola até `#cardapio`).
+- Banner único estático, sem carrossel (sem lib nova instalada) e sem item
+  de navegação próprio (não entra na sidebar/drawer nem no
+  `useScrollSpy`) — decisões confirmadas com o usuário.
+- Conteúdo é rascunho editável, sem inventar desconto/oferta específica;
+  `promoBannerUrl` real (admin) segue fora de escopo — não mapeado pelo
+  service/repository público do storefront. Registrado no BACKLOG.
+- Escopo: quinta e última fase do redesign da área do cliente — ver
+  `docs/superpowers/specs/2026-07-25-client-promo-banner-design.md`.
+
 ### Added — Sprint 6 (Fase 4): Redesign da Experiência do Cliente — Cardápio Premium
 
 - `ProductCard`: imagem mais alta (`aspect-5/4`→`aspect-4/3`), hover com

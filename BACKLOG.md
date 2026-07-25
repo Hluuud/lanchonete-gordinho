@@ -5,12 +5,19 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
-## Sprint 6 — Redesign da Experiência do Cliente (Fases 1-4: Sidebar, Home/Hero, Sobre/Contato/Footer, Cardápio Premium)
+## Sprint 6 — Redesign da Experiência do Cliente (Fases 1-5: Sidebar, Home/Hero, Sobre/Contato/Footer, Cardápio Premium, Promoções)
 
 Ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
 (spec geral) e specs/plans por fase. Achados dos reviews finais (branch
 `dev`):
 
+- ☐ **`promoBannerUrl` real (admin) não chega ao banner de Promoções**
+  (Fase 5, decisão confirmada com o usuário): `promo_banner_url` existe em
+  `tenants` e em `AdminStoreSettings`
+  (`services/admin/store-settings.service.ts`), mas o `Tenant` público
+  (vitrine) é deliberadamente minimalista e não mapeia esse campo — mesma
+  categoria de restrição das Fases 1/4. `StorePromoBanner` usa conteúdo
+  estático/rascunho enquanto isso não for liberado.
 - ☐ **Tags "Mais Vendido"/"Promoção" nos cards, descrição/imagem por
   categoria, tag "Artesanal"** (Fase 4, decisão confirmada com o usuário):
   `is_bestseller`/`promo_price_cents` existem no banco mas só chegam ao
