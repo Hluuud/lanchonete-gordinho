@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Home } from "lucide-react";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export function StoreSidebar({
   onQueryChange: (query: string) => void;
 }) {
   const activeId = useScrollSpy(
-    sections.map((section) => sectionAnchorId(section.slug)),
+    ["home", ...sections.map((section) => sectionAnchorId(section.slug))],
     // Linha de detecção logo abaixo do `lg:scroll-mt-20` (80px) das seções —
     // garante que a seção clicada fique ativa ao final do scroll suave.
     { topOffsetPx: 84 },
@@ -80,6 +80,26 @@ export function StoreSidebar({
         className="flex-1 overflow-y-auto px-3 pb-4"
       >
         <ul className="flex flex-col gap-1">
+          <li>
+            <a
+              href="#home"
+              onClick={(event) => {
+                event.preventDefault();
+                scrollToSection("home");
+              }}
+              aria-current={activeId === "home" ? "true" : undefined}
+              className={cn(
+                "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                activeId === "home"
+                  ? "bg-primary font-semibold text-primary-foreground"
+                  : "text-foreground hover:bg-primary/10 hover:text-primary",
+              )}
+            >
+              <Home className="size-5" aria-hidden />
+              <span className="flex-1 truncate">Home</span>
+            </a>
+          </li>
+
           {sections.map((section) => {
             const anchor = sectionAnchorId(section.slug);
             const isActive = anchor === activeId;
