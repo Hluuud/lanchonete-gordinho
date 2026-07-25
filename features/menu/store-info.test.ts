@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  BUSINESS_HOURS,
   getAverageMenuPrepTimeMinutes,
   getStoreOpenState,
   type DayHours,
@@ -111,5 +112,14 @@ describe("getAverageMenuPrepTimeMinutes", () => {
 
   it("retorna null sem produtos elegíveis", () => {
     expect(getAverageMenuPrepTimeMinutes(makeMenu([]))).toBeNull();
+  });
+});
+
+describe("BUSINESS_HOURS", () => {
+  it("segunda-feira fechada, terça a domingo 13:00–00:00", () => {
+    expect(BUSINESS_HOURS[1]).toBeNull();
+    for (const day of [0, 2, 3, 4, 5, 6]) {
+      expect(BUSINESS_HOURS[day]).toEqual({ open: "13:00", close: "00:00" });
+    }
   });
 });

@@ -13,13 +13,13 @@ export type DayHours = { open: string; close: string } | null;
 
 /** Índice = `Date#getDay()` (0 = domingo). `null` = fechado o dia todo. */
 export const BUSINESS_HOURS: Record<number, DayHours> = {
-  0: { open: "18:00", close: "23:00" },
+  0: { open: "13:00", close: "00:00" },
   1: null,
-  2: { open: "18:00", close: "23:00" },
-  3: { open: "18:00", close: "23:00" },
-  4: { open: "18:00", close: "23:00" },
-  5: { open: "18:00", close: "23:30" },
-  6: { open: "18:00", close: "23:30" },
+  2: { open: "13:00", close: "00:00" },
+  3: { open: "13:00", close: "00:00" },
+  4: { open: "13:00", close: "00:00" },
+  5: { open: "13:00", close: "00:00" },
+  6: { open: "13:00", close: "00:00" },
 };
 
 export type StoreOpenState = {
