@@ -20,11 +20,11 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Card
       className={cn(
-        "group gap-0 py-0 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl",
-        unavailable && "opacity-75 hover:translate-y-0 hover:shadow-sm",
+        "group gap-0 py-0 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-xl",
+        unavailable && "opacity-75 hover:scale-100 hover:translate-y-0 hover:shadow-sm",
       )}
     >
-      <div className="relative aspect-5/4 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-accent/20 to-accent/40">
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-accent/20 to-accent/40">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
