@@ -6,9 +6,11 @@ import {
   EMAIL,
   FACEBOOK_LINK,
   INSTAGRAM_LINK,
+  MAPS_EMBED_LINK,
   MAPS_LINK,
   PHONE_DISPLAY,
   PHONE_TEL_LINK,
+  SLOGAN,
   WHATSAPP_LINK,
 } from "@/features/menu/contact-info";
 
@@ -20,6 +22,7 @@ describe("contact-info", () => {
     expect(CNPJ).toBe("09.068.710/0001-28");
     expect(INSTAGRAM_LINK).toBe("https://www.instagram.com/andre_edvaldo/");
     expect(FACEBOOK_LINK).toBe("https://www.facebook.com/edvaldo.andre");
+    expect(SLOGAN).toBe("Sabor que aquece, feito com carinho");
   });
 
   it("deriva o link de telefone a partir do número exibido", () => {
@@ -34,6 +37,14 @@ describe("contact-info", () => {
     expect(MAPS_LINK).toBe(
       "https://www.google.com/maps/search/?api=1&query=" +
         encodeURIComponent(ADDRESS),
+    );
+  });
+
+  it("codifica o endereço no link de embed do Google Maps", () => {
+    expect(MAPS_EMBED_LINK).toBe(
+      "https://www.google.com/maps?q=" +
+        encodeURIComponent(ADDRESS) +
+        "&output=embed",
     );
   });
 });

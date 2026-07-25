@@ -12,6 +12,8 @@ function digitsOnly(value: string): string {
   return value.replace(/\D/g, "");
 }
 
+export const SLOGAN = "Sabor que aquece, feito com carinho";
+
 export const ADDRESS = "Calçadão Ricardo Gregório, 548, Analândia - SP";
 export const PHONE_DISPLAY = "(19) 99727-3897";
 export const EMAIL = "edvaldolanchonete@hotmail.com";
@@ -23,3 +25,5 @@ export const FACEBOOK_LINK = "https://www.facebook.com/edvaldo.andre";
 export const PHONE_TEL_LINK = `tel:+55${digitsOnly(PHONE_DISPLAY)}`;
 export const WHATSAPP_LINK = `https://wa.me/55${digitsOnly(PHONE_DISPLAY)}`;
 export const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS)}`;
+/** Embed público do Google Maps — sem chave de API, só o endereço na URL. */
+export const MAPS_EMBED_LINK = `https://www.google.com/maps?q=${encodeURIComponent(ADDRESS)}&output=embed`;
