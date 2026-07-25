@@ -2,6 +2,7 @@
 
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { BrandLogo } from "@/components/brand-logo";
+import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
 import { sectionAnchorId, type StoreSection } from "@/features/menu/virtual-sections";
@@ -71,6 +72,8 @@ export function StoreMobileNav({
             ))}
           </ul>
         </nav>
+
+        <StoreContactFooter className="shrink-0" />
       </DrawerContent>
     </Drawer>
   );
