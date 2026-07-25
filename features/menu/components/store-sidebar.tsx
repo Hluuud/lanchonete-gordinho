@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Home, Info, Phone } from "lucide-react";
+import { ArrowRight, Home, Info, Phone, UtensilsCrossed } from "lucide-react";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
@@ -141,6 +141,20 @@ export function StoreSidebar({
             >
               <Phone className="size-5" aria-hidden />
               <span className="flex-1 truncate">Contato</span>
+            </a>
+          </li>
+
+          <li className="pt-2">
+            <a
+              href="#cardapio"
+              onClick={(event) => {
+                event.preventDefault();
+                scrollToSection("cardapio");
+              }}
+              className="flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:text-primary"
+            >
+              <UtensilsCrossed className="size-4" aria-hidden />
+              Cardápio
             </a>
           </li>
 
