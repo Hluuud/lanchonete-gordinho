@@ -16,7 +16,7 @@ import {
 
 describe("contact-info", () => {
   it("expõe os dados estáticos de contato sem alteração", () => {
-    expect(ADDRESS).toBe("Calçadão Ricardo Gregório, 548, Analândia - SP");
+    expect(ADDRESS).toBe("Avenida 1, 548, Centro, Analândia - SP");
     expect(PHONE_DISPLAY).toBe("(19) 99727-3897");
     expect(EMAIL).toBe("edvaldolanchonete@hotmail.com");
     expect(CNPJ).toBe("09.068.710/0001-28");

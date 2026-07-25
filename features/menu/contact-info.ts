@@ -14,7 +14,7 @@ function digitsOnly(value: string): string {
 
 export const SLOGAN = "Sabor que aquece, feito com carinho";
 
-export const ADDRESS = "Calçadão Ricardo Gregório, 548, Analândia - SP";
+export const ADDRESS = "Avenida 1, 548, Centro, Analândia - SP";
 export const PHONE_DISPLAY = "(19) 99727-3897";
 export const EMAIL = "edvaldolanchonete@hotmail.com";
 export const CNPJ = "09.068.710/0001-28";
