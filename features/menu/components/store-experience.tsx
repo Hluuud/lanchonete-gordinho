@@ -7,6 +7,7 @@ import { FeaturedCarousel } from "@/features/menu/components/featured-carousel";
 import { CategoryNav } from "@/features/menu/components/category-nav";
 import { MenuSection } from "@/features/menu/components/menu-section";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
+import { StoreHero } from "@/features/menu/components/store-hero";
 import { StoreTopbar } from "@/features/menu/components/store-topbar";
 import { getAverageMenuPrepTimeMinutes } from "@/features/menu/store-info";
 import { buildStoreSections } from "@/features/menu/virtual-sections";
@@ -94,6 +95,8 @@ export function StoreExperience({ menu }: { menu: Menu }) {
           query={rawQuery}
           onQueryChange={setRawQuery}
         />
+
+        <StoreHero />
 
         <div id="cardapio" className="mx-auto w-full max-w-6xl px-4 py-4 pb-24">
           <div className="lg:hidden">
