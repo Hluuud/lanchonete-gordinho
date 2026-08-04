@@ -1,5 +1,7 @@
 import {
+  Beef,
   CupSoda,
+  Croissant,
   Flame,
   IceCreamCone,
   Sandwich,
@@ -16,6 +18,10 @@ import {
  */
 const ICONS_BY_SLUG: Record<string, LucideIcon> = {
   lanches: Sandwich,
+  hamburgueres: Beef,
+  "hot-dogs": Sandwich,
+  hotdogs: Sandwich,
+  pasteis: Croissant,
   porcoes: UtensilsCrossed,
   bebidas: CupSoda,
   sobremesas: IceCreamCone,

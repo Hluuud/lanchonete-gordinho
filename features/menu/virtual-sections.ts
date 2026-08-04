@@ -76,6 +76,15 @@ function allProductsOf(menu: Menu): Product[] {
   return menu.categories.flatMap((category) => category.products);
 }
 
+/*
+ * ATENÇÃO — o preço promocional ainda NÃO pode ser exibido como preço final.
+ * A função `create_order` (migration 0009) calcula `unit_price_cents` a partir
+ * de `products.price_cents` e ignora `promo_price_cents`: mostrar o valor
+ * promocional na vitrine cobraria o preço cheio no checkout. Os helpers abaixo
+ * existem e estão corretos, mas só devem chegar à UI depois que a RPC honrar a
+ * promoção (registrado no BACKLOG).
+ */
+
 /** Está em promoção quando o lojista definiu um preço promocional. */
 export function isOnPromotion(product: Product): boolean {
   return product.promoPriceCents !== null;

@@ -2,7 +2,7 @@ import type { MenuCategory, Product } from "@/types/domain";
 
 export type SearchableProduct = Product & { categoryName: string };
 
-export type BadgeFilter = "all" | "featured" | "new";
+export type BadgeFilter = "all" | "bestseller" | "featured" | "new";
 export type SortOrder = "relevance" | "price-asc" | "price-desc";
 
 /** Achata as categorias em uma lista de produtos pesquisáveis, com o nome da categoria anexado. */
@@ -28,7 +28,10 @@ function normalize(value: string): string {
     .trim();
 }
 
-/** Busca por nome, descrição (ingredientes/detalhes) ou categoria — sem diferenciar acentos. */
+/**
+ * Busca por nome, descrição (ingredientes/detalhes), categoria ou rótulo do
+ * lojista — sem diferenciar acentos.
+ */
 export function matchesQuery(
   product: SearchableProduct,
   query: string,
@@ -40,6 +43,7 @@ export function matchesQuery(
     product.name,
     product.description ?? "",
     product.categoryName,
+    ...product.tags,
   ];
 
   return haystacks.some((text) => normalize(text).includes(needle));
@@ -50,6 +54,7 @@ export function matchesBadgeFilter(
   filter: BadgeFilter,
 ): boolean {
   if (filter === "all") return true;
+  if (filter === "bestseller") return product.badges.isBestseller;
   if (filter === "featured") return product.badges.isFeatured;
   return product.badges.isNew;
 }

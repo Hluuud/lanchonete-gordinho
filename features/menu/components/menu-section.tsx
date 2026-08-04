@@ -1,3 +1,4 @@
+import { categoryDescription } from "@/features/menu/category-content";
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { ProductCard } from "@/features/menu/components/product-card";
 import {
@@ -14,6 +15,7 @@ export function MenuSection({ section }: { section: StoreSection }) {
 
   const anchor = sectionAnchorId(section.slug);
   const count = section.products.length;
+  const description = categoryDescription(section.slug);
 
   return (
     <section
@@ -23,19 +25,26 @@ export function MenuSection({ section }: { section: StoreSection }) {
       // CategoryNav mobile: 130px) para a seção clicada ativar no destino.
       className="scroll-mt-32 lg:scroll-mt-20"
     >
-      <div className="mb-6 flex items-center gap-3 border-b pb-4">
-        <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-          <CategoryIcon slug={section.slug} className="size-6" />
-        </span>
-        <h2
-          id={`titulo-${section.slug}`}
-          className="text-2xl font-black tracking-tight sm:text-3xl"
-        >
-          {section.title}
-        </h2>
-        <span className="text-sm text-muted-foreground tabular-nums">
-          {count} {count === 1 ? "item" : "itens"}
-        </span>
+      <div className="mb-6 border-b pb-4">
+        <div className="flex items-center gap-3">
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+            <CategoryIcon slug={section.slug} className="size-6" />
+          </span>
+          <h2
+            id={`titulo-${section.slug}`}
+            className="font-display text-3xl leading-none tracking-tight uppercase sm:text-4xl"
+          >
+            {section.title}
+          </h2>
+          <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
+            {count} {count === 1 ? "item" : "itens"}
+          </span>
+        </div>
+        {description && (
+          <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            {description}
+          </p>
+        )}
       </div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {section.products.map((product) => (

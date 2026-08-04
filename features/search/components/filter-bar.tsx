@@ -1,4 +1,4 @@
-import { Flame, Sparkles } from "lucide-react";
+import { Flame, Sparkles, TrendingUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { BadgeFilter, SortOrder } from "@/features/search/search-utils";
@@ -16,14 +16,15 @@ const BADGE_CHIPS: {
   icon?: typeof Flame;
 }[] = [
   { value: "all", label: "Todos" },
+  { value: "bestseller", label: "Mais vendidos", icon: TrendingUp },
   { value: "featured", label: "Destaques", icon: Flame },
   { value: "new", label: "Novidades", icon: Sparkles },
 ];
 
 /**
  * Filtros do cardápio: por badge (dados reais) e ordenação por preço.
- * "Promoções"/"Combos"/"Mais vendidos" ficam de fora até existir schema/dados
- * reais (ver docs/roadmap) — nenhum dado fabricado.
+ * "Promoções" fica de fora enquanto o checkout não honrar
+ * `promo_price_cents`; "Combos" enquanto não forem vendáveis na loja.
  */
 export function FilterBar({
   badgeFilter,
