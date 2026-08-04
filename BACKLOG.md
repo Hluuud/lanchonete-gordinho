@@ -46,11 +46,12 @@ Ver `docs/adr/0010-storefront-brand-identity.md` e o Sprint Report em
   sprint testaram só lógica pura (`nav`, `virtual-sections`,
   `category-content`, `combo-suggestions`). Introduzir jsdom + RTL é uma
   decisão de infraestrutura própria.
-- ☐ **Verificação visual em navegador pendente.** Não foi possível carregar
-  a loja em runtime durante a sprint: o host não resolve o domínio do
-  projeto Supabase (`ENOTFOUND`), então o cardápio não carrega. Build,
-  typecheck, lint e testes passam; falta a conferência visual real
-  (desktop/tablet/mobile e `prefers-reduced-motion`).
+- ☐ **Conferência visual em navegador pendente.** A verificação do HTML
+  servido passou (as nove seções ancoradas, navegação, combos com produtos
+  reais, `/checkout` 200, guardas de auth em 307). Falta o que só se vê com
+  um navegador aberto: responsivo real em desktop/tablet/mobile, hover e
+  micro-interações, `prefers-reduced-motion` e o fluxo carrinho → checkout
+  clicado de ponta a ponta.
 
 ## Sprint 6 — Redesign da Experiência do Cliente (Fases 1-5: Sidebar, Home/Hero, Sobre/Contato/Footer, Cardápio Premium, Promoções)
 

@@ -146,15 +146,33 @@ no BACKLOG.
 | Testes | ✅ 121/121 |
 | Revisão crítica | ✅ (os dois achados acima) |
 | Sprint Report | ✅ este documento |
-| Commits Conventional Commits | ✅ sete commits, um por fase |
-| **Verificação visual em navegador** | ❌ **bloqueada** |
+| Commits Conventional Commits | ✅ oito commits, um por fase |
+| Verificação em runtime (HTML servido) | ✅ |
+| **Conferência visual em navegador** | ⚠️ **parcial** |
 
-A verificação visual não pôde ser feita: o host não resolve o domínio do
-projeto Supabase (`getaddrinfo ENOTFOUND ...supabase.co`), então o cardápio
-não carrega em runtime e a loja fica no skeleton. Nada indica problema no
-código — build, typecheck, lint e testes passam —, mas a conferência de
-desktop/tablet/mobile e de `prefers-reduced-motion` continua pendente e está
-registrada no BACKLOG.
+### Sobre a verificação em runtime
+
+Durante a maior parte da sprint o projeto Supabase esteve fora do ar
+(`ENOTFOUND`, depois 521 do Cloudflare), o que derrubava o Server Component
+do cardápio e deixava a loja no skeleton. Com o projeto de volta, a
+verificação do HTML servido passou:
+
+- `/` 200 com as nove seções ancoradas (`destaques`, `novidades`, `lanches`,
+  `porcoes`, `bebidas`, `sobremesas`, `promocoes`, `combos`,
+  `mais-vendidos`).
+- Os sete rótulos de navegação aparecem na sidebar e no rodapé, vindos da
+  mesma fonte.
+- Os combos renderizam com produtos reais do cardápio, o que só acontece se
+  a consulta ao banco funcionou.
+- `#mais-vendidos` está no rótulo de fallback ("Os queridinhos da casa"),
+  confirmando que nenhum produto tem `is_bestseller` marcado ainda.
+- `/checkout` 200, `/api/menu` 200, `/cozinha` e `/admin` 307 (guarda de
+  autenticação intacta).
+
+O que **não** dá para verificar por HTTP e continua pendente: comportamento
+responsivo real (desktop/tablet/mobile), hover e micro-interações,
+`prefers-reduced-motion`, e o fluxo de carrinho → checkout clicado de ponta
+a ponta. Registrado no BACKLOG.
 
 ## Próximos passos sugeridos
 
