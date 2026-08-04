@@ -62,7 +62,7 @@ export function StoreMobileNav({
 
         <nav
           aria-label="Seções da loja"
-          className="min-h-0 flex-1 overflow-y-auto px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)]"
+          className="min-h-0 flex-1 overflow-y-auto px-3 pb-4"
         >
           <ul className="flex flex-col gap-1">
             {STORE_NAV_ITEMS.map((item) => {
@@ -115,7 +115,14 @@ export function StoreMobileNav({
           </ul>
         </nav>
 
-        <StoreContactFooter tone="light" className="shrink-0" />
+        {/*
+          A área segura fica no último elemento do Drawer, e não na lista de
+          navegação: é ele que encosta na borda inferior da tela.
+        */}
+        <StoreContactFooter
+          tone="light"
+          className="shrink-0 pb-[calc(env(safe-area-inset-bottom)+1rem)]"
+        />
       </DrawerContent>
     </Drawer>
   );

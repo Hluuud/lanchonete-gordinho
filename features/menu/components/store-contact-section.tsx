@@ -1,6 +1,7 @@
-import { Clock, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
+import { Clock, MapPin, Navigation, Phone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { SocialLink } from "@/features/menu/components/social-link";
 import { StoreOpenBadge } from "@/features/menu/components/store-open-badge";
 import {
   ADDRESS,
@@ -12,10 +13,14 @@ import {
   PHONE_TEL_LINK,
   WHATSAPP_LINK,
 } from "@/features/menu/contact-info";
-import { FacebookIcon, InstagramIcon } from "@/features/menu/social-icons";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  WhatsAppIcon,
+} from "@/features/menu/social-icons";
 
-const SOCIAL_LINK_CLASS =
-  "flex size-11 items-center justify-center rounded-full border text-muted-foreground transition-colors hover:border-primary hover:text-primary";
+/** Botão de rede social maior que o padrão da sidebar, com borda. */
+const SOCIAL_LINK_CLASS = "size-11 border";
 
 /**
  * Seção de contato (`#contato`): mapa embutido (Google Maps, sem chave de
@@ -32,7 +37,8 @@ export function StoreContactSection() {
       id="contato"
       className="mx-auto w-full max-w-6xl px-4 py-16 lg:scroll-mt-20 lg:px-8"
     >
-      <h2 className="text-3xl leading-tight font-black text-balance lg:text-4xl">
+      <span className="block h-1.5 w-16 rounded-full bg-primary" aria-hidden />
+      <h2 className="font-display mt-4 text-3xl leading-none tracking-tight text-balance uppercase lg:text-5xl">
         Onde estamos
       </h2>
 
@@ -89,33 +95,24 @@ export function StoreContactSection() {
           </div>
 
           <div className="flex items-center gap-2">
-            <a
+            <SocialLink
               href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
+              label="WhatsApp"
               className={SOCIAL_LINK_CLASS}
-            >
-              <MessageCircle className="size-5" aria-hidden />
-            </a>
-            <a
+              icon={<WhatsAppIcon className="size-5" />}
+            />
+            <SocialLink
               href={INSTAGRAM_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
+              label="Instagram"
               className={SOCIAL_LINK_CLASS}
-            >
-              <InstagramIcon className="size-5" />
-            </a>
-            <a
+              icon={<InstagramIcon className="size-5" />}
+            />
+            <SocialLink
               href={FACEBOOK_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook"
+              label="Facebook"
               className={SOCIAL_LINK_CLASS}
-            >
-              <FacebookIcon className="size-5" />
-            </a>
+              icon={<FacebookIcon className="size-5" />}
+            />
           </div>
 
           <Button asChild size="lg" className="w-full rounded-full sm:w-fit">

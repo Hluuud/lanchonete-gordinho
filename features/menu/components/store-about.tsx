@@ -37,9 +37,15 @@ export function StoreAbout() {
     >
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
         <div className="flex flex-col gap-6">
-          <h2 className="text-3xl leading-tight font-black text-balance lg:text-4xl">
-            Sobre a Lanchonete do Gordinho
-          </h2>
+          <div>
+            <span
+              className="block h-1.5 w-16 rounded-full bg-primary"
+              aria-hidden
+            />
+            <h2 className="font-display mt-4 text-3xl leading-none tracking-tight text-balance uppercase lg:text-5xl">
+              Sobre a Lanchonete do Gordinho
+            </h2>
+          </div>
           <p className="text-base text-muted-foreground lg:text-lg">
             {ABOUT_TEXT}
           </p>
@@ -49,16 +55,16 @@ export function StoreAbout() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="flex aspect-square items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 via-secondary to-foreground/10">
+          <div className="flex aspect-square items-center justify-center rounded-3xl bg-gradient-to-br from-accent/40 via-secondary to-surface-dark/10">
             <Store
               className="size-16 text-primary/50"
               strokeWidth={1.5}
               aria-hidden
             />
           </div>
-          <div className="flex aspect-square items-center justify-center rounded-3xl bg-gradient-to-br from-primary via-primary/70 to-foreground">
+          <div className="flex aspect-square items-center justify-center rounded-3xl bg-gradient-to-br from-primary via-primary/80 to-surface-dark">
             <Flame
-              className="size-16 text-background/30"
+              className="size-16 text-white/35"
               strokeWidth={1.5}
               aria-hidden
             />
@@ -70,9 +76,11 @@ export function StoreAbout() {
         {ABOUT_FEATURES.map((feature) => (
           <div
             key={feature.title}
-            className="flex flex-col gap-3 rounded-2xl border bg-card p-6"
+            className="flex flex-col gap-3 rounded-2xl border bg-card p-6 transition-shadow hover:shadow-lg"
           >
-            <feature.icon className="size-8 text-primary" aria-hidden />
+            <span className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <feature.icon className="size-5" aria-hidden />
+            </span>
             <h3 className="text-base font-bold">{feature.title}</h3>
             <p className="text-sm text-muted-foreground">
               {feature.description}
