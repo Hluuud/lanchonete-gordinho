@@ -6,6 +6,8 @@ import { useDebounce } from "use-debounce";
 import { FeaturedCarousel } from "@/features/menu/components/featured-carousel";
 import { CategoryNav } from "@/features/menu/components/category-nav";
 import { MenuSection } from "@/features/menu/components/menu-section";
+import { StoreBestsellers } from "@/features/menu/components/store-bestsellers";
+import { StoreCombos } from "@/features/menu/components/store-combos";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreHero } from "@/features/menu/components/store-hero";
 import { StorePromoBanner } from "@/features/menu/components/store-promo-banner";
@@ -105,9 +107,7 @@ export function StoreExperience({ menu }: { menu: Menu }) {
 
         <StoreValueProps />
 
-        <StorePromoBanner />
-
-        <div id="cardapio" className="mx-auto w-full max-w-6xl px-4 py-4 pb-24">
+        <div id="cardapio" className="mx-auto w-full max-w-6xl px-4 py-10">
           <div className="lg:hidden">
             <SearchBar value={rawQuery} onChange={setRawQuery} />
           </div>
@@ -147,6 +147,10 @@ export function StoreExperience({ menu }: { menu: Menu }) {
             )}
           </div>
         </div>
+
+        <StorePromoBanner />
+        <StoreCombos menu={menu} />
+        <StoreBestsellers menu={menu} />
 
         <StoreAbout />
         <StoreContactSection />

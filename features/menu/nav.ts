@@ -1,4 +1,13 @@
-import { Home, Info, Phone, UtensilsCrossed, type LucideIcon } from "lucide-react";
+import {
+  Home,
+  Info,
+  Package,
+  Phone,
+  Sparkles,
+  TrendingUp,
+  UtensilsCrossed,
+  type LucideIcon,
+} from "lucide-react";
 
 export type StoreNavItem = {
   /** Âncora DOM da seção, sem `#` — também serve de chave no React. */
@@ -18,8 +27,7 @@ export type StoreNavItem = {
  *
  * A lista cresce junto com as seções: um item só entra aqui quando a âncora
  * correspondente existe de fato no DOM, senão o menu promete um destino que
- * não leva a lugar nenhum. Promoções, Combos e Mais Vendidos entram na fase
- * que constrói cada uma dessas seções.
+ * não leva a lugar nenhum.
  */
 export const STORE_NAV_ITEMS: StoreNavItem[] = [
   { anchor: "home", label: "Home", icon: Home },
@@ -29,6 +37,9 @@ export const STORE_NAV_ITEMS: StoreNavItem[] = [
     icon: UtensilsCrossed,
     isHeading: true,
   },
+  { anchor: "promocoes", label: "Promoções", icon: Sparkles },
+  { anchor: "combos", label: "Combos", icon: Package },
+  { anchor: "mais-vendidos", label: "Mais Vendidos", icon: TrendingUp },
   { anchor: "sobre", label: "Sobre Nós", icon: Info },
   { anchor: "contato", label: "Contato", icon: Phone },
 ];

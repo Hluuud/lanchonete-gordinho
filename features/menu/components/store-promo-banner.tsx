@@ -3,44 +3,60 @@
 import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/features/menu/social-icons";
+import { WHATSAPP_LINK } from "@/features/menu/contact-info";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
 
-const PROMO_TITLE = "Fique de olho nas nossas promoções";
+const PROMO_TITLE = "As promoções da semana são combinadas na hora";
 const PROMO_SUBTITLE =
-  "Sempre tem novidade por aqui — dá uma olhada no cardápio e aproveite.";
+  "Chame a gente no WhatsApp para saber o que está saindo mais barato hoje — e dê uma olhada no cardápio enquanto isso.";
 
 /**
- * Faixa full-width entre a Home e o Cardápio (âncora `#promocoes`, sem
- * item de navegação próprio — ver spec da Fase 5). Conteúdo é rascunho
- * editável enquanto não há uma promoção real cadastrada.
+ * Faixa full-width da seção `#promocoes`.
+ *
+ * Deliberadamente não lista produtos com preço promocional: a função
+ * `create_order` (migration 0009) cobra `products.price_cents` e ignora
+ * `promo_price_cents`, então anunciar desconto aqui cobraria o valor cheio no
+ * checkout. Enquanto a RPC não honrar a promoção (registrado no BACKLOG), a
+ * seção convida ao contato em vez de prometer um preço que não se cumpre.
  */
 export function StorePromoBanner() {
   return (
     <section
       id="promocoes"
-      className="bg-gradient-to-r from-primary via-primary/80 to-foreground px-4 py-10 lg:scroll-mt-20 lg:px-8"
+      aria-labelledby="titulo-promocoes"
+      className="scroll-mt-32 bg-surface-dark px-4 py-12 text-surface-dark-foreground lg:scroll-mt-20 lg:px-8 lg:py-16"
     >
-      <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
-        <Sparkles
-          className="size-10 text-background/80"
-          strokeWidth={1.5}
-          aria-hidden
-        />
-        <h2 className="text-2xl font-black text-background lg:text-3xl">
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+        <span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Sparkles className="size-7" aria-hidden />
+        </span>
+        <h2
+          id="titulo-promocoes"
+          className="font-display text-3xl leading-none tracking-tight text-balance uppercase sm:text-4xl"
+        >
           {PROMO_TITLE}
         </h2>
-        <p className="text-base text-background/80 lg:text-lg">
+        <p className="text-base text-surface-dark-muted lg:text-lg">
           {PROMO_SUBTITLE}
         </p>
-        <Button
-          type="button"
-          size="lg"
-          variant="secondary"
-          className="mt-2 rounded-full"
-          onClick={() => scrollToSection("cardapio")}
-        >
-          Ver Cardápio
-        </Button>
+        <div className="mt-2 flex flex-wrap justify-center gap-3">
+          <Button asChild size="lg" className="rounded-full font-semibold">
+            <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">
+              <WhatsAppIcon className="size-4" />
+              Falar no WhatsApp
+            </a>
+          </Button>
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            className="rounded-full border-white/25 bg-transparent font-semibold text-surface-dark-foreground hover:bg-white/10 hover:text-surface-dark-foreground"
+            onClick={() => scrollToSection("cardapio")}
+          >
+            Ver Cardápio
+          </Button>
+        </div>
       </div>
     </section>
   );
