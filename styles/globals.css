@@ -3,9 +3,11 @@
 
 /*
  * Design System — Lanchonete do Gordinho
- * Identidade: paleta da logo — laranja vibrante (#FFA61E), preto e branco.
- * Sobre o laranja da marca, texto escuro (branco sobre #FFA61E não atinge AA;
- * preto sobre laranja rende ~10.7:1 e é a assinatura visual da logo).
+ * Identidade da loja (Sprint 7, ver ADR 0010): preto e creme dominantes com
+ * vermelho pontual (CTA, tags, item ativo). O laranja da logo (#FFA61E) segue
+ * na marca, mas como acento — não mais como cor primária.
+ * Sobre o vermelho, texto branco (≈5:1, AA); sobre o laranja, texto escuro
+ * (branco sobre #FFA61E não atinge AA; preto sobre laranja rende ~10.7:1).
  * Tokens em oklch para consistência perceptual e bom contraste (WCAG AA).
  * `.dark` é a identidade do painel da cozinha (escopado por subárvore).
  */
@@ -15,47 +17,67 @@
 :root {
   --radius: 0.75rem;
 
-  /* Base: branco com leve calor (muitos espaços em branco, estilo autoatendimento) */
-  --background: oklch(0.995 0.002 90);
-  --foreground: oklch(0.21 0.01 60);
+  /* Base: creme quente — fundo de papel pardo claro, não branco de escritório */
+  --background: oklch(0.965 0.016 80);
+  --foreground: oklch(0.19 0.012 60);
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.01 60);
+  /* Cards mais claros que o fundo: as fotos de comida saltam do creme */
+  --card: oklch(0.995 0.006 85);
+  --card-foreground: oklch(0.19 0.012 60);
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.01 60);
+  --popover: oklch(0.995 0.006 85);
+  --popover-foreground: oklch(0.19 0.012 60);
 
-  /* Primária: laranja da logo (#FFA61E) — texto escuro por contraste */
-  --primary: oklch(0.79 0.165 68);
-  --primary-foreground: oklch(0.2 0.02 70);
+  /* Primária: vermelho da marca — texto branco (≈5:1) */
+  --primary: oklch(0.53 0.205 27);
+  --primary-foreground: oklch(0.99 0.004 90);
 
   /* Secundária: neutro quente */
-  --secondary: oklch(0.96 0.01 85);
-  --secondary-foreground: oklch(0.27 0.02 60);
+  --secondary: oklch(0.93 0.014 80);
+  --secondary-foreground: oklch(0.26 0.015 60);
 
-  --muted: oklch(0.96 0.008 85);
-  --muted-foreground: oklch(0.5 0.02 60);
+  --muted: oklch(0.93 0.012 80);
+  --muted-foreground: oklch(0.47 0.02 60);
 
-  /* Acento: âmbar/dourado (badges, contadores, destaques) */
-  --accent: oklch(0.86 0.15 82);
-  --accent-foreground: oklch(0.28 0.05 65);
+  /* Acento: laranja da logo (#FFA61E) — badges, contadores, destaques */
+  --accent: oklch(0.79 0.165 68);
+  --accent-foreground: oklch(0.24 0.03 65);
 
-  --destructive: oklch(0.577 0.245 27);
-  --destructive-foreground: oklch(0.985 0.01 90);
+  /* Destrutivo: vermelho mais claro e saturado que a primária, para não se
+     confundir com um CTA (remover item, excluir). */
+  --destructive: oklch(0.63 0.235 25);
+  --destructive-foreground: oklch(0.99 0.006 90);
 
   /* Feedback */
-  --success: oklch(0.62 0.17 150);
+  --success: oklch(0.58 0.16 150);
   --success-foreground: oklch(0.985 0.01 150);
   --warning: oklch(0.82 0.17 75);
   --warning-foreground: oklch(0.3 0.06 60);
 
-  --border: oklch(0.91 0.01 80);
-  --input: oklch(0.91 0.01 80);
-  /* Foco: laranja escurecido — o laranja da marca não tem 3:1 sobre branco */
-  --ring: oklch(0.66 0.15 60);
+  --border: oklch(0.88 0.014 80);
+  --input: oklch(0.88 0.014 80);
+  /* Foco: o próprio vermelho da marca — já passa de 3:1 sobre o creme */
+  --ring: oklch(0.53 0.205 27);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-anton), var(--font-geist-sans), ui-sans-serif,
+    sans-serif;
+}
+
+/*
+ * Superfície escura da marca — a sidebar, o hero e o footer da loja usam
+ * preto quente independentemente do tema do módulo. Definida fora dos três
+ * escopos (`:root`/`.dark`/`.theme-admin`) justamente por ser constante:
+ * ao contrário dos tokens semânticos, não muda de valor por módulo.
+ */
+:root,
+.dark,
+.theme-admin {
+  --surface-dark: oklch(0.16 0.008 60);
+  --surface-dark-foreground: oklch(0.97 0.006 85);
+  --surface-dark-muted: oklch(0.7 0.014 70);
+  --surface-dark-border: oklch(0.28 0.01 60);
 }
 
 /* Identidade do painel da cozinha: alto contraste sobre fundo quase preto */
@@ -159,8 +181,14 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  --color-surface-dark: var(--surface-dark);
+  --color-surface-dark-foreground: var(--surface-dark-foreground);
+  --color-surface-dark-muted: var(--surface-dark-muted);
+  --color-surface-dark-border: var(--surface-dark-border);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Anton, Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
 import { Providers } from "@/app/providers";
@@ -17,6 +17,18 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+/**
+ * Fonte de display da loja (Sprint 7): condensada e pesada, para títulos
+ * curtos em caixa alta — o "grito" da fachada de hamburgueria. Peso único
+ * (400 é o único da Anton); corpo de texto continua na Geist.
+ */
+const anton = Anton({
+  variable: "--font-anton",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Lanchonete do Gordinho",
@@ -27,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffa61e",
+  themeColor: "#1a1614",
   width: "device-width",
   initialScale: 1,
 };
@@ -38,7 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${anton.variable} h-full scroll-smooth antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
