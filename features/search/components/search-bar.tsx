@@ -18,6 +18,10 @@ export function SearchBar({
         className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
         aria-hidden
       />
+      {/*
+        `text-foreground` explícito no campo: ele também é montado dentro da
+        sidebar escura, onde herdaria texto claro sobre o próprio fundo claro.
+      */}
       <input
         type="search"
         role="searchbox"
@@ -25,7 +29,7 @@ export function SearchBar({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         aria-label="Buscar no cardápio"
-        className="h-12 w-full rounded-full border border-input bg-background pr-11 pl-10 text-sm placeholder:text-muted-foreground focus-visible:outline-none [&::-webkit-search-cancel-button]:appearance-none"
+        className="h-12 w-full rounded-full border border-input bg-background pr-11 pl-10 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none [&::-webkit-search-cancel-button]:appearance-none"
       />
       {value && (
         <button

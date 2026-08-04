@@ -1,12 +1,14 @@
 "use client";
 
-import { ArrowRight, Home, Info, Phone, UtensilsCrossed } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
+import { StoreNavLink } from "@/features/menu/components/store-nav-link";
 import { SLOGAN } from "@/features/menu/contact-info";
+import { STORE_NAV_ANCHORS, STORE_NAV_ITEMS } from "@/features/menu/nav";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
 import { useScrollSpy } from "@/features/menu/use-scroll-spy";
 import {
@@ -14,13 +16,13 @@ import {
   type StoreSection,
 } from "@/features/menu/virtual-sections";
 import { SearchBar } from "@/features/search/components/search-bar";
-import { cn } from "@/lib/utils";
 
 /**
  * Sidebar fixa do autoatendimento (desktop/totem, `lg:+`): identidade da
- * marca, CTA de pedido, busca e navegação vertical de categorias com
- * destaque da seção ativa (ScrollSpy). No mobile a navegação equivalente é
- * a `StoreMobileNav` (Drawer).
+ * marca sobre o preto da fachada, CTA de pedido, busca e navegação vertical
+ * com destaque da seção ativa (ScrollSpy). As categorias reais do cardápio
+ * aparecem indentadas sob o item "Cardápio". No mobile a navegação
+ * equivalente é a `StoreMobileNav` (Drawer).
  */
 export function StoreSidebar({
   tenantName,
@@ -35,9 +37,7 @@ export function StoreSidebar({
 }) {
   const activeId = useScrollSpy(
     [
-      "home",
-      "sobre",
-      "contato",
+      ...STORE_NAV_ANCHORS,
       ...sections.map((section) => sectionAnchorId(section.slug)),
     ],
     // Linha de detecção logo abaixo do `lg:scroll-mt-20` (80px) das seções —
@@ -46,24 +46,22 @@ export function StoreSidebar({
   );
 
   return (
-    <aside className="sticky top-0 hidden h-dvh flex-col border-r bg-card lg:flex">
+    <aside className="sticky top-0 hidden h-dvh flex-col border-r border-surface-dark-border bg-surface-dark text-surface-dark-foreground lg:flex">
       <div className="flex flex-col gap-4 px-5 pt-6 pb-4">
         <div className="flex items-center gap-3">
           <BrandLogo size="lg" priority />
           <div className="min-w-0">
-            <p className="text-lg leading-tight font-extrabold">
+            <p className="font-display text-xl leading-tight tracking-wide uppercase">
               {tenantName}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {SLOGAN}
-            </p>
+            <p className="truncate text-xs text-surface-dark-muted">{SLOGAN}</p>
           </div>
         </div>
 
         <Button
           type="button"
           size="lg"
-          className="w-full rounded-full"
+          className="w-full rounded-full font-semibold"
           onClick={() => scrollToSection("cardapio")}
         >
           Peça Agora
@@ -80,124 +78,64 @@ export function StoreSidebar({
       </div>
 
       <nav
-        aria-label="Seções do cardápio"
+        aria-label="Seções da loja"
         className="flex-1 overflow-y-auto px-3 pb-4"
       >
         <ul className="flex flex-col gap-1">
-          <li>
-            <a
-              href="#home"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection("home");
-              }}
-              aria-current={activeId === "home" ? "true" : undefined}
-              className={cn(
-                "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                activeId === "home"
-                  ? "bg-primary font-semibold text-primary-foreground"
-                  : "text-foreground hover:bg-primary/10 hover:text-primary",
-              )}
-            >
-              <Home className="size-5" aria-hidden />
-              <span className="flex-1 truncate">Home</span>
-            </a>
-          </li>
-
-          <li>
-            <a
-              href="#sobre"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection("sobre");
-              }}
-              aria-current={activeId === "sobre" ? "true" : undefined}
-              className={cn(
-                "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                activeId === "sobre"
-                  ? "bg-primary font-semibold text-primary-foreground"
-                  : "text-foreground hover:bg-primary/10 hover:text-primary",
-              )}
-            >
-              <Info className="size-5" aria-hidden />
-              <span className="flex-1 truncate">Sobre Nós</span>
-            </a>
-          </li>
-
-          <li>
-            <a
-              href="#contato"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection("contato");
-              }}
-              aria-current={activeId === "contato" ? "true" : undefined}
-              className={cn(
-                "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                activeId === "contato"
-                  ? "bg-primary font-semibold text-primary-foreground"
-                  : "text-foreground hover:bg-primary/10 hover:text-primary",
-              )}
-            >
-              <Phone className="size-5" aria-hidden />
-              <span className="flex-1 truncate">Contato</span>
-            </a>
-          </li>
-
-          <li className="pt-2">
-            <a
-              href="#cardapio"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection("cardapio");
-              }}
-              className="flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:text-primary"
-            >
-              <UtensilsCrossed className="size-4" aria-hidden />
-              Cardápio
-            </a>
-          </li>
-
-          {sections.map((section) => {
-            const anchor = sectionAnchorId(section.slug);
-            const isActive = anchor === activeId;
+          {STORE_NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
 
             return (
-              <li key={section.id}>
-                <a
-                  href={`#${anchor}`}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    scrollToSection(anchor);
-                  }}
-                  aria-current={isActive ? "true" : undefined}
-                  className={cn(
-                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary font-semibold text-primary-foreground"
-                      : "text-foreground hover:bg-primary/10 hover:text-primary",
-                  )}
-                >
-                  <CategoryIcon slug={section.slug} className="size-5" />
-                  <span className="flex-1 truncate">{section.title}</span>
-                  <span
-                    className={cn(
-                      "text-xs tabular-nums",
-                      isActive
-                        ? "text-primary-foreground/70"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {section.products.length}
-                  </span>
-                </a>
+              <li key={item.anchor} className={item.isHeading ? "pt-2" : undefined}>
+                <StoreNavLink
+                  anchor={item.anchor}
+                  label={item.label}
+                  icon={
+                    <Icon
+                      className={item.isHeading ? "size-4" : "size-5"}
+                      aria-hidden
+                    />
+                  }
+                  isActive={!item.isHeading && activeId === item.anchor}
+                  isHeading={item.isHeading}
+                  tone="dark"
+                  onNavigate={scrollToSection}
+                />
+
+                {item.isHeading && (
+                  <ul className="mt-1 flex flex-col gap-1">
+                    {sections.map((section) => {
+                      const anchor = sectionAnchorId(section.slug);
+
+                      return (
+                        <li key={section.id}>
+                          <StoreNavLink
+                            anchor={anchor}
+                            label={section.title}
+                            icon={
+                              <CategoryIcon
+                                slug={section.slug}
+                                className="size-5"
+                              />
+                            }
+                            count={section.products.length}
+                            isActive={activeId === anchor}
+                            isIndented
+                            tone="dark"
+                            onNavigate={scrollToSection}
+                          />
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </li>
             );
           })}
         </ul>
       </nav>
 
-      <StoreContactFooter />
+      <StoreContactFooter tone="dark" />
     </aside>
   );
 }

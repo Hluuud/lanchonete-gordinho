@@ -1,8 +1,10 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { Clock, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Clock, MapPin, Phone } from "lucide-react";
 
+import { SocialLink } from "@/features/menu/components/social-link";
+import type { StoreNavTone } from "@/features/menu/components/store-nav-link";
 import {
   ADDRESS,
   FACEBOOK_LINK,
@@ -12,7 +14,11 @@ import {
   PHONE_TEL_LINK,
   WHATSAPP_LINK,
 } from "@/features/menu/contact-info";
-import { FacebookIcon, InstagramIcon } from "@/features/menu/social-icons";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  WhatsAppIcon,
+} from "@/features/menu/social-icons";
 import { getStoreOpenState } from "@/features/menu/store-info";
 import { cn } from "@/lib/utils";
 
@@ -31,20 +37,34 @@ function getServerSnapshot(): number | null {
   return null;
 }
 
-const SOCIAL_LINK_CLASS =
-  "flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary";
+const TONE_BORDER: Record<StoreNavTone, string> = {
+  dark: "border-surface-dark-border",
+  light: "border-border",
+};
+
+const TONE_TEXT: Record<StoreNavTone, string> = {
+  dark: "text-surface-dark-muted hover:text-surface-dark-foreground",
+  light: "text-muted-foreground hover:text-primary",
+};
+
+const TONE_SKELETON: Record<StoreNavTone, string> = {
+  dark: "bg-white/10",
+  light: "bg-secondary",
+};
 
 /**
- * Rodapé de contato reaproveitado pela sidebar desktop (`StoreSidebar`) e
- * pelo drawer mobile (`StoreMobileNav`): WhatsApp/Instagram/Facebook,
- * telefone, endereço (link "Como chegar") e status de horário. Relógio via
- * `useSyncExternalStore` com snapshot por minuto — mesmo padrão de
- * `StoreOpenBadge`, evita hydration mismatch (servidor renderiza
- * placeholder neutro).
+ * Rodapé de contato reaproveitado pela sidebar desktop (`StoreSidebar`, sobre
+ * o preto da marca) e pelo drawer mobile (`StoreMobileNav`, sobre o creme):
+ * WhatsApp/Instagram/Facebook, telefone, endereço (link "Como chegar") e
+ * status de horário. Relógio via `useSyncExternalStore` com snapshot por
+ * minuto — mesmo padrão de `StoreOpenBadge`, evita hydration mismatch
+ * (servidor renderiza placeholder neutro).
  */
 export function StoreContactFooter({
+  tone = "light",
   className,
 }: {
+  tone?: StoreNavTone;
   className?: string;
 } = {}) {
   const minute = useSyncExternalStore(
@@ -53,42 +73,41 @@ export function StoreContactFooter({
     getServerSnapshot,
   );
 
+  const linkClass = cn(
+    "flex items-center gap-2 text-xs transition-colors",
+    TONE_TEXT[tone],
+  );
+
   return (
-    <div className={cn("flex shrink-0 flex-col gap-3 border-t px-5 py-4", className)}>
+    <div
+      className={cn(
+        "flex shrink-0 flex-col gap-3 border-t px-5 py-4",
+        TONE_BORDER[tone],
+        className,
+      )}
+    >
       <div className="flex items-center gap-1">
-        <a
+        <SocialLink
           href={WHATSAPP_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="WhatsApp"
-          className={SOCIAL_LINK_CLASS}
-        >
-          <MessageCircle className="size-4" aria-hidden />
-        </a>
-        <a
+          label="WhatsApp"
+          tone={tone}
+          icon={<WhatsAppIcon className="size-4" />}
+        />
+        <SocialLink
           href={INSTAGRAM_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Instagram"
-          className={SOCIAL_LINK_CLASS}
-        >
-          <InstagramIcon className="size-4" />
-        </a>
-        <a
+          label="Instagram"
+          tone={tone}
+          icon={<InstagramIcon className="size-4" />}
+        />
+        <SocialLink
           href={FACEBOOK_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Facebook"
-          className={SOCIAL_LINK_CLASS}
-        >
-          <FacebookIcon className="size-4" />
-        </a>
+          label="Facebook"
+          tone={tone}
+          icon={<FacebookIcon className="size-4" />}
+        />
       </div>
 
-      <a
-        href={PHONE_TEL_LINK}
-        className="flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-primary"
-      >
+      <a href={PHONE_TEL_LINK} className={linkClass}>
         <Phone className="size-3.5 shrink-0" aria-hidden />
         {PHONE_DISPLAY}
       </a>
@@ -97,16 +116,24 @@ export function StoreContactFooter({
         href={MAPS_LINK}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-start gap-2 text-xs text-muted-foreground transition-colors hover:text-primary"
+        className={cn(linkClass, "items-start")}
       >
         <MapPin className="mt-0.5 size-3.5 shrink-0" aria-hidden />
         <span>{ADDRESS}</span>
       </a>
 
       {minute === null ? (
-        <span className="h-4 w-32 animate-pulse rounded bg-secondary" aria-hidden />
+        <span
+          className={cn("h-4 w-32 animate-pulse rounded", TONE_SKELETON[tone])}
+          aria-hidden
+        />
       ) : (
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div
+          className={cn(
+            "flex items-center gap-2 text-xs",
+            tone === "dark" ? "text-surface-dark-muted" : "text-muted-foreground",
+          )}
+        >
           <Clock className="size-3.5 shrink-0" aria-hidden />
           {getStoreOpenState(new Date()).label}
         </div>
