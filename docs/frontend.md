@@ -87,6 +87,35 @@ nenhum componente:
 | Cozinha | `.dark` | `app/(kitchen)/layout.tsx` |
 | Admin | `.theme-admin` | `app/(admin)/admin/layout.tsx` |
 
+Desde a **Sprint 7** ([ADR 0010](./adr/0010-storefront-brand-identity.md)),
+os valores de `:root` são a identidade da loja: preto e creme dominantes,
+`--primary` vermelho e o laranja da logo em `--accent`. `.dark` e
+`.theme-admin` seguem inalterados.
+
+Quatro tokens descrevem a superfície escura da marca (sidebar, hero,
+promoções, rodapé) e são declarados **uma vez para os três escopos**, porque
+não mudam de valor por módulo:
+
+```
+--surface-dark            --surface-dark-muted
+--surface-dark-foreground --surface-dark-border
+```
+
+Tipografia: `--font-sans` (Geist) para texto corrido e `--font-display`
+(Anton, utilitário `font-display`) para títulos curtos em caixa alta.
+
+## Navegação da loja
+
+`features/menu/nav.ts` (`STORE_NAV_ITEMS`) é a fonte única das seções da
+loja — sidebar desktop, drawer mobile, `useScrollSpy` e links do rodapé leem
+dela. Mesmo contrato do `ADMIN_NAV_ITEMS`: **um item só entra na lista
+quando a âncora existe de fato no DOM**, para o menu nunca prometer um
+destino que não leva a lugar nenhum.
+
+A ordem do array é a ordem das seções na página; o ScrollSpy depende dessa
+correspondência. `StoreNavLink` concentra estado ativo, alvo de toque e tom
+da superfície (`dark` na sidebar, `light` no drawer).
+
 ## Painel Administrativo (shell, Sprint 4)
 
 Ver detalhe de domínio nas próprias páginas (`app/(admin)/admin/`). Shell:

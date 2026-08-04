@@ -4,6 +4,52 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — Sprint 7: Identidade Visual da Área do Cliente
+
+Sprint exclusivamente de frontend da loja. Nenhuma migration, nenhuma
+alteração em checkout, carrinho, realtime, admin, cozinha ou impressão.
+Única exceção autorizada: três colunas a mais no `SELECT` público do
+cardápio (mesma query, mesmo número de round-trips ao Supabase).
+
+- **Paleta (Fase 0).** O bloco `:root` passa a ser preto/creme com vermelho
+  pontual; o laranja da logo vira `--accent`. `.dark` (cozinha) e
+  `.theme-admin` não mudaram. Novos tokens `--surface-dark*` descrevem a
+  superfície escura da marca. Fonte de display Anton (`--font-display`).
+  Ver `docs/adr/0010-storefront-brand-identity.md`.
+- **Navegação (Fase 1).** `features/menu/nav.ts` (`STORE_NAV_ITEMS`) vira a
+  fonte única da sidebar, do drawer mobile e dos links do rodapé; os itens
+  eram blocos JSX duplicados entre sidebar e drawer. `StoreNavLink`
+  concentra as regras de estado; sidebar passa a ser escura. `SocialLink`
+  elimina a `SOCIAL_LINK_CLASS` repetida e `WhatsAppIcon` substitui o
+  `MessageCircle` genérico.
+- **Dados do produto (Fase 2).** `promo_price_cents`, `is_bestseller` e
+  `tags` passam a chegar ao domínio público. `selectBestsellers` sinaliza
+  quando caiu no fallback dos destaques.
+- **Hero (Fase 3).** `HeroMedia` com vídeo em autoplay mudo, pôster e
+  placeholder; URLs em `features/menu/media.ts` (hoje nulas). Faixa de três
+  promessas (`StoreValueProps`) logo abaixo.
+- **Cardápio (Fase 4).** Descrição por categoria
+  (`features/menu/category-content.ts`), cabeçalho em fonte de display,
+  card com badge de mais vendido, rótulos do lojista, tempo de preparo sobre
+  a foto e hover mais presente. Busca considera os rótulos; filtro ganha o
+  chip "Mais vendidos".
+- **Seções novas (Fase 5).** `#mais-vendidos`, `#combos` e `#promocoes`
+  completam os sete itens de navegação. Combos são sugestões montadas com
+  produtos reais do cardápio (`combo-suggestions.ts`), somando o preço real
+  dos itens e usando o carrinho existente.
+- **Institucional (Fase 6).** Sobre/Contato repaginados, rodapé sobre o
+  preto da marca com links vindos de `STORE_NAV_ITEMS`, área segura do iOS
+  corrigida no Drawer e skeleton alinhado ao novo shell.
+
+Duas coisas ficaram deliberadamente fora, por não terem como ser honestas
+hoje (ambas registradas no BACKLOG):
+
+- **Preço promocional na vitrine.** `create_order` (migration 0009) calcula
+  `unit_price_cents` a partir de `products.price_cents` e ignora
+  `promo_price_cents` — anunciar o desconto cobraria o preço cheio.
+- **Combos reais do banco.** A RLS de `combos` é staff-only (migration
+  0017) e o checkout não vende combo.
+
 ### Added — Sprint 6 (Fase 5): Redesign da Experiência do Cliente — Promoções
 
 - Nova faixa full-width `StorePromoBanner` (`#promocoes`), entre a Home e o

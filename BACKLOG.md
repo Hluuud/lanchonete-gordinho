@@ -5,6 +5,53 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Sprint 7 — Identidade Visual da Área do Cliente
+
+Ver `docs/adr/0010-storefront-brand-identity.md` e o Sprint Report em
+`docs/superpowers/reports/`. Bloqueios encontrados durante a implementação:
+
+- ☐ **Preço promocional não pode ser exibido na vitrine.** `promo_price_cents`
+  já chega ao domínio público (Fase 2) e os helpers existem em
+  `features/menu/virtual-sections.ts`, mas a função `create_order`
+  (`supabase/migrations/0009_create_order_coupon_code_fix.sql`) calcula
+  `unit_price_cents` a partir de `products.price_cents` — o cliente veria o
+  desconto e pagaria o preço cheio. **Pré-requisito:** migration que faça a
+  RPC usar `coalesce(promo_price_cents, price_cents)`. Só depois disso o
+  badge "Promoção", o preço riscado e o carrossel de ofertas fazem sentido.
+- ☐ **Combos reais do banco.** `combos`/`combo_slots`/`combo_slot_products`
+  têm RLS staff-only (migration 0017) e o checkout não sabe montar combo em
+  `order_items`. A seção `#combos` usa sugestões derivadas do cardápio real
+  (`features/menu/combo-suggestions.ts`), sem desconto prometido.
+  **Pré-requisitos:** policy pública de leitura + suporte a combo no
+  carrinho/checkout.
+- ☐ **Timer de contagem regressiva nas promoções.** Não existe campo de
+  validade em `products` nem uma tabela de campanhas; inventar prazo é
+  mentir para o cliente. Depende de modelagem de promoção com início/fim.
+- ☐ **Vídeo e fotos reais.** `HERO_VIDEO_URL`/`HERO_POSTER_URL`
+  (`features/menu/media.ts`) estão nulos e o Hero cai no placeholder; as
+  imagens da seção Sobre também são placeholders declarados. Basta
+  preencher as constantes quando o material existir.
+- ☐ **Descrição/imagem por categoria vêm do frontend.**
+  `features/menu/category-content.ts` é constante; a tabela `categories`
+  tem `icon`/`color` mas não descrição nem imagem. Mesma dívida de
+  `contact-info.ts`.
+- ☐ **TikTok não tem campo nem link.** Foi pedido na navegação, mas não há
+  perfil informado pelo lojista nem coluna em `tenants` — omitido em vez de
+  apontar para lugar nenhum.
+- ☐ **Contatos ainda são constantes de frontend.** `contact-info.ts` e
+  `store-info.ts` seguem hardcoded enquanto `findTenantBySlug` selecionar
+  só `id, slug, name`.
+- ☐ **Sem teste de render na área do cliente.** `vitest` roda em
+  `environment: "node"`, sem jsdom nem Testing Library — as fases desta
+  sprint testaram só lógica pura (`nav`, `virtual-sections`,
+  `category-content`, `combo-suggestions`). Introduzir jsdom + RTL é uma
+  decisão de infraestrutura própria.
+- ☐ **Verificação visual em navegador pendente.** Não foi possível carregar
+  a loja em runtime durante a sprint: o host não resolve o domínio do
+  projeto Supabase (`ENOTFOUND`), então o cardápio não carrega. Build,
+  typecheck, lint e testes passam; falta a conferência visual real
+  (desktop/tablet/mobile e `prefers-reduced-motion`).
+
 ## Sprint 6 — Redesign da Experiência do Cliente (Fases 1-5: Sidebar, Home/Hero, Sobre/Contato/Footer, Cardápio Premium, Promoções)
 
 Ver `docs/superpowers/specs/2026-07-24-client-experience-redesign-design.md`
