@@ -5,8 +5,10 @@ import type { Menu, Product } from "@/types/domain";
  * (derivadas dos badges existentes — nunca dados fabricados) seguidas das
  * categorias reais do banco.
  *
- * "Combos" e "Mais Vendidos" ficam deliberadamente de fora até existirem no
- * schema (ver BACKLOG.md) — exibir seção vazia ou inventar dados quebraria a
+ * "Mais Vendidos" e "Promoções" não entram aqui: desde a Sprint 7 eles têm
+ * seções próprias na página, fora do bloco do cardápio (ver
+ * `selectBestsellers`/`selectPromotions` abaixo). Combos seguem de fora até
+ * serem vendáveis — exibir seção vazia ou inventar dados quebraria a
  * confiança do cliente.
  */
 export type StoreSection = {
@@ -32,7 +34,7 @@ const VIRTUAL_SECTION_DEFS: {
 }[] = [
   {
     slug: "destaques",
-    title: "Promoções & Destaques",
+    title: "Destaques da Casa",
     matches: (product) => product.badges.isFeatured,
   },
   {
@@ -67,4 +69,52 @@ export function buildStoreSections(menu: Menu): StoreSection[] {
   }));
 
   return [...virtualSections, ...categorySections];
+}
+
+/** Todos os produtos do cardápio, achatados na ordem das categorias. */
+function allProductsOf(menu: Menu): Product[] {
+  return menu.categories.flatMap((category) => category.products);
+}
+
+/** Está em promoção quando o lojista definiu um preço promocional. */
+export function isOnPromotion(product: Product): boolean {
+  return product.promoPriceCents !== null;
+}
+
+/** Preço que o cliente efetivamente paga hoje. */
+export function effectivePriceCents(product: Product): number {
+  return product.promoPriceCents ?? product.priceCents;
+}
+
+/** Quanto o cliente economiza, em centavos. Zero quando não há promoção. */
+export function savingsCents(product: Product): number {
+  return product.priceCents - effectivePriceCents(product);
+}
+
+/** Produtos com preço promocional — alimentam a seção `#promocoes`. */
+export function selectPromotions(menu: Menu): Product[] {
+  return allProductsOf(menu).filter(isOnPromotion);
+}
+
+/**
+ * Produtos da seção `#mais-vendidos`. Enquanto o lojista não marcar nenhum
+ * campeão de vendas, cai nos destaques — é a melhor aproximação honesta que
+ * temos, e a UI rotula a seção de acordo (não afirma "mais vendido" sobre um
+ * produto que ninguém contou).
+ */
+export function selectBestsellers(menu: Menu): {
+  products: Product[];
+  isFallback: boolean;
+} {
+  const products = allProductsOf(menu);
+  const bestsellers = products.filter((product) => product.badges.isBestseller);
+
+  if (bestsellers.length > 0) {
+    return { products: bestsellers, isFallback: false };
+  }
+
+  return {
+    products: products.filter((product) => product.badges.isFeatured),
+    isFallback: true,
+  };
 }

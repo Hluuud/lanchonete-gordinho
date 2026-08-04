@@ -2,21 +2,38 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildStoreSections,
+  effectivePriceCents,
+  isOnPromotion,
+  savingsCents,
   sectionAnchorId,
+  selectBestsellers,
+  selectPromotions,
 } from "@/features/menu/virtual-sections";
-import type { Menu, Product } from "@/types/domain";
+import type { Menu, Product, ProductBadges } from "@/types/domain";
 
-function makeProduct(overrides: Partial<Product> = {}): Product {
+type ProductOverrides = Partial<Omit<Product, "badges">> & {
+  /** Parcial: cada teste declara só o badge que lhe interessa. */
+  badges?: Partial<ProductBadges>;
+};
+
+function makeProduct({ badges, ...overrides }: ProductOverrides = {}): Product {
   return {
     id: "p1",
     categoryId: "c1",
     name: "X-Burger",
     description: null,
     priceCents: 2500,
+    promoPriceCents: null,
     imageUrl: null,
     prepTimeMinutes: 15,
     isAvailable: true,
-    badges: { isFeatured: false, isNew: false },
+    badges: {
+      isFeatured: false,
+      isNew: false,
+      isBestseller: false,
+      ...badges,
+    },
+    tags: [],
     rating: null,
     ...overrides,
   };
@@ -150,5 +167,103 @@ describe("sectionAnchorId", () => {
   it("mantém o padrão de âncora #categoria-<slug> da Sprint 1", () => {
     expect(sectionAnchorId("lanches")).toBe("categoria-lanches");
     expect(sectionAnchorId("destaques")).toBe("categoria-destaques");
+  });
+});
+
+describe("preço promocional", () => {
+  it("sem promoção, o preço efetivo é o cheio e a economia é zero", () => {
+    const product = makeProduct({ priceCents: 2500 });
+
+    expect(isOnPromotion(product)).toBe(false);
+    expect(effectivePriceCents(product)).toBe(2500);
+    expect(savingsCents(product)).toBe(0);
+  });
+
+  it("com promoção, o preço efetivo é o promocional e a economia é a diferença", () => {
+    const product = makeProduct({ priceCents: 2500, promoPriceCents: 1990 });
+
+    expect(isOnPromotion(product)).toBe(true);
+    expect(effectivePriceCents(product)).toBe(1990);
+    expect(savingsCents(product)).toBe(510);
+  });
+});
+
+describe("selectPromotions", () => {
+  it("junta produtos com preço promocional de todas as categorias", () => {
+    const menu = makeMenu([
+      {
+        id: "c1",
+        name: "Lanches",
+        slug: "lanches",
+        products: [
+          makeProduct({ id: "p1", promoPriceCents: 1990 }),
+          makeProduct({ id: "p2" }),
+        ],
+      },
+      {
+        id: "c2",
+        name: "Bebidas",
+        slug: "bebidas",
+        products: [makeProduct({ id: "p3", promoPriceCents: 500 })],
+      },
+    ]);
+
+    expect(selectPromotions(menu).map((p) => p.id)).toEqual(["p1", "p3"]);
+  });
+
+  it("retorna vazio quando nada está em promoção — a seção some em vez de mentir", () => {
+    const menu = makeMenu([
+      { id: "c1", name: "Lanches", slug: "lanches", products: [makeProduct()] },
+    ]);
+
+    expect(selectPromotions(menu)).toEqual([]);
+  });
+});
+
+describe("selectBestsellers", () => {
+  it("usa os campeões de venda marcados pelo lojista", () => {
+    const menu = makeMenu([
+      {
+        id: "c1",
+        name: "Lanches",
+        slug: "lanches",
+        products: [
+          makeProduct({ id: "p1", badges: { isBestseller: true } }),
+          makeProduct({ id: "p2", badges: { isFeatured: true } }),
+        ],
+      },
+    ]);
+
+    const { products, isFallback } = selectBestsellers(menu);
+
+    expect(products.map((p) => p.id)).toEqual(["p1"]);
+    expect(isFallback).toBe(false);
+  });
+
+  it("cai nos destaques e sinaliza fallback quando ninguém foi marcado", () => {
+    const menu = makeMenu([
+      {
+        id: "c1",
+        name: "Lanches",
+        slug: "lanches",
+        products: [
+          makeProduct({ id: "p1", badges: { isFeatured: true } }),
+          makeProduct({ id: "p2" }),
+        ],
+      },
+    ]);
+
+    const { products, isFallback } = selectBestsellers(menu);
+
+    expect(products.map((p) => p.id)).toEqual(["p1"]);
+    expect(isFallback).toBe(true);
+  });
+
+  it("sem campeões nem destaques, devolve lista vazia", () => {
+    const menu = makeMenu([
+      { id: "c1", name: "Lanches", slug: "lanches", products: [makeProduct()] },
+    ]);
+
+    expect(selectBestsellers(menu).products).toEqual([]);
   });
 });

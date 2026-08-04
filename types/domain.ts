@@ -17,6 +17,7 @@ export type Tenant = {
 export type ProductBadges = {
   isFeatured: boolean;
   isNew: boolean;
+  isBestseller: boolean;
 };
 
 export type Product = {
@@ -26,10 +27,18 @@ export type Product = {
   description: string | null;
   /** Preço em centavos (inteiro). Formatação para BRL acontece na UI. */
   priceCents: number;
+  /**
+   * Preço promocional em centavos, quando o produto está em promoção.
+   * Sempre menor que `priceCents` (constraint no banco) — a UI mostra o
+   * preço cheio riscado ao lado.
+   */
+  promoPriceCents: number | null;
   imageUrl: string | null;
   prepTimeMinutes: number;
   isAvailable: boolean;
   badges: ProductBadges;
+  /** Rótulos livres definidos pelo lojista ("Artesanal", "Picante"...). */
+  tags: string[];
   /**
    * Nota média (0-5). Sem dado real ainda — não há avaliações no banco.
    * Sempre `null` por ora; a UI reserva o slot mas só exibe quando existir.

@@ -55,13 +55,16 @@ function toProduct(row: ProductRow): Product {
     name: row.name,
     description: row.description,
     priceCents: row.price_cents,
+    promoPriceCents: row.promo_price_cents,
     imageUrl: row.image_url,
     prepTimeMinutes: row.prep_time_minutes,
     isAvailable: row.is_available,
     badges: {
       isFeatured: row.is_featured,
       isNew: row.is_new,
+      isBestseller: row.is_bestseller,
     },
+    tags: row.tags ?? [],
     // Sem avaliações no banco ainda — slot reservado na UI para o futuro.
     rating: null,
   };

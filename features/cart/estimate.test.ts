@@ -11,10 +11,12 @@ function makeItem(prepTimeMinutes: number, quantity = 1): CartItem {
     name: "X-Burger",
     description: null,
     priceCents: 2500,
+    promoPriceCents: null,
     imageUrl: null,
     prepTimeMinutes,
     isAvailable: true,
-    badges: { isFeatured: false, isNew: false },
+    badges: { isFeatured: false, isNew: false, isBestseller: false },
+    tags: [],
     rating: null,
   };
   return { product, quantity, note: "" };

@@ -38,12 +38,15 @@ export async function findCategoriesWithProducts(
         name,
         description,
         price_cents,
+        promo_price_cents,
         image_url,
         prep_time_minutes,
         is_available,
         is_published,
         is_featured,
         is_new,
+        is_bestseller,
+        tags,
         sort_order
       )
     `,
