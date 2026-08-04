@@ -44,6 +44,10 @@ next-env.d.ts
 # graphify (generated knowledge graph, regenerate via /graphify)
 /graphify-out/
 
+# material de referência (mockups, cardápio em PDF) — insumo de design local,
+# não faz parte do código nem do deploy
+/referencias/
+
 # pnpm (project uses npm — package-lock.json is the source of truth)
 pnpm-lock.yaml
 pnpm-workspace.yaml
