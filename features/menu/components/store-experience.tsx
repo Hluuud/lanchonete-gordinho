@@ -9,6 +9,7 @@ import { MenuSection } from "@/features/menu/components/menu-section";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreHero } from "@/features/menu/components/store-hero";
 import { StorePromoBanner } from "@/features/menu/components/store-promo-banner";
+import { StoreValueProps } from "@/features/menu/components/store-value-props";
 import { StoreTopbar } from "@/features/menu/components/store-topbar";
 import { StoreAbout } from "@/features/menu/components/store-about";
 import { StoreContactSection } from "@/features/menu/components/store-contact-section";
@@ -100,7 +101,9 @@ export function StoreExperience({ menu }: { menu: Menu }) {
           onQueryChange={setRawQuery}
         />
 
-        <StoreHero />
+        <StoreHero avgPrepMinutes={avgPrepMinutes} />
+
+        <StoreValueProps />
 
         <StorePromoBanner />
 
