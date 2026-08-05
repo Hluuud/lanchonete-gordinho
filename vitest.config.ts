@@ -23,5 +23,13 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    // Placeholders para `lib/env.ts`, que valida (Zod) e lança na primeira
+    // importação — mesma lógica do CI (`ci.yml`, step de build): nenhum
+    // teste chama Supabase de fato, só precisa do parse não explodir para
+    // qualquer módulo que importe `lib/env` transitivamente.
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "test-anon-key",
+    },
   },
 });

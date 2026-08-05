@@ -13,6 +13,44 @@ export const brand = tokens;
 /** Alvos de splash screen do iOS (Android monta a sua a partir do manifest). */
 export const splashTargets = splashTargetsJson;
 
+export type BrandAssetVariant = "horizontal" | "mono" | "watermark";
+
+const BRAND_ASSET_PATHS: Record<BrandAssetVariant, string> = {
+  horizontal: "/brand/logo-horizontal.png",
+  mono: "/brand/logo-mono.png",
+  watermark: "/brand/watermark.png",
+};
+
+const BRAND_ASSET_SOURCE_KEYS: Record<BrandAssetVariant, string> = {
+  horizontal: "logoHorizontal",
+  mono: "logoMono",
+  watermark: "watermark",
+};
+
+/**
+ * Resolve o caminho público de uma variante de marca a partir de um
+ * `tokens.source` arbitrário. Extraído de `brandAsset()` só para ser
+ * testável sem depender do singleton `tokens.json` — a decisão em si
+ * (`fonte configurada?`) é o que importa, não o JSON real.
+ */
+export function resolveBrandAsset(
+  source: Record<string, string | null | undefined>,
+  variant: BrandAssetVariant,
+): string | null {
+  const sourceKey = BRAND_ASSET_SOURCE_KEYS[variant];
+  return source[sourceKey] ? BRAND_ASSET_PATHS[variant] : null;
+}
+
+/**
+ * Caminho público de uma variante de marca gerada por `pnpm brand:assets`
+ * (`scripts/generate-brand-assets.mjs`), ou `null` se a fonte daquela
+ * variante nunca foi configurada em `tokens.source` — quem consome deve
+ * degradar para o selo (ver `components/brand-logo.tsx`).
+ */
+export function brandAsset(variant: BrandAssetVariant): string | null {
+  return resolveBrandAsset(tokens.source, variant);
+}
+
 /**
  * Caminho do PNG de splash de um alvo. Mesmo cálculo do gerador — se mudar
  * aqui, mudar lá.

@@ -3,13 +3,18 @@
  *
  * Entrada: `public/brand/logo.png` + `lib/brand/tokens.json` + `lib/brand/splash-targets.json`.
  * Saída: favicon, ícones PWA, ícone Apple, splash screens do iOS e imagem
- * Open Graph padrão.
+ * Open Graph padrão — sempre. Além disso, `tokens.source` aceita três fontes
+ * opcionais (`logoHorizontal`, `logoMono`, `watermark`): quando apontadas
+ * para um arquivo existente, geram `public/brand/{logo-horizontal,logo-mono,
+ * watermark}.png`; ausentes ou apontando para um arquivo que não existe, são
+ * puladas com aviso — o pipeline nunca falha por falta de variante.
  *
  * Rodar `pnpm brand:assets` depois de trocar a logo ou uma cor. Os arquivos
  * gerados são commitados: o build (Vercel) não roda este script.
  *
  * Uso: node scripts/generate-brand-assets.mjs
  */
+import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -42,12 +47,21 @@ async function write(relativePath, buffer) {
  * opaco. Sobre o marrom da marca (ou numa aba escura) esse quadrado aparece
  * como uma moldura suja — então recortamos a moldura branca (`trim`) e
  * aplicamos uma máscara circular, devolvendo um PNG com fundo transparente.
+ *
+ * `sourcePath`/`mask` existem para as variantes opcionais (logo horizontal,
+ * monocromática, marca d'água): todo chamador existente usa os defaults
+ * (`logoPath`, máscara circular) e continua produzindo exatamente o mesmo
+ * PNG de antes.
  */
-async function logo(size) {
-  const trimmed = await sharp(logoPath)
+async function logo(size, { sourcePath = logoPath, mask = "circle" } = {}) {
+  const trimmed = await sharp(sourcePath)
     .trim({ background: "#ffffff", threshold: 12 })
     .resize(size, size, { fit: "contain", background: "#00000000" })
     .toBuffer();
+
+  if (mask !== "circle") {
+    return sharp(trimmed).png({ compressionLevel: 9 }).toBuffer();
+  }
 
   const circle = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="#fff" /></svg>`,
@@ -57,6 +71,42 @@ async function logo(size) {
     .composite([{ input: circle, blend: "dest-in" }])
     .png({ compressionLevel: 9 })
     .toBuffer();
+}
+
+/**
+ * Variante retangular (não-quadrada) de uma fonte de marca — lockup
+ * horizontal, versão monocromática ou marca d'água. Sem máscara circular:
+ * uma logo horizontal recortada em círculo perderia o texto lateral. Mesmo
+ * `trim()` de moldura branca da `logo()`, porque não sabemos de antemão se a
+ * arte enviada já vem com fundo transparente.
+ */
+async function variantAsset(sourcePath, { width, height }) {
+  const trimmed = await sharp(sourcePath)
+    .trim({ background: "#ffffff", threshold: 12 })
+    .resize(width, height, { fit: "contain", background: "#00000000" })
+    .toBuffer();
+
+  return sharp(trimmed).png({ compressionLevel: 9 }).toBuffer();
+}
+
+/**
+ * Resolve uma fonte opcional de `tokens.source` (`logoHorizontal`,
+ * `logoMono`, `watermark`). Ausente ou apontando para um arquivo que não
+ * existe: `null` + aviso — nunca derruba o script por falta de material.
+ */
+function resolveOptionalSource(key) {
+  const relativePath = tokens.source[key];
+  if (!relativePath) return null;
+
+  const absolutePath = join(root, relativePath);
+  if (!existsSync(absolutePath)) {
+    console.warn(
+      `Aviso: tokens.source.${key} aponta para "${relativePath}", mas o arquivo não existe — pulando essa variante.`,
+    );
+    return null;
+  }
+
+  return absolutePath;
 }
 
 /**
@@ -240,6 +290,32 @@ for (const target of splashTargets) {
 // --- Open Graph ----------------------------------------------------------
 
 await write("public/brand/og-default.png", await openGraphImage());
+
+// --- Variantes opcionais de marca ----------------------------------------
+
+const horizontalSource = resolveOptionalSource("logoHorizontal");
+if (horizontalSource) {
+  await write(
+    "public/brand/logo-horizontal.png",
+    await variantAsset(horizontalSource, { width: 960, height: 280 }),
+  );
+}
+
+const monoSource = resolveOptionalSource("logoMono");
+if (monoSource) {
+  await write(
+    "public/brand/logo-mono.png",
+    await variantAsset(monoSource, { width: 512, height: 512 }),
+  );
+}
+
+const watermarkSource = resolveOptionalSource("watermark");
+if (watermarkSource) {
+  await write(
+    "public/brand/watermark.png",
+    await variantAsset(watermarkSource, { width: 1024, height: 1024 }),
+  );
+}
 
 console.log(`${written.length} assets gerados:`);
 for (const line of written) console.log(`  ${line}`);

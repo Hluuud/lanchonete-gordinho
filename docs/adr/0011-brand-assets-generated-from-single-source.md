@@ -13,8 +13,7 @@ Um link da loja colado no WhatsApp aparecia como texto puro, e a aba do
 navegador mostrava o ícone genérico do Next.
 
 Ao mesmo tempo, a logo atual (`public/brand/logo.png`, um selo circular feito
-no Canva) é **provisória** — o lojista já sinalizou que ela vai evoluir. Ela
-também tem um erro de arte: o texto do selo diz "LANCHONTE", sem o segundo E.
+no Canva) é **provisória** — o lojista já sinalizou que ela vai evoluir.
 
 O conjunto completo de assets é grande: favicon `.ico` e `.png`, ícone Apple,
 ícones PWA 192/512, ícone `maskable`, 11 splash screens de iOS e a imagem Open
@@ -85,3 +84,16 @@ registrado no backlog.
   nome, descrição e cores do PWA nunca divergem dos assets.
 - Preview de compartilhamento por página (produto, promoção) fica em aberto e
   vai exigir `ImageResponse` — a decisão aqui não fecha essa porta.
+
+## Atualização — Sprint 8, Fase 1 (variantes de marca)
+
+`tokens.source` passou de um único caminho (`logo`) para aceitar três fontes
+opcionais: `logoHorizontal`, `logoMono`, `watermark`. O gerador continua
+recusando falhar por falta de material — fonte ausente ou apontando para um
+arquivo inexistente é pulada com aviso, não interrompe o script. As
+variantes não levam a máscara circular do selo (destruiria um lockup
+horizontal), só `resize({fit: "contain"})` com respiro transparente.
+
+Isso não muda a decisão original: ainda é geração offline, `sharp`, saída
+commitada. Só amplia o vocabulário de "uma imagem-fonte" para "até quatro",
+cada uma opcional e independente.

@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { brandAsset } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 const LOGO_SIZES = {
@@ -12,20 +13,47 @@ const LOGO_SIZES = {
 type BrandLogoSize = keyof typeof LOGO_SIZES;
 
 /**
- * Logo oficial da marca (public/brand/logo.png). Fonte única para exibir a
- * logo em sidebar, topbar e telas de acompanhamento — nunca referenciar o
- * arquivo diretamente fora daqui.
+ * `"seal"` é o selo circular de sempre (`public/brand/logo.png`). `"horizontal"`
+ * e `"mono"` pedem a variante gerada por `pnpm brand:assets` a partir de
+ * `tokens.source` — enquanto essa fonte não existir (`brandAsset()` volta
+ * `null`), o componente degrada para o selo, nunca quebra.
+ */
+type BrandLogoVariant = "seal" | "horizontal" | "mono";
+
+/**
+ * Logo oficial da marca. Fonte única para exibir a logo em sidebar, topbar e
+ * telas de acompanhamento — nunca referenciar o arquivo diretamente fora
+ * daqui.
  */
 export function BrandLogo({
   size = "md",
   className,
   priority = false,
+  variant = "seal",
 }: {
   size?: BrandLogoSize;
   className?: string;
   priority?: boolean;
+  variant?: BrandLogoVariant;
 }) {
   const px = LOGO_SIZES[size];
+
+  if (variant !== "seal") {
+    const src = brandAsset(variant);
+    if (src) {
+      const width = variant === "horizontal" ? px * 3 : px;
+      return (
+        <Image
+          src={src}
+          alt="Logo da Lanchonete do Gordinho"
+          width={width}
+          height={px}
+          priority={priority}
+          className={cn("object-contain", className)}
+        />
+      );
+    }
+  }
 
   return (
     <Image

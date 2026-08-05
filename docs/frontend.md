@@ -219,6 +219,28 @@ Roda offline, em ~2 s, e sobrescreve:
 Os arquivos gerados **são commitados**: o build da Vercel não roda o script
 (e não teria as fontes do sistema para o texto do Open Graph).
 
+### Variantes de marca (Sprint 8, Fase 1)
+
+Além do selo, `tokens.source` aceita três fontes opcionais —
+`logoHorizontal`, `logoMono`, `watermark` — cada uma apontando para um PNG
+em `public/brand/`. Quando configurada e o arquivo existe no disco, o
+gerador escreve a variante correspondente (`logo-horizontal.png`, `logo-mono.png`,
+`watermark.png`); ausente ou apontando para um arquivo inexistente, é pulada
+com um aviso no console — o script nunca falha por falta de material, e
+rodá-lo hoje (sem nenhuma fonte extra configurada) continua produzindo
+exatamente os mesmos 18 arquivos de antes.
+
+Essas variantes **não passam pela máscara circular** do selo: um lockup
+horizontal recortado em círculo perderia o texto lateral. `resize({fit:
+"contain"})` preserva a proporção original da arte dentro do canvas de
+saída, com respiro transparente.
+
+No app, `brandAsset(variant)` (`lib/brand/index.ts`) devolve o caminho
+público de uma variante ou `null` se a fonte nunca foi configurada;
+`<BrandLogo variant="horizontal" | "mono">` (`components/brand-logo.tsx`)
+já degrada para o selo quando `brandAsset()` volta `null` — nenhum
+consumidor precisa checar isso na mão.
+
 Dois detalhes do gerador que não são óbvios:
 
 - a logo original é um selo circular dentro de um **quadrado branco opaco**;
