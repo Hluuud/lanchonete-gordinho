@@ -11,7 +11,10 @@ import {
   buildComboSuggestions,
   type ComboSuggestion,
 } from "@/features/menu/combo-suggestions";
+import { Reveal } from "@/features/menu/components/reveal";
 import type { Menu } from "@/types/domain";
+
+const STAGGER_STEP_S = 0.07;
 
 /**
  * Seção `#combos`: sugestões montadas com produtos reais do cardápio (ver
@@ -31,27 +34,39 @@ export function StoreCombos({ menu }: { menu: Menu }) {
       className="scroll-mt-32 bg-secondary/60 px-4 py-12 lg:scroll-mt-20 lg:px-8 lg:py-16"
     >
       <div className="mx-auto w-full max-w-6xl">
-        <div className="flex items-center gap-3">
-          <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-            <Package className="size-6" aria-hidden />
-          </span>
-          <h2
-            id="titulo-combos"
-            className="font-display text-3xl leading-none tracking-tight uppercase sm:text-4xl"
-          >
-            Combos
-          </h2>
-        </div>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
-          Junte os favoritos da casa e peça de uma vez só. O valor é a soma dos
-          itens — o que você vê aqui é o que aparece no carrinho.
-        </p>
+        <Reveal>
+          <div className="flex items-center gap-3">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+              <Package className="size-6" aria-hidden />
+            </span>
+            <h2
+              id="titulo-combos"
+              className="font-display text-3xl leading-none tracking-tight uppercase sm:text-4xl"
+            >
+              Combos
+            </h2>
+          </div>
+          <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            Junte os favoritos da casa e peça de uma vez só. O valor é a soma
+            dos itens — o que você vê aqui é o que aparece no carrinho.
+          </p>
+        </Reveal>
 
-        <ul className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {combos.map((combo) => (
-            <ComboCard key={combo.id} combo={combo} />
+        <div
+          role="list"
+          className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+        >
+          {combos.map((combo, index) => (
+            <Reveal
+              key={combo.id}
+              role="listitem"
+              delay={index * STAGGER_STEP_S}
+              className="h-full"
+            >
+              <ComboCard combo={combo} />
+            </Reveal>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );
@@ -69,7 +84,7 @@ function ComboCard({ combo }: { combo: ComboSuggestion }) {
   }
 
   return (
-    <li className="flex flex-col rounded-3xl border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
+    <div className="flex h-full flex-col rounded-3xl border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
       <h3 className="font-display text-2xl leading-none tracking-tight uppercase">
         {combo.name}
       </h3>
@@ -105,6 +120,6 @@ function ComboCard({ combo }: { combo: ComboSuggestion }) {
           Adicionar tudo
         </Button>
       </div>
-    </li>
+    </div>
   );
 }

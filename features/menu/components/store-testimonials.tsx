@@ -68,7 +68,7 @@ export function StoreTestimonials() {
             key={testimonial.id}
             role="listitem"
             delay={index * 0.07}
-            className="flex h-full flex-col gap-4 rounded-2xl border bg-card p-6"
+            className="flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
           >
             <StarRating rating={testimonial.rating} />
             <p className="text-sm text-muted-foreground">

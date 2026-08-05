@@ -1,6 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import { ArrowRight, Clock } from "lucide-react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/use-cart";
@@ -8,6 +15,9 @@ import { HeroMedia } from "@/features/menu/components/hero-media";
 import { StoreOpenBadge } from "@/features/menu/components/store-open-badge";
 import { HERO_MEDIA, hasHeroMedia } from "@/features/menu/media";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
+
+/** Deslocamento máximo do parallax, em px — sutil, não uma cortina se abrindo. */
+const PARALLAX_RANGE_PX = 40;
 
 /** Título quebrado em três para destacar o verbo em vermelho, como na fachada. */
 const HERO_TITLE_PRE = "O hambúrguer que vai";
@@ -37,6 +47,18 @@ export function StoreHero({
 } = {}) {
   const { setOpen } = useCart();
   const cinematic = hasHeroMedia(HERO_MEDIA);
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const mediaY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, prefersReducedMotion ? 0 : PARALLAX_RANGE_PX],
+  );
 
   const content = (
     <div className="flex flex-col items-start gap-5">
@@ -86,13 +108,21 @@ export function StoreHero({
   if (cinematic) {
     return (
       <section
+        ref={sectionRef}
         id="home"
         className="relative isolate overflow-hidden bg-surface-dark text-surface-dark-foreground lg:scroll-mt-20"
       >
-        <HeroMedia
-          media={HERO_MEDIA}
-          className="absolute inset-0 rounded-none"
-        />
+        {/* `-inset-y-10` dá respiro pro deslocamento do parallax não expor a
+            borda da mídia — `PARALLAX_RANGE_PX` (40) cabe folgado nos 2.5rem. */}
+        <motion.div
+          className="absolute inset-x-0 -inset-y-10"
+          style={{ y: mediaY }}
+        >
+          <HeroMedia
+            media={HERO_MEDIA}
+            className="absolute inset-0 rounded-none"
+          />
+        </motion.div>
         {/* Gradiente de legibilidade: o véu de `HeroMedia` é uniforme, este
             concentra o escurecimento na base, onde o texto fica. */}
         <div

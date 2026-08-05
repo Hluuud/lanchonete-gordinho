@@ -124,7 +124,7 @@ export function StoreAbout() {
               key={title}
               role="listitem"
               delay={index * 0.07}
-              className="flex h-full flex-col gap-3 rounded-2xl border bg-card p-6 transition-shadow hover:shadow-lg"
+              className="flex h-full flex-col gap-3 rounded-2xl border bg-card p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
             >
               <span className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 <Icon className="size-5" aria-hidden />
@@ -146,7 +146,7 @@ export function StoreAbout() {
               key={title}
               role="listitem"
               delay={index * 0.07}
-              className="flex items-start gap-3 rounded-2xl bg-secondary p-5"
+              className="flex items-start gap-3 rounded-2xl bg-secondary p-5 transition-colors hover:bg-secondary/70"
             >
               <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Icon className="size-5" aria-hidden />

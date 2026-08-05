@@ -3,6 +3,7 @@
 import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Reveal } from "@/features/menu/components/reveal";
 import { WhatsAppIcon } from "@/features/menu/social-icons";
 import { WHATSAPP_LINK } from "@/features/menu/contact-info";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
@@ -27,7 +28,7 @@ export function StorePromoBanner() {
       aria-labelledby="titulo-promocoes"
       className="scroll-mt-32 bg-surface-dark px-4 py-12 text-surface-dark-foreground lg:scroll-mt-20 lg:px-8 lg:py-16"
     >
-      <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+      <Reveal className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
         <span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <Sparkles className="size-7" aria-hidden />
         </span>
@@ -57,7 +58,7 @@ export function StorePromoBanner() {
             Ver Cardápio
           </Button>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

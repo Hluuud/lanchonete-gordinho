@@ -1,6 +1,7 @@
 import { Clock, MapPin, Navigation, Phone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Reveal } from "@/features/menu/components/reveal";
 import { SocialLink } from "@/features/menu/components/social-link";
 import { StoreOpenBadge } from "@/features/menu/components/store-open-badge";
 import {
@@ -49,7 +50,7 @@ export function StoreContactSection() {
         Onde estamos
       </h2>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-2">
+      <Reveal className="mt-8 grid gap-8 lg:grid-cols-2">
         <div className="overflow-hidden rounded-3xl border">
           <iframe
             src={MAPS_EMBED_LINK}
@@ -170,7 +171,7 @@ export function StoreContactSection() {
             </Button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
