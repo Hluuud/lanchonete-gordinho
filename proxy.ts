@@ -57,6 +57,9 @@ export const config = {
     // externos podem pingar essas rotas com alta frequência, e elas não
     // usam sessão nenhuma; revalidar cookie de auth a cada ping seria
     // trabalho descartado.
-    "/((?!_next/static|_next/image|favicon.ico|health$|ready$|live$|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // A lista de extensões cobre também os assets de marca (ícones, splash,
+    // manifest, vídeo do hero): são públicos e sem sessão — revalidar cookie
+    // neles é round-trip jogado fora.
+    "/((?!_next/static|_next/image|favicon.ico|health$|ready$|live$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|webmanifest|mp4|webm)$).*)",
   ],
 };

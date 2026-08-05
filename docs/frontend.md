@@ -178,3 +178,67 @@ Storage.
   (categorias/produtos estendem os repositories existentes; módulos com
   tabelas totalmente novas, como Adicionais/Combos, ganham arquivo de
   repository próprio).
+
+---
+
+## Assets de marca: favicon, PWA e Open Graph (Sprint 8)
+
+Toda a identidade "fora da página" — o ícone da aba, o ícone na home screen,
+a splash screen do app instalado e o card de compartilhamento no WhatsApp —
+é derivada por script de **uma única imagem-fonte**, `public/brand/logo.png`.
+
+### Fonte da verdade
+
+| Arquivo | Papel |
+| --- | --- |
+| `lib/brand/tokens.json` | Nome, short name, descrição, tagline, cores hex da marca |
+| `lib/brand/splash-targets.json` | Resoluções de iPhone/iPad que ganham splash |
+| `lib/brand/index.ts` | Exporta os JSONs tipados + `siteUrl()` e helpers de splash |
+| `scripts/generate-brand-assets.mjs` | Lê os JSONs e a logo, escreve todos os assets |
+
+As cores hex em `tokens.json` são a conversão para sRGB dos tokens `oklch`
+de `styles/globals.css` (`--primary`, `--accent`, `--surface-dark`,
+`--background`). CSS continua em `oklch`; o gerador precisa de hex porque
+`sharp`/SVG não interpolam `oklch`. **Se a paleta mudar em `globals.css`,
+atualizar `tokens.json` junto.**
+
+### Regenerar
+
+```bash
+pnpm brand:assets
+```
+
+Roda offline, em ~2 s, e sobrescreve:
+
+- `app/icon.png` (favicon 512, transparente) e `public/favicon.ico` (32);
+- `app/apple-icon.png` (180, fundo opaco — o iOS não respeita alpha);
+- `public/icons/icon-{192,512}.png` e `icon-maskable-512.png`;
+- `public/splash/apple-splash-*.png` (11 resoluções, retrato);
+- `public/brand/og-default.png` (1200×630).
+
+Os arquivos gerados **são commitados**: o build da Vercel não roda o script
+(e não teria as fontes do sistema para o texto do Open Graph).
+
+Dois detalhes do gerador que não são óbvios:
+
+- a logo original é um selo circular dentro de um **quadrado branco opaco**;
+  o script faz `trim()` da moldura e aplica máscara circular, senão o ícone
+  aparece como um quadrado branco na aba escura e sobre o fundo da splash;
+- o ícone `maskable` usa só 60% do lado porque o Android recorta as bordas
+  em círculo/squircle — os outros usam ~86%.
+
+### Onde isso é declarado
+
+- `app/manifest.ts` → `/manifest.webmanifest` (Android monta a splash sozinho
+  a partir de `name` + `background_color` + ícone 512);
+- `app/layout.tsx` → `metadata.icons`, `openGraph`, `twitter`, `appleWebApp`
+  e as tags `<link rel="apple-touch-startup-image">` (o Safari só aceita
+  splash por `<link>` com media query casando o aparelho exato).
+
+`metadataBase` vem de `siteUrl()`: `NEXT_PUBLIC_SITE_URL` → `VERCEL_URL` →
+`localhost:3000`. Sem ele o Next emite `og:image` relativo e nenhuma rede
+social consegue buscar o preview.
+
+Página que merecer preview próprio (um produto, uma promoção) sobrescreve
+`openGraph.images` no seu próprio `metadata` — o default do layout continua
+valendo para todo o resto.

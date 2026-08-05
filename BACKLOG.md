@@ -5,6 +5,53 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Sprint 8 — Conteúdo Visual
+
+A Fase 0 (infraestrutura de assets: favicon, ícones PWA, splash, Open Graph)
+está entregue — ver `CHANGELOG.md` e `docs/frontend.md`. O que resta é
+**material bruto**, não código: sem os arquivos, todo o pipeline continua
+derivando de uma logo provisória.
+
+### Bloqueado por material do lojista
+
+- ☐ **Logo definitiva.** `public/brand/logo.png` (500×500, selo circular
+  feito no Canva) é a fonte de todos os ícones gerados — inclusive o texto
+  do selo diz "LANCHONTE", sem o segundo E. Substituir o arquivo (de
+  preferência por um PNG quadrado com fundo transparente, ≥1024 px) e rodar
+  `pnpm brand:assets` regenera os 18 assets. Se a arte vier em SVG, trocar
+  a fonte e simplificar o `trim()`/máscara circular do gerador.
+- ☐ **Fotos profissionais dos produtos.** O upload já existe
+  (`components/image-upload.tsx` → bucket `store-assets`); falta o material.
+  Sem foto, o card cai no placeholder gráfico.
+- ☐ **Vídeo em loop e pôster do Hero.** `HERO_VIDEO_URL`/`HERO_POSTER_URL`
+  (`features/menu/media.ts`) seguem nulos; `HeroMedia` já trata os três
+  estados (vídeo mudo em autoplay → pôster → placeholder) e respeita
+  `prefers-reduced-motion`. Preferir MP4 H.264 curto (≤8 s) e sem áudio.
+- ☐ **Fotos de fachada e do salão** para a seção Sobre — hoje placeholders
+  declarados.
+- ☐ **Ícones próprios.** A loja usa `lucide-react` inteiro. Um set autoral
+  (categorias, formas de pagamento) só faz sentido depois da logo nova, para
+  herdar o traço dela.
+
+### Depende de código, não de material
+
+- ☐ **Open Graph por página.** Hoje há uma imagem única
+  (`/brand/og-default.png`) para o site inteiro. Preview por produto ou
+  promoção pede `opengraph-image.tsx` dinâmico (`ImageResponse`) na rota —
+  exige embutir a fonte Anton como arquivo, já que `next/font` não funciona
+  dentro do `ImageResponse`.
+- ☐ **Splash de iOS só em retrato.** Em paisagem o Safari cai no branco.
+  Cobrir exige dobrar as 11 imagens em `lib/brand/splash-targets.json`;
+  adiado porque o app é declaradamente `orientation: portrait`.
+- ☐ **Service worker / offline.** O manifest torna o app instalável, mas não
+  há cache offline — abrir sem rede mostra a página de erro do navegador.
+  Decisão própria (Workbox vs. handler manual), não é pré-requisito de
+  instalação.
+- ☐ **Cores duplicadas entre `globals.css` (oklch) e `tokens.json` (hex).**
+  O gerador não interpola `oklch`; a conversão foi feita uma vez, à mão. Se
+  a paleta mudar, os dois arquivos precisam mudar juntos — não há teste que
+  detecte a divergência.
+
 ## Sprint 7 — Identidade Visual da Área do Cliente
 
 Ver `docs/adr/0010-storefront-brand-identity.md` e o Sprint Report em

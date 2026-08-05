@@ -4,6 +4,36 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 8, Fase 0: Infraestrutura de assets de marca
+
+Camada de identidade "fora da página": ícone da aba, ícone na home screen,
+splash do PWA e card de compartilhamento. Nenhuma migration, nenhuma
+alteração de fluxo. Todos os assets derivam de `public/brand/logo.png` — a
+logo definitiva substitui esse arquivo e um comando regenera o conjunto.
+
+- **Gerador (`scripts/generate-brand-assets.mjs`, `pnpm brand:assets`).**
+  `sharp` produz 18 arquivos a partir da logo: `app/icon.png`,
+  `public/favicon.ico`, `app/apple-icon.png`, `public/icons/icon-{192,512}.png`,
+  `icon-maskable-512.png`, 11 splash screens de iOS e
+  `public/brand/og-default.png` (1200×630). Recorta a moldura branca da logo
+  original e aplica máscara circular — sem isso o ícone vira um quadrado
+  branco na aba escura.
+- **Fonte da verdade (`lib/brand/`).** `tokens.json` (nome, tagline, cores
+  hex convertidas dos tokens `oklch` de `globals.css`) e
+  `splash-targets.json` são lidos tanto pelo gerador (via `fs`) quanto pelo
+  app (import tipado) — uma cor muda em um lugar só.
+- **Manifest PWA (`app/manifest.ts`).** `/manifest.webmanifest` com
+  `display: standalone`, `start_url: /` (quem instala é o cliente, não o
+  admin), `background_color` no marrom da marca e ícone `maskable`.
+- **Metadata (`app/layout.tsx`).** `metadataBase`, `openGraph`, `twitter`
+  (`summary_large_image`), `icons`, `appleWebApp` e as tags
+  `apple-touch-startup-image` por resolução.
+- **`NEXT_PUBLIC_SITE_URL`** (opcional) em `lib/env.ts` e `.env.example`:
+  base das URLs absolutas de Open Graph. Sem ela, cai em `VERCEL_URL` ou
+  `localhost`.
+- **Proxy.** O matcher passa a excluir `.ico`, `.webmanifest`, `.avif`,
+  `.mp4` e `.webm` — assets públicos não precisam de revalidação de sessão.
+
 ### Changed — Sprint 7: Identidade Visual da Área do Cliente
 
 Sprint exclusivamente de frontend da loja. Nenhuma migration, nenhuma

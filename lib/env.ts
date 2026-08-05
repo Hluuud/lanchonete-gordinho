@@ -15,6 +15,14 @@ const clientSchema = z.object({
   // Opcional: Sentry funciona como no-op sem DSN (ex.: ambiente local sem
   // conta configurada). O DSN em si não é segredo — seguro no client.
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+  // Domínio público da loja. Usado como `metadataBase` para gerar URL absoluta
+  // de imagem Open Graph. Ausente = cai no domínio da Vercel ou em localhost.
+  // O `preprocess` trata `NEXT_PUBLIC_SITE_URL=` (linha vazia copiada do
+  // .env.example) como ausente, em vez de falhar na validação de URL.
+  NEXT_PUBLIC_SITE_URL: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().url().optional(),
+  ),
 });
 
 /**
@@ -26,6 +34,7 @@ export const env = clientSchema.parse({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   NEXT_PUBLIC_DEFAULT_TENANT_SLUG: process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG,
   NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 });
 
 /**
