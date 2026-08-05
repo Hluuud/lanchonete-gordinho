@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   images: {
     // Fotos de produtos serão servidas pelo Supabase Storage (Fase 1).
     remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }],
+    // Default do Next é só WebP; AVIF primeiro porque é menor pra mesma
+    // qualidade. O otimizador serve o primeiro que o `Accept` do browser
+    // aceitar (Sprint 8, Fase 2 — galeria e pôster do Hero em mídia real).
+    formats: ["image/avif", "image/webp"],
   },
 };
 
