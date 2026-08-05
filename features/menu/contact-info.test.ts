@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   ADDRESS,
+  ADDRESS_PARTS,
   CNPJ,
   EMAIL,
   FACEBOOK_LINK,
@@ -11,6 +12,7 @@ import {
   PHONE_DISPLAY,
   PHONE_TEL_LINK,
   SLOGAN,
+  TIKTOK_LINK,
   WHATSAPP_LINK,
 } from "@/features/menu/contact-info";
 
@@ -46,5 +48,15 @@ describe("contact-info", () => {
         encodeURIComponent(ADDRESS) +
         "&output=embed",
     );
+  });
+
+  it("ADDRESS é derivado de ADDRESS_PARTS, sem divergir", () => {
+    expect(ADDRESS).toBe(
+      `${ADDRESS_PARTS.street}, ${ADDRESS_PARTS.number}, ${ADDRESS_PARTS.neighborhood}, ${ADDRESS_PARTS.city} - ${ADDRESS_PARTS.state}`,
+    );
+  });
+
+  it("TikTok ainda não tem perfil informado — link null", () => {
+    expect(TIKTOK_LINK).toBeNull();
   });
 });

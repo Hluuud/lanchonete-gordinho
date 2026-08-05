@@ -9,12 +9,14 @@ import {
   PHONE_DISPLAY,
   PHONE_TEL_LINK,
   SLOGAN,
+  TIKTOK_LINK,
   WHATSAPP_LINK,
 } from "@/features/menu/contact-info";
 import { STORE_NAV_ITEMS } from "@/features/menu/nav";
 import {
   FacebookIcon,
   InstagramIcon,
+  TikTokIcon,
   WhatsAppIcon,
 } from "@/features/menu/social-icons";
 
@@ -92,6 +94,15 @@ export function StoreFooter() {
               className="size-10 border border-surface-dark-border"
               icon={<FacebookIcon className="size-4" />}
             />
+            {TIKTOK_LINK && (
+              <SocialLink
+                href={TIKTOK_LINK}
+                label="TikTok"
+                tone="dark"
+                className="size-10 border border-surface-dark-border"
+                icon={<TikTokIcon className="size-4" />}
+              />
+            )}
           </div>
         </div>
       </div>

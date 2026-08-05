@@ -14,13 +14,33 @@ function digitsOnly(value: string): string {
 
 export const SLOGAN = "Sabor que aquece, feito com carinho";
 
-export const ADDRESS = "Avenida 1, 548, Centro, Analândia - SP";
+/**
+ * Partes estruturadas do endereço — fonte única para `ADDRESS` (texto livre,
+ * exibição) e para o `PostalAddress` do JSON-LD (Sprint 8, Fase 8). Sem CEP:
+ * não temos o dado, e inventar quebraria a mesma regra de honestidade da UI
+ * que já rege o resto da loja.
+ */
+export const ADDRESS_PARTS = {
+  street: "Avenida 1",
+  number: "548",
+  neighborhood: "Centro",
+  city: "Analândia",
+  state: "SP",
+} as const;
+
+export const ADDRESS = `${ADDRESS_PARTS.street}, ${ADDRESS_PARTS.number}, ${ADDRESS_PARTS.neighborhood}, ${ADDRESS_PARTS.city} - ${ADDRESS_PARTS.state}`;
 export const PHONE_DISPLAY = "(19) 99727-3897";
 export const EMAIL = "edvaldolanchonete@hotmail.com";
 export const CNPJ = "09.068.710/0001-28";
 /** Instagram/Facebook pessoais do proprietário — únicos disponíveis hoje. */
 export const INSTAGRAM_LINK = "https://www.instagram.com/andre_edvaldo/";
 export const FACEBOOK_LINK = "https://www.facebook.com/edvaldo.andre";
+/**
+ * Sem perfil informado pelo lojista nem coluna em `tenants` (BACKLOG.md) —
+ * `null` até existir. Consumidores (`store-contact-section.tsx`,
+ * `store-footer.tsx`) só renderizam o ícone quando isto não for `null`.
+ */
+export const TIKTOK_LINK: string | null = null;
 
 export const PHONE_TEL_LINK = `tel:+55${digitsOnly(PHONE_DISPLAY)}`;
 export const WHATSAPP_LINK = `https://wa.me/55${digitsOnly(PHONE_DISPLAY)}`;

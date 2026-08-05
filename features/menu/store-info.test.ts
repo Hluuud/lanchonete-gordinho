@@ -4,6 +4,7 @@ import {
   BUSINESS_HOURS,
   getAverageMenuPrepTimeMinutes,
   getStoreOpenState,
+  getWeeklyHours,
   type DayHours,
 } from "@/features/menu/store-info";
 import type { Menu, Product } from "@/types/domain";
@@ -123,5 +124,28 @@ describe("BUSINESS_HOURS", () => {
     for (const day of [0, 2, 3, 4, 5, 6]) {
       expect(BUSINESS_HOURS[day]).toEqual({ open: "13:00", close: "00:00" });
     }
+  });
+});
+
+describe("getWeeklyHours", () => {
+  it("sete dias, na ordem de Date#getDay (domingo primeiro)", () => {
+    const week = getWeeklyHours(HOURS);
+
+    expect(week).toHaveLength(7);
+    expect(week.map((entry) => entry.day)).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    expect(week[0].label).toBe("Domingo");
+    expect(week[6].label).toBe("Sábado");
+  });
+
+  it("reflete o horário de cada dia, incluindo os fechados", () => {
+    const week = getWeeklyHours(HOURS);
+
+    expect(week[1].hours).toBeNull(); // segunda
+    expect(week[2].hours).toEqual({ open: "18:00", close: "23:00" }); // terça
+  });
+
+  it("usa BUSINESS_HOURS por padrão", () => {
+    const week = getWeeklyHours();
+    expect(week.find((entry) => entry.day === 1)?.hours).toBeNull();
   });
 });

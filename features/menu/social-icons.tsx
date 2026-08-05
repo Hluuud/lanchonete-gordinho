@@ -63,3 +63,23 @@ export function FacebookIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/** Nota musical com o traço duplo do TikTok — estrutura pronta, sem uso ainda (`TIKTOK_LINK` é `null`). */
+export function TikTokIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M9 18a4 4 0 1 0 4 4V2" />
+      <path d="M13 6a5 5 0 0 0 5 5" />
+      <path d="M18 8v3a7 7 0 0 1-5-2" />
+    </svg>
+  );
+}

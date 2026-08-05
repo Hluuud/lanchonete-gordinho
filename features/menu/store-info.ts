@@ -67,6 +67,38 @@ export function getStoreOpenState(
   return { isOpen: false, label: "Fechado hoje" };
 }
 
+const WEEKDAY_LABELS = [
+  "Domingo",
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
+];
+
+export type WeeklyHoursEntry = {
+  /** `Date#getDay()` (0 = domingo). */
+  day: number;
+  label: string;
+  hours: DayHours;
+};
+
+/**
+ * A semana inteira, na ordem de `Date#getDay()` (domingo primeiro) — para o
+ * card de horário em `#contato` mostrar todos os dias, não só o de hoje
+ * (isso continua sendo o `StoreOpenBadge`).
+ */
+export function getWeeklyHours(
+  hours: Record<number, DayHours> = BUSINESS_HOURS,
+): WeeklyHoursEntry[] {
+  return WEEKDAY_LABELS.map((label, day) => ({
+    day,
+    label,
+    hours: hours[day] ?? null,
+  }));
+}
+
 /**
  * Tempo médio de preparo do cardápio (produtos disponíveis), arredondado ao
  * múltiplo de 5 mais próximo — exibido na barra superior como expectativa
