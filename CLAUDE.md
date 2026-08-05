@@ -34,15 +34,25 @@ Antes de iniciar qualquer implementação:
 
 ---
 
-# Graphify
+## Graphify
 
-## Objetivo
+Neste projeto NÃO utilizar graphify --update.
 
-O Graphify é o segundo cérebro deste projeto.
+Motivo:
 
-Ele armazena conhecimento estruturado sobre a arquitetura, relações entre módulos e decisões técnicas para reduzir consumo de contexto e evitar que o projeto dependa da memória da conversa.
+O modo incremental perde relações (imports_from) em projetos grandes (>300 arquivos).
 
-O Graphify complementa a documentação, mas não substitui os ADRs nem os documentos em `/docs`.
+Sempre utilizar build completo quando houver alterações estruturais.
+
+Para consultas do dia a dia utilizar apenas o grafo existente.
+
+Reconstruir somente quando houver:
+
+- Nova Sprint
+- Novas migrations
+- ADR
+- Mudanças arquiteturais
+- Grandes refactors
 
 ---
 
