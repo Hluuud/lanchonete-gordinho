@@ -33,6 +33,10 @@ logo definitiva substitui esse arquivo e um comando regenera o conjunto.
   `localhost`.
 - **Proxy.** O matcher passa a excluir `.ico`, `.webmanifest`, `.avif`,
   `.mp4` e `.webm` — assets públicos não precisam de revalidação de sessão.
+- **ADR 0011** (`docs/adr/0011-brand-assets-generated-from-single-source.md`):
+  por que gerar por script offline e commitar, em vez de exportar à mão,
+  gerar no build ou gerar em runtime via `ImageResponse`. Sprint Report em
+  `docs/superpowers/reports/2026-08-05-sprint-8-fase-0-brand-assets.md`.
 
 ### Changed — Sprint 7: Identidade Visual da Área do Cliente
 
