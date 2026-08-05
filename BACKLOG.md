@@ -14,12 +14,13 @@ derivando de uma logo provisória.
 
 ### Bloqueado por material do lojista
 
-- ☐ **Logo definitiva.** `public/brand/logo.png` (500×500, selo circular
-  feito no Canva) é a fonte de todos os ícones gerados — inclusive o texto
-  do selo diz "LANCHONTE", sem o segundo E. Substituir o arquivo (de
-  preferência por um PNG quadrado com fundo transparente, ≥1024 px) e rodar
-  `pnpm brand:assets` regenera os 18 assets. Se a arte vier em SVG, trocar
-  a fonte e simplificar o `trim()`/máscara circular do gerador.
+- ☐ **Logo definitiva.** O erro de grafia foi corrigido (o selo agora diz
+  "LANCHONETE"), mas `public/brand/logo.png` segue sendo um selo circular de
+  500×500 **sem canal alfa** — o fundo branco é recortado pelo `trim()` do
+  gerador, o que só funciona porque a arte é circular sobre branco. Arte
+  definitiva de preferência em PNG quadrado ≥1024 px com fundo transparente;
+  se vier em SVG, trocar a fonte e simplificar `trim()`/máscara circular.
+  Trocar o arquivo + `pnpm brand:assets` regenera os 18 assets.
 - ☐ **Fotos profissionais dos produtos.** O upload já existe
   (`components/image-upload.tsx` → bucket `store-assets`); falta o material.
   Sem foto, o card cai no placeholder gráfico.
