@@ -11,7 +11,7 @@ import { StoreCombos } from "@/features/menu/components/store-combos";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreHero } from "@/features/menu/components/store-hero";
 import { StorePromoBanner } from "@/features/menu/components/store-promo-banner";
-import { StoreValueProps } from "@/features/menu/components/store-value-props";
+import { StoreHighlights } from "@/features/menu/components/store-highlights";
 import { StoreTopbar } from "@/features/menu/components/store-topbar";
 import { StoreAbout } from "@/features/menu/components/store-about";
 import { StoreContactSection } from "@/features/menu/components/store-contact-section";
@@ -105,7 +105,7 @@ export function StoreExperience({ menu }: { menu: Menu }) {
 
         <StoreHero avgPrepMinutes={avgPrepMinutes} />
 
-        <StoreValueProps />
+        <StoreHighlights />
 
         <div id="cardapio" className="mx-auto w-full max-w-6xl px-4 py-10">
           <div className="lg:hidden">
