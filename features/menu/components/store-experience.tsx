@@ -8,6 +8,7 @@ import { CategoryNav } from "@/features/menu/components/category-nav";
 import { MenuSection } from "@/features/menu/components/menu-section";
 import { StoreBestsellers } from "@/features/menu/components/store-bestsellers";
 import { StoreCombos } from "@/features/menu/components/store-combos";
+import { StoreGallery } from "@/features/menu/components/store-gallery";
 import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreHero } from "@/features/menu/components/store-hero";
 import { StorePromoBanner } from "@/features/menu/components/store-promo-banner";
@@ -151,6 +152,8 @@ export function StoreExperience({ menu }: { menu: Menu }) {
         <StorePromoBanner />
         <StoreCombos menu={menu} />
         <StoreBestsellers menu={menu} />
+
+        <StoreGallery />
 
         <StoreAbout />
         <StoreContactSection />

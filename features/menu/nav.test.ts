@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { STORE_NAV_ANCHORS, STORE_NAV_ITEMS } from "@/features/menu/nav";
+import {
+  buildStoreNavItems,
+  STORE_NAV_ANCHORS,
+  STORE_NAV_ITEMS,
+} from "@/features/menu/nav";
 import { sectionAnchorId } from "@/features/menu/virtual-sections";
 
 describe("STORE_NAV_ITEMS", () => {
@@ -35,5 +39,46 @@ describe("STORE_NAV_ITEMS", () => {
 
     expect(headings).toHaveLength(1);
     expect(headings[0].anchor).toBe("cardapio");
+  });
+});
+
+describe("buildStoreNavItems", () => {
+  it("omite galeria e depoimentos por padrão — não prometer âncora sem seção", () => {
+    const anchors = buildStoreNavItems().map((item) => item.anchor);
+
+    expect(anchors).not.toContain("galeria");
+    expect(anchors).not.toContain("depoimentos");
+  });
+
+  it("inclui galeria, na posição certa, quando hasGallery é true", () => {
+    const anchors = buildStoreNavItems({ hasGallery: true }).map(
+      (item) => item.anchor,
+    );
+
+    expect(anchors).toContain("galeria");
+    expect(anchors.indexOf("galeria")).toBeLessThan(anchors.indexOf("sobre"));
+  });
+
+  it("inclui depoimentos, depois de sobre e antes de contato, quando hasTestimonials é true", () => {
+    const anchors = buildStoreNavItems({ hasTestimonials: true }).map(
+      (item) => item.anchor,
+    );
+
+    expect(anchors).toContain("depoimentos");
+    expect(anchors.indexOf("sobre")).toBeLessThan(
+      anchors.indexOf("depoimentos"),
+    );
+    expect(anchors.indexOf("depoimentos")).toBeLessThan(
+      anchors.indexOf("contato"),
+    );
+  });
+
+  it("com as duas flags ligadas, ainda não repete âncora nenhuma", () => {
+    const anchors = buildStoreNavItems({
+      hasGallery: true,
+      hasTestimonials: true,
+    }).map((item) => item.anchor);
+
+    expect(new Set(anchors).size).toBe(anchors.length);
   });
 });
