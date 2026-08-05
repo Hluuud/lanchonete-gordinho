@@ -16,6 +16,7 @@ import { StoreHighlights } from "@/features/menu/components/store-highlights";
 import { StoreTopbar } from "@/features/menu/components/store-topbar";
 import { StoreAbout } from "@/features/menu/components/store-about";
 import { StoreContactSection } from "@/features/menu/components/store-contact-section";
+import { StoreTestimonials } from "@/features/menu/components/store-testimonials";
 import { StoreFooter } from "@/features/menu/components/store-footer";
 import { getAverageMenuPrepTimeMinutes } from "@/features/menu/store-info";
 import { buildStoreSections } from "@/features/menu/virtual-sections";
@@ -156,6 +157,7 @@ export function StoreExperience({ menu }: { menu: Menu }) {
         <StoreGallery />
 
         <StoreAbout />
+        <StoreTestimonials />
         <StoreContactSection />
         <StoreFooter />
       </div>

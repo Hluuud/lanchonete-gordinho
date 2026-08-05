@@ -15,6 +15,10 @@ import {
   GALLERY_ITEMS,
   hasGallery as hasGalleryItems,
 } from "@/features/menu/gallery";
+import {
+  TESTIMONIALS,
+  hasTestimonials as hasTestimonialItems,
+} from "@/features/menu/testimonials";
 
 export type StoreNavItem = {
   /** Âncora DOM da seção, sem `#` — também serve de chave no React. */
@@ -78,11 +82,11 @@ export function buildStoreNavItems({
 
 /**
  * Navegação real da loja hoje, com o estado atual de cada seção opcional —
- * único ponto que sidebar, drawer e footer devem importar. `hasTestimonials`
- * ainda não é passado: `testimonials.ts` chega na Fase 6.
+ * único ponto que sidebar, drawer e footer devem importar.
  */
 export const STORE_NAV_ITEMS: StoreNavItem[] = buildStoreNavItems({
   hasGallery: hasGalleryItems(GALLERY_ITEMS),
+  hasTestimonials: hasTestimonialItems(TESTIMONIALS),
 });
 
 /** Âncoras observadas pelo ScrollSpy, na ordem da página. */
