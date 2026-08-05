@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { KitchenBoard } from "@/features/kitchen/components/kitchen-board";
@@ -8,7 +9,10 @@ import { KITCHEN_STAFF_ROLES } from "@/lib/kitchen/roles";
 import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
 import { getActiveKitchenOrders } from "@/services/kitchen-orders.service";
 
-export const metadata = { title: "Cozinha" };
+export const metadata: Metadata = {
+  title: "Cozinha",
+  robots: { index: false, follow: false },
+};
 
 /**
  * Painel da Cozinha (Fase 2): busca os pedidos ativos no servidor (RLS do

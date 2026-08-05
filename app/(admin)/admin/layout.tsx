@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
+
 import { AdminHeader } from "@/features/admin/components/admin-header";
 import { AdminSidebar } from "@/features/admin/components/admin-sidebar";
 import { requireRole } from "@/lib/auth/session";
 import { ADMIN_ROLES } from "@/lib/admin/roles";
 import { resolveTenantSlug } from "@/lib/tenant/get-tenant-context";
 import { getTenantBySlug } from "@/services/tenant.service";
+
+/** No layout, não em cada subpágina: cobre as 14 rotas de `/admin` de uma vez. */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /**
  * Shell do Painel Administrativo: guarda de acesso único para todas as

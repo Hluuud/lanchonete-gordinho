@@ -1,11 +1,15 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/features/auth/components/login-form";
 import { getCurrentUser } from "@/lib/auth/session";
 import { resolveLandingPath } from "@/lib/auth/landing-path";
 
-export const metadata = { title: "Entrar" };
+export const metadata: Metadata = {
+  title: "Entrar",
+  robots: { index: false, follow: false },
+};
 
 /**
  * Login único para todos os papéis (loja não exige conta — só cozinha/admin).
