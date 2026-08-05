@@ -116,6 +116,16 @@ A ordem do array é a ordem das seções na página; o ScrollSpy depende dessa
 correspondência. `StoreNavLink` concentra estado ativo, alvo de toque e tom
 da superfície (`dark` na sidebar, `light` no drawer).
 
+**Desde a Sprint 8** (Fase 4), `STORE_NAV_ITEMS` não é mais um array
+estático — é `buildStoreNavItems({ hasGallery, hasTestimonials })` chamado
+uma vez com o estado real de cada seção opcional (`gallery.ts`,
+`testimonials.ts`). "Galeria" e "Depoimentos" só entram no array quando a
+seção correspondente tem conteúdo de verdade — mesma regra de honestidade
+da UI, aplicada agora também à navegação derivada, não só às categorias do
+cardápio. Qualquer seção nova condicional (sem dado real ainda) deve seguir
+o mesmo padrão: uma flag em `buildStoreNavItems`, não um item sempre
+presente.
+
 ## Painel Administrativo (shell, Sprint 4)
 
 Ver detalhe de domínio nas próprias páginas (`app/(admin)/admin/`). Shell:
@@ -264,3 +274,101 @@ social consegue buscar o preview.
 Página que merecer preview próprio (um produto, uma promoção) sobrescreve
 `openGraph.images` no seu próprio `metadata` — o default do layout continua
 valendo para todo o resto.
+
+## Sprint 8, Fases 2-9: Hero cinematográfico, seções institucionais e SEO
+
+Continuação da Sprint 8 (Fase 1 = variantes de marca, acima). Todas as
+fases seguintes são frontend-only: nenhum schema, service ou repository
+mudou; nenhuma chamada nova ao Supabase.
+
+### Hero cinematográfico (`features/menu/media.ts`, `hero-media.tsx`, `store-hero.tsx`)
+
+`HERO_MEDIA` (antes dois escalares, `HERO_VIDEO_URL`/`HERO_POSTER_URL`)
+agora é um objeto: `sources[]` (múltiplas `<source>`, WebM antes de MP4),
+`poster`, `posterMobile` opcional e `overlayOpacity`. `resolveHeroMedia()` e
+`hasHeroMedia()` são puras — decidem "vídeo, pôster ou placeholder" e "tem
+mídia real?" sem depender de DOM, por isso são testáveis sem
+Testing Library.
+
+`StoreHero` escolhe entre dois layouts a partir de `hasHeroMedia()`:
+
+- **sem mídia** (estado atual — `HERO_MEDIA` vazia): o split de sempre,
+  texto à esquerda e o placeholder gráfico à direita;
+- **com mídia**: full-bleed cinematográfico, texto sobreposto na base sobre
+  um gradiente escuro, e um parallax leve (`useScroll`/`useTransform`,
+  40px, desligado em `prefers-reduced-motion`) na camada de mídia.
+
+### Primitiva de entrada (`features/menu/components/reveal.tsx`)
+
+`Reveal` é o wrapper compartilhado de "fade + leve subida ao entrar na
+viewport" (`whileInView`, `once: true`, respeita `prefers-reduced-motion`).
+Toda seção nova da Fase 3 em diante usa `Reveal` em vez de reimplementar a
+mesma configuração de `framer-motion`. Aceita `role`, porque `Reveal` já é
+o `<div>` do item — uma lista usa `role="list"`/`role="listitem"` no
+container e em cada `Reveal`, nunca `<ul>`/`<li>` (aninhar `<li>` dentro do
+`<div>` do `Reveal` seria HTML invalido).
+
+**Onde não usar por performance:** a grade de produtos do cardápio
+(`menu-section.tsx`) só envolve o **cabeçalho** da seção em `Reveal` — a
+grade em si pode ter dezenas de produtos somados entre todas as categorias,
+e cada `Reveal` monta um `IntersectionObserver`. `ProductCard` continua
+hover/animação só em CSS, decisão que já valia antes desta sprint.
+
+### Seções institucionais condicionadas a dado real
+
+Três seções novas seguem a mesma regra: **estrutura pronta, constante
+vazia, seção que não renderiza sem conteúdo real** (nenhum placeholder
+fictício vai ao ar — ver [ADR 0012](./adr/0012-institutional-content-gated-on-real-data.md)).
+
+| Seção | Arquivo de conteúdo | Guarda |
+|---|---|---|
+| Galeria (`#galeria`) | `features/menu/gallery.ts` | `hasGallery()` |
+| Depoimentos (`#depoimentos`) | `features/menu/testimonials.ts` | `hasTestimonials()` |
+| Linha do tempo (dentro de `#sobre`) | `features/menu/about-content.ts` | `hasTimeline()` |
+
+A galeria tem lightbox (`gallery-lightbox.tsx`) sobre o `Dialog` radix já
+instalado — foco preso e Esc de graça, sem dependência nova; setas
+←/→ e contador "n de N" por cima disso. Fotos de `fachada`/`ambiente`,
+quando existirem, também alimentam os dois placeholders de imagem do
+`StoreAbout`.
+
+`nav.ts` deriva `STORE_NAV_ITEMS` a partir de `hasGallery`/
+`hasTestimonials` — ver "Navegação da loja" acima.
+
+### Destaques e Sobre Nós expandidos
+
+`StoreValueProps` (3 promessas) evoluiu para `StoreHighlights`
+(`features/menu/highlights.ts`, 6 destaques, entrada em stagger).
+`StoreAbout` ganhou missão, valores e "por que escolher"
+(`features/menu/about-content.ts`), além da história que já existia.
+
+### Contato (`store-contact-section.tsx`, `contact-info.ts`, `store-info.ts`)
+
+- CTA primário "Chamar no WhatsApp" ao lado de "Como chegar" (antes o
+  WhatsApp só era um ícone redondo);
+- `getWeeklyHours()` (puro, testado) mostra a semana inteira no card de
+  horário, a partir de `BUSINESS_HOURS` — `StoreOpenBadge` continua sendo o
+  único lugar que sabe a hora "agora" (hydration-safe);
+- `ADDRESS_PARTS` é a fonte estruturada da qual `ADDRESS` (texto livre) é
+  derivado — usada pelo `PostalAddress` do JSON-LD;
+- `TIKTOK_LINK` (`null` hoje) e `TikTokIcon` existem prontos; renderizam
+  condicionalmente na seção de contato e no rodapé quando o lojista informar
+  o perfil.
+
+### SEO técnico (`app/robots.ts`, `app/sitemap.ts`, `lib/seo/`)
+
+- `lib/seo/page-metadata.ts` → `buildPageMetadata()`: centraliza
+  `alternates.canonical`, Open Graph e Twitter sobre `/brand/og-default.png`
+  (Fase 0), com `index` opcional. Aplicado em `/`, `/checkout` e
+  `/pedido/[id]` (este via `generateMetadata`, canonical por id).
+- `lib/seo/restaurant-json-ld.ts` → `buildRestaurantJsonLd()`: monta o
+  schema.org `Restaurant` a partir das mesmas fontes que já alimentam a
+  página (`lib/brand`, `contact-info.ts`, `store-info.ts`) — nenhum dado
+  novo. Injetado via `<script type="application/ld+json">` na home.
+- `/pedido/[id]` leva `noindex` por `metadata`, não por `robots.txt`:
+  bloquear no `robots.txt` impediria o Google de sequer ver o `noindex`,
+  arriscando indexar a URL nua se alguém compartilhar o link. `/login`,
+  `/cozinha` e o layout de `/admin` (cobre as 14 subrotas de uma vez) levam
+  `noindex` simples.
+- OG dinâmico por produto/promoção segue no BACKLOG — precisa de
+  `ImageResponse` com a Anton embutida como arquivo (ver ADR 0011).

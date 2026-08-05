@@ -4,6 +4,58 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 8, Fases 1-9: Branding, Experiência Visual e Mídia
+
+Frontend-only, sobre a base das Sprints 6/7. Nenhuma migration, nenhuma
+alteração em checkout, carrinho, realtime, admin, cozinha ou impressão;
+nenhuma chamada nova ao Supabase.
+
+- **Fase 1 — Pipeline de marca multi-variante.**
+  `scripts/generate-brand-assets.mjs` e `lib/brand/tokens.json` aceitam três
+  fontes opcionais (`logoHorizontal`, `logoMono`, `watermark`), sem quebrar
+  o pipeline atual quando ausentes. `brandAsset(variant)`/`resolveBrandAsset()`
+  (`lib/brand/index.ts`) e `<BrandLogo variant>` degradam pro selo quando a
+  fonte não existe. Aproveitado para corrigir a grafia "LANCHONTE" →
+  "LANCHONETE" na logo e regenerar os 18 assets.
+- **Fase 2 — Hero cinematográfico.** `HERO_MEDIA` (`features/menu/media.ts`)
+  troca dois escalares por `sources[]`/`poster`/`posterMobile`/
+  `overlayOpacity`; `resolveHeroMedia()`/`hasHeroMedia()` são puras.
+  `StoreHero` ganha layout full-bleed com parallax leve quando houver mídia
+  real (hoje ainda não há — comportamento visual idêntico ao anterior).
+- **Fase 3 — `Reveal` e Destaques da Casa.** Wrapper compartilhado de
+  entrada (`features/menu/components/reveal.tsx`, `whileInView` +
+  `prefers-reduced-motion`). `StoreValueProps` (3 itens) evolui para
+  `StoreHighlights` (`features/menu/highlights.ts`, 6 itens, stagger).
+- **Fase 4 — Galeria institucional (`#galeria`).** `features/menu/gallery.ts`
+  + `StoreGallery`/`GalleryLightbox` (sobre o `Dialog` radix já instalado).
+  Vazia hoje — a seção e o item de navegação não aparecem sem foto real
+  (ver ADR 0012). `nav.ts` passa a derivar `STORE_NAV_ITEMS` via
+  `buildStoreNavItems({ hasGallery, hasTestimonials })`.
+- **Fase 5 — Storytelling em Sobre Nós.** `features/menu/about-content.ts`
+  (história, missão, valores, "por que escolher", linha do tempo). Linha do
+  tempo vazia até haver marco real (ADR 0012); fotos de fachada/ambiente da
+  galeria substituem os placeholders quando existirem.
+- **Fase 6 — Depoimentos (`#depoimentos`).** `features/menu/testimonials.ts`
+  + `StoreTestimonials` — estrelas com `aria-label`, avatar por iniciais sem
+  foto. Vazia hoje, mesma regra da galeria (ADR 0012).
+- **Fase 7 — Contato e redes.** CTA "Chamar no WhatsApp" em
+  `store-contact-section.tsx`; `getWeeklyHours()`
+  (`features/menu/store-info.ts`) mostra a semana inteira no card de
+  horário; `TIKTOK_LINK`/`TikTokIcon` prontos (perfil ainda não informado);
+  `ADDRESS_PARTS` estrutura o endereço (usado pelo JSON-LD da Fase 8).
+- **Fase 8 — SEO técnico.** `app/robots.ts`, `app/sitemap.ts`,
+  `lib/seo/restaurant-json-ld.ts` (schema.org `Restaurant` injetado na
+  home) e `lib/seo/page-metadata.ts` (`canonical` + Open Graph + Twitter por
+  rota, aplicado em `/`, `/checkout`, `/pedido/[id]`). `noindex` em
+  `/pedido/[id]` (via metadata), `/login`, `/cozinha` e todo `/admin`.
+- **Fase 9 — UX sensorial.** `Reveal` nas seções existentes (cardápio —
+  só o cabeçalho, por performance —, promoções, combos, mais vendidos,
+  contato); hover unificado nos cards com borda
+  (`transition-all duration-200 hover:-translate-y-1 hover:shadow-lg`).
+- **ADR 0012** (`docs/adr/0012-institutional-content-gated-on-real-data.md`):
+  registra a regra "estrutura pronta, seção oculta sem dado real" aplicada
+  a Galeria, Depoimentos e Linha do Tempo.
+
 ### Added — Sprint 8, Fase 0: Infraestrutura de assets de marca
 
 Camada de identidade "fora da página": ícone da aba, ícone na home screen,

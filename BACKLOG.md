@@ -5,12 +5,12 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
-## Sprint 8 — Conteúdo Visual
+## Sprint 8 — Branding, Experiência Visual e Mídia
 
-A Fase 0 (infraestrutura de assets: favicon, ícones PWA, splash, Open Graph)
-está entregue — ver `CHANGELOG.md` e `docs/frontend.md`. O que resta é
-**material bruto**, não código: sem os arquivos, todo o pipeline continua
-derivando de uma logo provisória.
+Fases 0-9 estão entregues — ver `CHANGELOG.md` e `docs/frontend.md`. O que
+resta é quase todo **material bruto**, não código: a estrutura já existe e
+degrada com elegância (placeholder, seção oculta, link condicional) até o
+lojista fornecer cada item.
 
 ### Bloqueado por material do lojista
 
@@ -21,15 +21,35 @@ derivando de uma logo provisória.
   definitiva de preferência em PNG quadrado ≥1024 px com fundo transparente;
   se vier em SVG, trocar a fonte e simplificar `trim()`/máscara circular.
   Trocar o arquivo + `pnpm brand:assets` regenera os 18 assets.
+- ☐ **Logo horizontal / monocromática / marca d'água.** Pipeline pronto
+  desde a Fase 1 (`tokens.source.logoHorizontal`/`logoMono`/`watermark`,
+  `brandAsset()`, `<BrandLogo variant>`) — falta a arte-fonte de cada
+  variante em `public/brand/`.
 - ☐ **Fotos profissionais dos produtos.** O upload já existe
   (`components/image-upload.tsx` → bucket `store-assets`); falta o material.
   Sem foto, o card cai no placeholder gráfico.
-- ☐ **Vídeo em loop e pôster do Hero.** `HERO_VIDEO_URL`/`HERO_POSTER_URL`
-  (`features/menu/media.ts`) seguem nulos; `HeroMedia` já trata os três
-  estados (vídeo mudo em autoplay → pôster → placeholder) e respeita
-  `prefers-reduced-motion`. Preferir MP4 H.264 curto (≤8 s) e sem áudio.
-- ☐ **Fotos de fachada e do salão** para a seção Sobre — hoje placeholders
-  declarados.
+- ☐ **Vídeo em loop e pôster do Hero.** `HERO_MEDIA`
+  (`features/menu/media.ts`) segue vazio; `HeroMedia`/`StoreHero` já tratam
+  os três estados (vídeo mudo em autoplay → pôster → placeholder), o layout
+  full-bleed cinematográfico e o parallax leve. Preferir MP4 H.264 curto
+  (≤8 s) e sem áudio, mais um WebM equivalente (`HERO_MEDIA.sources`, ordem
+  de preferência).
+- ☐ **Fotos da galeria institucional (`#galeria`).** `GALLERY_ITEMS`
+  (`features/menu/gallery.ts`) está vazia — fachada, ambiente, cozinha,
+  equipe, clientes e os produtos em foto. Sem pelo menos uma, a seção e o
+  item "Galeria" da navegação não aparecem (ADR 0012). Fotos de
+  `fachada`/`ambiente`, quando existirem, também substituem os dois
+  placeholders da seção Sobre.
+- ☐ **Depoimentos de clientes (`#depoimentos`).** `TESTIMONIALS`
+  (`features/menu/testimonials.ts`) está vazia — nome, nota, comentário e
+  foto opcional. Sem pelo menos um, a seção e o item "Depoimentos" da
+  navegação não aparecem (ADR 0012).
+- ☐ **Linha do tempo da casa.** `ABOUT_TIMELINE`
+  (`features/menu/about-content.ts`) está vazia — nenhum marco/ano real
+  registrado ainda. Inventar uma data seria mentir pro cliente (ADR 0012).
+- ☐ **Perfil do TikTok.** `TIKTOK_LINK` (`features/menu/contact-info.ts`) é
+  `null`; `TikTokIcon` já existe e renderiza condicionalmente na seção de
+  contato e no rodapé quando houver link.
 - ☐ **Ícones próprios.** A loja usa `lucide-react` inteiro. Um set autoral
   (categorias, formas de pagamento) só faz sentido depois da logo nova, para
   herdar o traço dela.
@@ -37,10 +57,12 @@ derivando de uma logo provisória.
 ### Depende de código, não de material
 
 - ☐ **Open Graph por página.** Hoje há uma imagem única
-  (`/brand/og-default.png`) para o site inteiro. Preview por produto ou
-  promoção pede `opengraph-image.tsx` dinâmico (`ImageResponse`) na rota —
-  exige embutir a fonte Anton como arquivo, já que `next/font` não funciona
-  dentro do `ImageResponse`.
+  (`/brand/og-default.png`) para o site inteiro — `lib/seo/page-metadata.ts`
+  (Fase 8) já centraliza `canonical`/Open Graph/Twitter por rota, mas todas
+  apontam pra mesma imagem. Preview por produto ou promoção pede
+  `opengraph-image.tsx` dinâmico (`ImageResponse`) na rota — exige embutir a
+  fonte Anton como arquivo, já que `next/font` não funciona dentro do
+  `ImageResponse`.
 - ☐ **Splash de iOS só em retrato.** Em paisagem o Safari cai no branco.
   Cobrir exige dobrar as 11 imagens em `lib/brand/splash-targets.json`;
   adiado porque o app é declaradamente `orientation: portrait`.
@@ -52,6 +74,16 @@ derivando de uma logo provisória.
   O gerador não interpola `oklch`; a conversão foi feita uma vez, à mão. Se
   a paleta mudar, os dois arquivos precisam mudar juntos — não há teste que
   detecte a divergência.
+- ☐ **`pnpm format:check` já falha em ~114 arquivos não tocados por esta
+  sprint** (achado durante a Fase 1, não investigado a fundo — provável
+  drift entre a resolução do Prettier via `pnpm`/`pnpm-lock.yaml` e via
+  `npm ci`/`package-lock.json`, que é o que a CI realmente usa). Não é dívida
+  desta sprint, mas é um risco real de gate de CI silenciosamente
+  desalinhado do ambiente local.
+- ☐ **Verificação visual em navegador real pendente** (mobile/tablet/
+  desktop, hover, parallax, reveals, lightbox da galeria) — esta sprint foi
+  verificada via build + testes + smoke test de servidor local
+  (`curl`/HTML), não com um browser aberto.
 
 ## Sprint 7 — Identidade Visual da Área do Cliente
 
