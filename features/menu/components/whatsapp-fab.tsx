@@ -1,3 +1,7 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 import { WHATSAPP_LINK } from "@/features/menu/contact-info";
 import { WhatsAppIcon } from "@/features/menu/social-icons";
 
@@ -9,9 +13,14 @@ import { WhatsAppIcon } from "@/features/menu/social-icons";
  * visualmente com o carrinho, que é a ação primária. Cor sólida do
  * WhatsApp (`#25D366`) em vez do token `--success` do projeto: aquele
  * token só é usado como fundo suave (`/15`) para badges de status, não
- * pensado para preencher um botão inteiro.
+ * pensado para preencher um botão inteiro. Oculto no checkout — mesma regra
+ * do `CartButton`, um CTA de saída não deve competir com a finalização.
  */
 export function WhatsappFab() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/checkout")) return null;
+
   return (
     <a
       href={WHATSAPP_LINK}
