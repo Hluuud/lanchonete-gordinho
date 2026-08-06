@@ -18,7 +18,7 @@ type BrandLogoSize = keyof typeof LOGO_SIZES;
  * `tokens.source` — enquanto essa fonte não existir (`brandAsset()` volta
  * `null`), o componente degrada para o selo, nunca quebra.
  */
-type BrandLogoVariant = "seal" | "horizontal" | "mono";
+type BrandLogoVariant = "seal" | "horizontal" | "mono" | "mascote";
 
 /**
  * Logo oficial da marca. Fonte única para exibir a logo em sidebar, topbar e
@@ -37,6 +37,19 @@ export function BrandLogo({
   variant?: BrandLogoVariant;
 }) {
   const px = LOGO_SIZES[size];
+
+  if (variant === "mascote") {
+    return (
+      <Image
+        src="/brand/mascote-avatar.png"
+        alt="Gordinho, o mascote da Lanchonete do Gordinho"
+        width={px}
+        height={px}
+        priority={priority}
+        className={cn("rounded-full object-cover", className)}
+      />
+    );
+  }
 
   if (variant !== "seal") {
     const src = brandAsset(variant);
