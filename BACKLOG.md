@@ -18,6 +18,34 @@ arquiteturais associadas.
   real de combo (ex.: um campo/categoria que marque o produto como parte de
   um combo, ou a liberação das tabelas `combos`/`combo_slots` já
   rastreada no Sprint 7).
+- ☐ **`--ring` (anel de foco) ainda é o vermelho da ADR 0010** —
+  off-brand agora que `--primary` é laranja (ADR 0013), embora ainda WCAG
+  AA compliant. Polimento de baixa prioridade: trocar para um tom
+  derivado do novo laranja (ou de `--primary-text`, já testado contra
+  contraste) quando a paleta for revisitada.
+- ☐ **Margens de recorte das poses do mascote são hardcoded para o layout
+  atual de `Versoes_boneco.png`.** `scripts/cutout-mascot.mjs` extrai cada
+  pose por coordenadas fixas de pixel (grade 4×2, célula 384×512) — se a
+  folha de origem for regenerada/substituída por uma nova versão, essas
+  margens precisam ser re-derivadas. O método de derivação está comentado
+  no código, mas o script real de varredura de pixels usado para achá-las
+  não foi commitado.
+- ☐ **`public/brand/mascote-full.png` gerado e comitado, mas sem uso no
+  código ainda.** Corpo inteiro do mascote, fundo transparente — disponível
+  para um momento futuro (ex. confirmação de pedido, quando o checkout
+  entrar em escopo de UI).
+- ☐ **Vídeo do Hero sem `poster` e com nome de arquivo provisório.**
+  `public/brand/video_teste.mp4` (3,1 MB) não tem imagem de pôster
+  configurada em `HERO_MEDIA` — usuários com `prefers-reduced-motion` caem
+  no placeholder gráfico genérico em vez de um still real do vídeo. O
+  nome do arquivo também é literalmente "teste". Revisitar os dois pontos
+  quando existir o vídeo institucional definitivo.
+- ☐ **`TONE_HEADING.light` ainda usa `hover:text-primary` puro, não
+  `--primary-text`.** `features/menu/components/store-nav-link.tsx` — o
+  heading "Cardápio" do drawer mobile tem a mesma classe de problema de
+  contraste AA que a revisão final desta sprint corrigiu em outros
+  lugares (tagline, links, badges), mas esse caso específico não estava
+  no escopo enumerado da revisão.
 
 ## Sprint 8 — Branding, Experiência Visual e Mídia
 

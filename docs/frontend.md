@@ -18,25 +18,107 @@ celular/desktop).
 (Client Component, recebe `Menu` já carregado do servidor — decisão da
 Sprint 1 mantida). A partir dele:
 
-- **`StoreSidebar`** (`lg:+`) — fixa, `sticky top-0 h-dvh`: logo, busca,
-  navegação vertical de seções com `aria-current` na ativa.
-- **`StoreTopbar`** — sticky, sempre visível: nome da loja, badge
-  Aberto/Fechado, tempo médio de preparo, breadcrumb discreto da seção
-  ativa, botão de carrinho com contador. No mobile, também abre o
-  `StoreMobileNav` (drawer com a mesma lista de seções da sidebar).
+- **`StoreSidebar`** (`lg:+`) — fixa, `sticky top-0 h-dvh`: identidade do
+  mascote (ver "Identidade do mascote" abaixo), busca, navegação vertical
+  de seções com `aria-current` na ativa.
+- **`MascotNavBubble`** (`lg:hidden`, Sprint 8.1) — bolha fixa do Gordinho
+  no canto superior esquerdo do mobile: identidade da marca + gatilho do
+  `StoreMobileNav` (mesmo drawer que a extinta `StoreTopbar` abria). No
+  desktop não renderiza — a sidebar fixa já cobre navegação.
 - **`CategoryNav`** — nav horizontal sticky, `lg:hidden`: navegação primária
   de rolagem no mobile/tablet (a sidebar assume esse papel em telas
-  maiores).
+  maiores). `sticky top-0` (Sprint 8.1) — antes tinha `top-16` para abrir
+  espaço para a `StoreTopbar`, que não existe mais; o primeiro chip ganha
+  `pl-16` para não ficar atrás da `MascotNavBubble`, que é `fixed` por
+  cima dela.
+
+A `StoreTopbar` (nome da loja, badge Aberto/Fechado, breadcrumb e botão de
+carrinho sticky) existiu da Sprint 4 até a Sprint 8.1, quando foi removida
+por completo: identidade migrou para o mascote (sidebar/bolha), e o
+carrinho ganhou seu próprio botão flutuante (`CartButton`, ver "Ações
+flutuantes" abaixo). Nenhum substituto único assumiu o papel da topbar —
+cada responsabilidade dela foi redistribuída para um componente dedicado.
+
+### Identidade do mascote (Sprint 8.1)
+
+A identidade textual (logo + nome + slogan) na sidebar foi substituída
+pelo mascote "Gordinho": `<BrandLogo variant="mascote" size="xl" />`
+(`components/brand-logo.tsx`) renderiza `public/brand/mascote-avatar.png`
+dentro de um botão que rola até `#home` — mesmo destino que o clique na
+logo sempre teve. `variant="seal"` (o selo laranja) continua sendo o
+default do componente e segue em uso fora da sidebar (footer, `/pedido`).
+
+`mascote-avatar.png`, `mascote-full.png` e as 4 poses (ver
+`MASCOT_POSES` abaixo) são gerados por `scripts/cutout-mascot.mjs`
+(chroma-key determinístico via `sharp`, mesma filosofia de
+`generate-brand-assets.mjs` — sem IA, sem serviço externo) a partir das
+artes brutas `public/brand/Boneco.png` e `Versoes_boneco.png`, ambas
+comitadas junto dos PNGs gerados (o build da Vercel não roda o script).
+`scripts/lib/chroma-key.mjs` isola a função pura de distância-até-branco
++ feather, testada isoladamente.
+
+**`MascotMoment`** (`features/menu/components/mascot-moment.tsx`) é o
+componente reusável de "pose + mensagem curta", registrado por
+`MASCOT_POSES` (`features/menu/mascot-poses.ts`, um `Record<MascotPoseName,
+{ src, alt }>`). Usado em 4 pontos, todos fora do fluxo de checkout
+(que o lojista pediu para não tocar):
+
+| Pose | Onde | Componente |
+| --- | --- | --- |
+| `holding-burger` | Carrinho vazio | `CartPanelContent` |
+| `pointing-up` | Banner de promoções (`#promocoes`) | `StorePromoBanner` |
+| `resting` | Loja fechada, no Hero | `StoreHero` |
+| `welcoming` | Sobre Nós (`#sobre`) | `StoreAbout` |
+
+`MascotMoment` aceita `tone: "light" | "dark"` — `"light"` (padrão) usa
+`text-muted-foreground` sobre o creme; `"dark"` usa
+`text-surface-dark-muted`, para o único uso sobre o preto do Hero (loja
+fechada). Um `tone` fixo em `"light"` para todos os usos deixava a
+mensagem quase ilegível sobre `bg-surface-dark` (~2.8:1, abaixo de AA) —
+achado da revisão final da Sprint 8.1.
+
+"Pedido enviado" e "erro de conexão" (pedidos originais do lojista para o
+mascote) ficam fora de escopo: pertencem ao fluxo de checkout.
+
+O estado aberto/fechado que decide se `StoreHero` mostra `resting` vem de
+`useStoreOpenState()` (`features/menu/use-store-open-state.ts`, Sprint
+8.1) — hook compartilhado extraído de dentro de `StoreOpenBadge`
+(`useSyncExternalStore` com snapshot por minuto, mesmo padrão de sempre).
+`StoreOpenBadge` foi migrado para consumi-lo em vez de duplicar a
+assinatura; `null` no snapshot de servidor/primeira renderização assume
+`isOpen = true` no Hero (mesma segurança-por-omissão que o badge já
+aplicava com seu placeholder neutro).
+
+### Ações flutuantes (Sprint 8.1)
+
+Duas pílulas fixas no canto inferior direito, montadas em
+`app/(store)/layout.tsx` (fora de `StoreExperience`, dentro do
+`CartProvider`) — ambas ocultas em `/checkout` (`usePathname().startsWith("/checkout")`):
+
+- **`CartButton`** (`features/cart/components/cart-button.tsx`) — já
+  existia desde a Sprint 1 como o carrinho flutuante mobile, mas com
+  `lg:hidden`: no desktop, quem abria o carrinho era o ícone da
+  `StoreTopbar`. A remoção da topbar (Sprint 8.1, Fase B) deixou o
+  desktop sem forma de abrir o carrinho até essa classe ser removida
+  (Fase C) — hoje visível em todos os breakpoints. O badge de quantidade
+  é um `motion.span` remontado por `key={totalQuantity}` a cada mudança,
+  disparando um pulso de escala (respeita `prefers-reduced-motion`).
+- **`WhatsappFab`** (`features/menu/components/whatsapp-fab.tsx`) —
+  empilhado acima do `CartButton` (`bottom-20`/`sm:bottom-24` vs.
+  `bottom-4`/`sm:bottom-6`), abre `WHATSAPP_LINK` em nova aba, sem pulso
+  (nunca deve competir visualmente com o carrinho, a ação primária).
 
 ### Seções (`features/menu/virtual-sections.ts`)
 
 `buildStoreSections(menu)` monta a lista única consumida por sidebar,
 `CategoryNav` e conteúdo: seções **virtuais** (derivadas de badges reais —
-`isFeatured` → "Promoções & Destaques", `isNew` → "Novidades", ocultas
-quando vazias) seguidas das categorias reais do banco. "Combos" e "Mais
-Vendidos" ficam de fora até existir schema — nunca dado fabricado (ver
-`BACKLOG.md`). `MenuSection` é o componente único que renderiza qualquer
-seção (virtual ou real) com o mesmo grid de cards.
+`isFeatured` → "Destaques da Casa", `isNew` → "Novidades", ocultas quando
+vazias) seguidas das categorias reais do banco. Promoções **não** é mais
+uma seção virtual (Sprint 8.1) — o link de navegação aponta direto para a
+seção real `#promocoes` (`StorePromoBanner`), via `selectPromotions(menu)`.
+"Combos" e "Mais Vendidos" continuam de fora até existir schema — nunca
+dado fabricado (ver `BACKLOG.md`). `MenuSection` é o componente único que
+renderiza qualquer seção (virtual ou real) com o mesmo grid de cards.
 
 ### Navegação e scroll (`features/menu/use-scroll-spy.ts`, `scroll-to-section.ts`)
 
@@ -88,9 +170,30 @@ nenhum componente:
 | Admin | `.theme-admin` | `app/(admin)/admin/layout.tsx` |
 
 Desde a **Sprint 7** ([ADR 0010](./adr/0010-storefront-brand-identity.md)),
-os valores de `:root` são a identidade da loja: preto e creme dominantes,
-`--primary` vermelho e o laranja da logo em `--accent`. `.dark` e
-`.theme-admin` seguem inalterados.
+os valores de `:root` são a identidade da loja: preto e creme dominantes.
+Desde a **Sprint 8.1** ([ADR 0013](./adr/0013-paleta-laranja-do-mascote.md)),
+`--primary`/`--accent` são os dois tons de laranja do selo do mascote
+(`#F28C28`/`#FFB84D`, antes vermelho/laranja da ADR 0010) e
+`--primary-foreground` passou a ser escuro (não branco — os dois laranjas
+não atingem 4.5:1 contra branco). `.dark` e `.theme-admin` seguem
+inalterados em ambas as ADRs.
+
+`--primary-text` (Sprint 8.1) é um token à parte, **exclusivo para texto/
+ícone sobre fundo claro** (nunca para preencher `bg-primary`, que já usa
+`--primary-foreground`): texto na cor `--primary` direta só atinge ~2.2:1
+contra o creme do `background`, abaixo de AA. `--primary-text` é o tom
+mais escuro do selo (`#D96318`), que atinge 4.5:1 — usado em hovers de
+link/tagline/badge que precisam "ler" como laranja da marca sem falhar
+contraste (`store-nav-link.tsx`, `store-about.tsx`, `category-nav.tsx`,
+`social-link.tsx`, `store-contact-section.tsx`). **Achado da revisão
+final não corrigido nesta sprint:** o heading "Cardápio" do drawer mobile
+(`TONE_HEADING.light` em `store-nav-link.tsx`) ainda usa
+`hover:text-primary` puro, não `--primary-text` — mesma classe de
+problema, fora do escopo enumerado pela revisão (ver `BACKLOG.md`).
+
+`--ring` (cor do anel de foco) não foi atualizado pela ADR 0013 — segue o
+vermelho da ADR 0010, hoje destoando da paleta laranja (ainda WCAG AA
+compliant; registrado no `BACKLOG.md` como polimento de baixa prioridade).
 
 Quatro tokens descrevem a superfície escura da marca (sidebar, hero,
 promoções, rodapé) e são declarados **uma vez para os três escopos**, porque
@@ -116,15 +219,29 @@ A ordem do array é a ordem das seções na página; o ScrollSpy depende dessa
 correspondência. `StoreNavLink` concentra estado ativo, alvo de toque e tom
 da superfície (`dark` na sidebar, `light` no drawer).
 
-**Desde a Sprint 8** (Fase 4), `STORE_NAV_ITEMS` não é mais um array
-estático — é `buildStoreNavItems({ hasGallery, hasTestimonials })` chamado
-uma vez com o estado real de cada seção opcional (`gallery.ts`,
-`testimonials.ts`). "Galeria" e "Depoimentos" só entram no array quando a
-seção correspondente tem conteúdo de verdade — mesma regra de honestidade
-da UI, aplicada agora também à navegação derivada, não só às categorias do
-cardápio. Qualquer seção nova condicional (sem dado real ainda) deve seguir
-o mesmo padrão: uma flag em `buildStoreNavItems`, não um item sempre
-presente.
+Na Sprint 8 (Fase 4), `STORE_NAV_ITEMS` deixou de ser um array estático —
+passou a ser `buildStoreNavItems({ hasGallery, hasTestimonials })`, com
+"Galeria" e "Depoimentos" condicionados a conteúdo real.
+
+**Na Sprint 8.1**, a navegação foi simplificada de volta para **4 itens de
+topo, fixos**: `Home`, `Cardápio` (`isHeading: true`), `Sobre Nós`,
+`Contato` — `buildStoreNavItems()` não recebe mais parâmetros. "Mais
+Vendidos", "Novidades", "Galeria" e "Depoimentos" saíram da navegação
+(as seções continuam existindo na página, só não estão mais linkadas no
+menu — decisão deliberada de simplificação, não perda de conteúdo).
+Destaques da Casa, Novidades e as categorias reais do cardápio aparecem
+indentadas sob "Cardápio" via `sections` (`buildStoreSections`); o link
+para "Promoções" também aparece indentado ali, mas é montado à parte pela
+Sidebar/Drawer (não vem de `sections`) e só renderiza quando
+`selectPromotions(menu).length > 0` — apontando para a seção real
+`#promocoes`, não para uma seção virtual (ver "Seções" acima).
+
+**Combos não tem entrada na navegação** — não existe hoje nenhum campo de
+produto que marque "é combo" (`StoreCombos` monta sugestões a partir de
+produtos reais, não de um badge filtrável); criar uma seção de navegação
+para isso inventaria um filtro que não existe. Registrado no
+`BACKLOG.md`, mesma regra de honestidade da navegação aplicada às demais
+seções condicionais.
 
 ## Painel Administrativo (shell, Sprint 4)
 
@@ -292,11 +409,19 @@ Testing Library.
 
 `StoreHero` escolhe entre dois layouts a partir de `hasHeroMedia()`:
 
-- **sem mídia** (estado atual — `HERO_MEDIA` vazia): o split de sempre,
-  texto à esquerda e o placeholder gráfico à direita;
-- **com mídia**: full-bleed cinematográfico, texto sobreposto na base sobre
-  um gradiente escuro, e um parallax leve (`useScroll`/`useTransform`,
-  40px, desligado em `prefers-reduced-motion`) na camada de mídia.
+- **sem mídia**: o split de sempre, texto à esquerda e o placeholder
+  gráfico à direita;
+- **com mídia** (estado atual, desde a Sprint 8.1): full-bleed
+  cinematográfico, texto sobreposto na base sobre um gradiente escuro, e
+  um parallax leve (`useScroll`/`useTransform`, 40px, desligado em
+  `prefers-reduced-motion`) na camada de mídia.
+
+`HERO_MEDIA.sources` aponta para `public/brand/video_teste.mp4`
+(`overlayOpacity: 0.45`, subiu de `0.35` para compensar o contraste de
+texto sobre vídeo em movimento). Sem `poster` configurado — usuários com
+`prefers-reduced-motion` caem no placeholder gráfico genérico em vez de um
+still real do vídeo (registrado no `BACKLOG.md`, junto do nome de arquivo
+"de teste" — ambos pendentes do vídeo institucional definitivo).
 
 ### Primitiva de entrada (`features/menu/components/reveal.tsx`)
 

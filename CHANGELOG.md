@@ -4,6 +4,86 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Sprint 8.1: Refinamento da Experiência do Cliente (mascote e navegação)
+
+Frontend-only, sobre a base da Sprint 8. Nenhuma migration, nenhuma
+alteração em backend, checkout, painel administrativo, painel da cozinha
+ou realtime — pedido do lojista para que a área do cliente pareça o site
+oficial de uma hamburgueria, não um sistema de pedidos. Ver
+`docs/superpowers/specs/2026-08-06-sprint-8.1-client-ux-refresh-design.md`.
+
+- **Fase A — Paleta laranja do mascote.** `--primary`/`--accent` passam do
+  vermelho/laranja da ADR 0010 para os dois tons de laranja amostrados do
+  selo do mascote (`#F28C28`/`#FFB84D`); `--primary-foreground` passa a
+  escuro (os dois laranjas não atingem 4.5:1 contra branco). `--destructive`
+  não muda, agora claramente distinto de `--primary`. Ver
+  [ADR 0013](docs/adr/0013-paleta-laranja-do-mascote.md).
+  `scripts/cutout-mascot.mjs` + `scripts/lib/chroma-key.mjs` (função pura,
+  testada) removem o fundo branco de `Boneco.png`/`Versoes_boneco.png`
+  por distância de cor (chroma-key determinístico, sem IA), gerando
+  `mascote-full.png`/`mascote-avatar.png` comitados.
+- **Fase B — Identidade e navegação.** `<BrandLogo variant="mascote">`
+  substitui logo+nome+slogan na sidebar por um botão com o mascote
+  (rola até `#home`). `StoreTopbar` removida por completo. Nova
+  `MascotNavBubble` (mobile): bolha fixa do Gordinho que abre o mesmo
+  drawer que a topbar abria. Navegação simplificada para 4 itens de topo
+  (`Home`, `Cardápio`, `Sobre Nós`, `Contato`) — Mais Vendidos, Novidades,
+  Galeria e Depoimentos saem do menu (as seções continuam na página, só
+  não linkadas); Destaques da Casa e Promoções passam a aparecer
+  indentados sob "Cardápio".
+- **Fase C — Ações flutuantes.** Descoberta durante a implementação:
+  `CartButton` já existia como carrinho flutuante, mas com `lg:hidden` —
+  a remoção da topbar (Fase B) deixou o desktop sem forma de abrir o
+  carrinho. Corrigido para aparecer em todos os breakpoints, com pulso
+  animado no badge de quantidade a cada mudança. Novo `WhatsappFab`,
+  empilhado acima do carrinho, sem pulso constante.
+- **Fase D — Hero em vídeo.** `HERO_MEDIA` passa a apontar para
+  `public/brand/video_teste.mp4` (`overlayOpacity` de `0.35` para `0.45`,
+  mais contraste de texto sobre vídeo em movimento).
+- **Fase E — Mascote interativo.** Novo `MascotMoment` + registro
+  `MASCOT_POSES` (4 poses recortadas de `Versoes_boneco.png`): carrinho
+  vazio (substitui o `EmptyState` genérico), loja fechada (novo hook
+  compartilhado `useStoreOpenState`, extraído de dentro de
+  `StoreOpenBadge`), banner de promoções e Sobre Nós. "Pedido enviado" e
+  "erro de conexão" ficam fora desta sprint — pertencem ao fluxo de
+  checkout, que o lojista pediu para não alterar.
+
+### Fixed — Sprint 8.1: revisão final da branch
+
+Revisão de ponta a ponta da branch encontrou 1 problema crítico e 6
+importantes, todos corrigidos antes do encerramento da sprint:
+
+- **Selo da logo cortava a arte nova.** `logo.png` passou a ser uma
+  composição quadrada (mascote + faixas de texto) que o `rounded-full`
+  recortava; trocado para `object-contain`, preservando a arte completa
+  em footer/drawer/sidebar admin.
+- **Contraste AA do laranja como cor de texto.** Novo token
+  `--primary-text` (tom mais escuro do selo, `#D96318`), exclusivo para
+  texto/ícone sobre fundo claro — texto direto na cor `--primary` só
+  atingia ~2,2:1 contra o creme. Substituído em tagline/ano da timeline,
+  link de busca, badge de depoimento e hovers de navegação/contato.
+- **Mensagem do mascote ilegível sobre o Hero escuro.** `MascotMoment`
+  ganhou a prop `tone` (`"light"`/`"dark"`) — o momento de loja fechada
+  passa a usar `text-surface-dark-muted` em vez do `text-muted-foreground`
+  fixo (~2,8:1 sobre `bg-surface-dark`, abaixo de AA).
+- **Offset fantasma da topbar removida.** A matemática de layout da
+  `StoreTopbar` (64px) sobrevivia mesmo após a remoção do componente:
+  `CategoryNav` ainda estava `sticky top-16` e usava um `topOffsetPx` de
+  scroll-spy superestimado, e as seções do cardápio usavam `scroll-mt-32`
+  de mais. Corrigido para a altura real da nav sticky mobile; o primeiro
+  chip ganhou `pl-16` para não ficar atrás da `MascotNavBubble`.
+- **Botão do WhatsApp aparecia no checkout.** `WhatsappFab` não tinha o
+  guard de rota que o `CartButton` irmão já tinha — um CTA de saída
+  durante a finalização do pedido. Corrigido com o mesmo guard.
+- **Link "Promoções" não levava a lugar nenhum.** A Fase B trocou o link
+  por uma seção virtual que filtrava produtos, mas nunca apontava para a
+  seção real `#promocoes` (`StorePromoBanner`, com o mascote apontando) —
+  só era alcançável rolando a página. Corrigido para apontar direto para
+  a seção real, condicionado a `selectPromotions(menu).length > 0`.
+- **Ajuste pós-revisão:** `--primary-text` ainda não atingia 4,5:1 mesmo
+  após a correção acima — escurecido de `oklch(0.64 0.167 47)` para
+  `oklch(0.55 0.167 47)`.
+
 ### Added — Sprint 8, Fases 1-9: Branding, Experiência Visual e Mídia
 
 Frontend-only, sobre a base das Sprints 6/7. Nenhuma migration, nenhuma
