@@ -29,12 +29,12 @@ export type HeroMediaConfig = {
   overlayOpacity: number;
 };
 
-/** Nenhum material real cadastrado ainda — ver BACKLOG.md. */
+/** Vídeo institucional — video_teste.mp4 fornecido pelo lojista. */
 export const HERO_MEDIA: HeroMediaConfig = {
-  sources: [],
+  sources: [{ src: "/brand/video_teste.mp4", type: "video/mp4" }],
   poster: null,
   posterMobile: null,
-  overlayOpacity: 0.35,
+  overlayOpacity: 0.45,
 };
 
 export type HeroMediaState = "video" | "poster" | "placeholder";
