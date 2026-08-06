@@ -19,7 +19,7 @@ import { StoreContactSection } from "@/features/menu/components/store-contact-se
 import { StoreTestimonials } from "@/features/menu/components/store-testimonials";
 import { StoreFooter } from "@/features/menu/components/store-footer";
 import { getAverageMenuPrepTimeMinutes } from "@/features/menu/store-info";
-import { buildStoreSections } from "@/features/menu/virtual-sections";
+import { buildStoreSections, selectPromotions } from "@/features/menu/virtual-sections";
 import { FilterBar } from "@/features/search/components/filter-bar";
 import { SearchBar } from "@/features/search/components/search-bar";
 import { SearchResults } from "@/features/search/components/search-results";
@@ -65,6 +65,10 @@ export function StoreExperience({ menu }: { menu: Menu }) {
   // reais — mesma fonte para sidebar, CategoryNav mobile e conteúdo.
   const sections = useMemo(() => buildStoreSections(menu), [menu]);
 
+  // Controla o link direto "Promoções" (sidebar/drawer) para a seção real
+  // `#promocoes` — só aparece quando existe produto com preço promocional.
+  const hasPromotions = useMemo(() => selectPromotions(menu).length > 0, [menu]);
+
   const avgPrepMinutes = useMemo(
     () => getAverageMenuPrepTimeMinutes(menu),
     [menu],
@@ -91,6 +95,7 @@ export function StoreExperience({ menu }: { menu: Menu }) {
       <MascotNavBubble
         tenantName={menu.tenant.name}
         sections={sections}
+        hasPromotions={hasPromotions}
         query={rawQuery}
         onQueryChange={setRawQuery}
       />
@@ -98,6 +103,7 @@ export function StoreExperience({ menu }: { menu: Menu }) {
       <StoreSidebar
         tenantName={menu.tenant.name}
         sections={sections}
+        hasPromotions={hasPromotions}
         query={rawQuery}
         onQueryChange={setRawQuery}
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Tag } from "lucide-react";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,9 @@ import {
 } from "@/features/menu/virtual-sections";
 import { SearchBar } from "@/features/search/components/search-bar";
 
+/** Âncora fixa da seção real de promoções (`StorePromoBanner`, fora do bloco do cardápio). */
+const PROMOTIONS_ANCHOR = "promocoes";
+
 /**
  * Sidebar fixa do autoatendimento (desktop/totem, `lg:+`): identidade da
  * marca sobre o preto da fachada, CTA de pedido, busca e navegação vertical
@@ -26,17 +29,21 @@ import { SearchBar } from "@/features/search/components/search-bar";
 export function StoreSidebar({
   tenantName,
   sections,
+  hasPromotions,
   query,
   onQueryChange,
 }: {
   tenantName: string;
   sections: StoreSection[];
+  /** Só existe produto em promoção real — controla o link para `#promocoes`. */
+  hasPromotions: boolean;
   query: string;
   onQueryChange: (query: string) => void;
 }) {
   const activeId = useScrollSpy(
     [
       ...STORE_NAV_ANCHORS,
+      ...(hasPromotions ? [PROMOTIONS_ANCHOR] : []),
       ...sections.map((section) => sectionAnchorId(section.slug)),
     ],
     // Linha de detecção logo abaixo do `lg:scroll-mt-20` (80px) das seções —
@@ -102,6 +109,19 @@ export function StoreSidebar({
 
                 {item.isHeading && (
                   <ul className="mt-1 flex flex-col gap-1">
+                    {hasPromotions && (
+                      <li>
+                        <StoreNavLink
+                          anchor={PROMOTIONS_ANCHOR}
+                          label="Promoções"
+                          icon={<Tag className="size-5" aria-hidden />}
+                          isActive={activeId === PROMOTIONS_ANCHOR}
+                          isIndented
+                          tone="dark"
+                          onNavigate={scrollToSection}
+                        />
+                      </li>
+                    )}
                     {sections.map((section) => {
                       const anchor = sectionAnchorId(section.slug);
 

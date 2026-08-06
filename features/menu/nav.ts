@@ -7,8 +7,10 @@ export type StoreNavItem = {
   icon: LucideIcon;
   /**
    * Item-cabeçalho: renderiza menor e em caixa alta, e as categorias reais
-   * do cardápio (e as seções virtuais de Promoções/Destaques) aparecem
-   * indentadas logo abaixo dele.
+   * do cardápio (e as seções virtuais de Destaques/Novidades) aparecem
+   * indentadas logo abaixo dele. O link direto para `#promocoes` também é
+   * indentado sob este item, mas é montado à parte (não vem de `sections`)
+   * — ver `StoreSidebar`/`StoreMobileNav`.
    */
   isHeading?: boolean;
 };
@@ -16,11 +18,13 @@ export type StoreNavItem = {
 /**
  * Constrói a navegação da loja: 4 itens de topo, na mesma ordem em que as
  * seções aparecem na página — o ScrollSpy depende dessa correspondência
- * para destacar a seção certa. Promoções, Destaques da Casa e as categorias
+ * para destacar a seção certa. Destaques da Casa, Novidades e as categorias
  * reais do cardápio não são itens de topo — aparecem indentadas sob
  * "Cardápio" via `sections` (ver `buildStoreSections` em
  * `virtual-sections.ts` e a Sidebar/Drawer, que renderizam essa lista sob o
- * item `isHeading`).
+ * item `isHeading`). "Promoções" também aparece indentada ali, mas aponta
+ * direto para a seção real `#promocoes` (`StorePromoBanner`), não para uma
+ * seção virtual — ver `selectPromotions` em `virtual-sections.ts`.
  */
 export function buildStoreNavItems(): StoreNavItem[] {
   return [

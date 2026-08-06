@@ -126,7 +126,7 @@ describe("buildStoreSections", () => {
     ]);
   });
 
-  it("cria a seção de promoções (slug promocoes-cardapio) com produtos de preço promocional", () => {
+  it("não cria seção virtual de promoções — #promocoes é seção real, não derivada de categoria", () => {
     const onSale = makeProduct({ id: "p1", promoPriceCents: 1990 });
     const menu = makeMenu([
       {
@@ -138,38 +138,9 @@ describe("buildStoreSections", () => {
     ]);
 
     const sections = buildStoreSections(menu);
-    const promocoes = sections.find((s) => s.slug === "promocoes-cardapio");
 
-    expect(promocoes).toBeDefined();
-    expect(promocoes?.kind).toBe("virtual");
-    expect(promocoes?.title).toBe("Promoções");
-    expect(promocoes?.products.map((p) => p.id)).toEqual(["p1"]);
-  });
-
-  it("posiciona promoções antes de destaques e novidades quando as três existem", () => {
-    const menu = makeMenu([
-      {
-        id: "c1",
-        name: "Lanches",
-        slug: "lanches",
-        products: [
-          makeProduct({
-            id: "p1",
-            promoPriceCents: 1990,
-            badges: { isFeatured: true, isNew: true },
-          }),
-        ],
-      },
-    ]);
-
-    const sections = buildStoreSections(menu);
-
-    expect(sections.map((s) => s.slug)).toEqual([
-      "promocoes-cardapio",
-      "destaques",
-      "novidades",
-      "lanches",
-    ]);
+    expect(sections.find((s) => s.slug === "promocoes-cardapio")).toBeUndefined();
+    expect(sections.map((s) => s.slug)).toEqual(["lanches"]);
   });
 
   it("um produto com os dois badges aparece nas duas seções virtuais", () => {

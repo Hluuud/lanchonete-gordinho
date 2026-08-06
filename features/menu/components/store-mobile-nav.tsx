@@ -1,5 +1,7 @@
 "use client";
 
+import { Tag } from "lucide-react";
+
 import { BrandLogo } from "@/components/brand-logo";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { CategoryIcon } from "@/features/menu/category-icon";
@@ -16,6 +18,9 @@ import { SearchBar } from "@/features/search/components/search-bar";
 /** Tempo da animação de fechamento do Drawer (vaul), para não competir com o scroll. */
 const DRAWER_CLOSE_MS = 200;
 
+/** Âncora fixa da seção real de promoções (`StorePromoBanner`, fora do bloco do cardápio). */
+const PROMOTIONS_ANCHOR = "promocoes";
+
 /**
  * Menu de navegação do celular (Drawer inferior): mesma lista da sidebar
  * desktop — ambos leem `STORE_NAV_ITEMS` —, para pedir com uma mão sem
@@ -26,6 +31,7 @@ export function StoreMobileNav({
   onOpenChange,
   tenantName,
   sections,
+  hasPromotions,
   query,
   onQueryChange,
 }: {
@@ -33,6 +39,8 @@ export function StoreMobileNav({
   onOpenChange: (open: boolean) => void;
   tenantName: string;
   sections: StoreSection[];
+  /** Só existe produto em promoção real — controla o link para `#promocoes`. */
+  hasPromotions: boolean;
   query: string;
   onQueryChange: (query: string) => void;
 }) {
@@ -89,6 +97,18 @@ export function StoreMobileNav({
 
                   {item.isHeading && (
                     <ul className="mt-1 flex flex-col gap-1">
+                      {hasPromotions && (
+                        <li>
+                          <StoreNavLink
+                            anchor={PROMOTIONS_ANCHOR}
+                            label="Promoções"
+                            icon={<Tag className="size-5" aria-hidden />}
+                            isIndented
+                            tone="light"
+                            onNavigate={goTo}
+                          />
+                        </li>
+                      )}
                       {sections.map((section) => (
                         <li key={section.id}>
                           <StoreNavLink

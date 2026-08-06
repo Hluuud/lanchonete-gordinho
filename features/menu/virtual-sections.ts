@@ -32,11 +32,6 @@ const VIRTUAL_SECTION_DEFS: {
   matches: (product: Product) => boolean;
 }[] = [
   {
-    slug: "promocoes-cardapio",
-    title: "Promoções",
-    matches: (product) => isOnPromotion(product),
-  },
-  {
     slug: "destaques",
     title: "Destaques da Casa",
     matches: (product) => product.badges.isFeatured,
@@ -51,8 +46,10 @@ const VIRTUAL_SECTION_DEFS: {
 /**
  * Monta as seções exibidas na loja: virtuais não-vazias primeiro, depois as
  * categorias reais na ordem do banco. Slugs virtuais assumem que nenhuma
- * categoria real usa "promocoes-cardapio"/"destaques"/"novidades" (colisão
- * geraria âncora dupla).
+ * categoria real usa "destaques"/"novidades" (colisão geraria âncora dupla).
+ * "Promoções" não é uma seção virtual daqui — é a seção real `#promocoes`
+ * (`StorePromoBanner`), linkada diretamente pela navegação via
+ * `selectPromotions` abaixo, não por um recorte de categoria.
  */
 export function buildStoreSections(menu: Menu): StoreSection[] {
   const allProducts = menu.categories.flatMap((category) => category.products);

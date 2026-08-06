@@ -20,11 +20,14 @@ import type { StoreSection } from "@/features/menu/virtual-sections";
 export function MascotNavBubble({
   tenantName,
   sections,
+  hasPromotions,
   query,
   onQueryChange,
 }: {
   tenantName: string;
   sections: StoreSection[];
+  /** Só existe produto em promoção real — controla o link para `#promocoes`. */
+  hasPromotions: boolean;
   query: string;
   onQueryChange: (query: string) => void;
 }) {
@@ -52,6 +55,7 @@ export function MascotNavBubble({
         onOpenChange={setOpen}
         tenantName={tenantName}
         sections={sections}
+        hasPromotions={hasPromotions}
         query={query}
         onQueryChange={onQueryChange}
       />
