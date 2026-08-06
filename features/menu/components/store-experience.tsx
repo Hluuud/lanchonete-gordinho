@@ -5,6 +5,7 @@ import { useDebounce } from "use-debounce";
 
 import { FeaturedCarousel } from "@/features/menu/components/featured-carousel";
 import { CategoryNav } from "@/features/menu/components/category-nav";
+import { MascotNavBubble } from "@/features/menu/components/mascot-nav-bubble";
 import { MenuSection } from "@/features/menu/components/menu-section";
 import { StoreBestsellers } from "@/features/menu/components/store-bestsellers";
 import { StoreCombos } from "@/features/menu/components/store-combos";
@@ -87,6 +88,13 @@ export function StoreExperience({ menu }: { menu: Menu }) {
 
   return (
     <div className="flex flex-1 flex-col lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start">
+      <MascotNavBubble
+        tenantName={menu.tenant.name}
+        sections={sections}
+        query={rawQuery}
+        onQueryChange={setRawQuery}
+      />
+
       <StoreSidebar
         tenantName={menu.tenant.name}
         sections={sections}
