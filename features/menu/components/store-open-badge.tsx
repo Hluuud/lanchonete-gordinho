@@ -1,38 +1,14 @@
+// features/menu/components/store-open-badge.tsx
 "use client";
 
-import { useSyncExternalStore } from "react";
-
-import { getStoreOpenState } from "@/features/menu/store-info";
+import { useStoreOpenState } from "@/features/menu/use-store-open-state";
 import { cn } from "@/lib/utils";
 
-const MINUTE_MS = 60_000;
-
-function subscribe(onStoreChange: () => void) {
-  const id = window.setInterval(onStoreChange, MINUTE_MS);
-  return () => window.clearInterval(id);
-}
-
-function getMinuteSnapshot(): number {
-  return Math.floor(Date.now() / MINUTE_MS);
-}
-
-function getServerSnapshot(): number | null {
-  return null;
-}
-
-/**
- * Badge Aberto/Fechado da barra superior. Relógio via `useSyncExternalStore`
- * com snapshot por minuto (convenção do projeto para APIs de tempo — evita
- * hydration mismatch: o servidor renderiza um placeholder neutro).
- */
+/** Badge Aberto/Fechado da barra superior. */
 export function StoreOpenBadge() {
-  const minute = useSyncExternalStore(
-    subscribe,
-    getMinuteSnapshot,
-    getServerSnapshot,
-  );
+  const state = useStoreOpenState();
 
-  if (minute === null) {
+  if (state === null) {
     return (
       <span
         className="h-7 w-28 animate-pulse rounded-full bg-secondary"
@@ -41,7 +17,7 @@ export function StoreOpenBadge() {
     );
   }
 
-  const { isOpen, label } = getStoreOpenState(new Date());
+  const { isOpen, label } = state;
 
   return (
     <span

@@ -12,9 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/use-cart";
 import { HeroMedia } from "@/features/menu/components/hero-media";
+import { MascotMoment } from "@/features/menu/components/mascot-moment";
 import { StoreOpenBadge } from "@/features/menu/components/store-open-badge";
 import { HERO_MEDIA, hasHeroMedia } from "@/features/menu/media";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
+import { useStoreOpenState } from "@/features/menu/use-store-open-state";
 
 /** Deslocamento máximo do parallax, em px — sutil, não uma cortina se abrindo. */
 const PARALLAX_RANGE_PX = 40;
@@ -60,6 +62,9 @@ export function StoreHero({
     [0, prefersReducedMotion ? 0 : PARALLAX_RANGE_PX],
   );
 
+  const openState = useStoreOpenState();
+  const isOpen = openState === null ? true : openState.isOpen;
+
   const content = (
     <div className="flex flex-col items-start gap-5">
       <div className="flex flex-wrap items-center gap-2">
@@ -71,6 +76,14 @@ export function StoreHero({
           </span>
         )}
       </div>
+
+      {!isOpen && (
+        <MascotMoment
+          pose="resting"
+          message="Estamos fechados agora, mas o cardápio já está aberto — deixe seu pedido pronto para quando reabrirmos."
+          className="items-start text-left"
+        />
+      )}
 
       <h1 className="font-display text-4xl leading-[0.95] tracking-tight text-balance uppercase sm:text-5xl lg:text-6xl">
         {HERO_TITLE_PRE}{" "}
