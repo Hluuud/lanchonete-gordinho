@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
-import { Clock, ShoppingBag } from "lucide-react";
+import { Clock } from "lucide-react";
 
-import { EmptyState } from "@/components/empty-state";
+import { MascotMoment } from "@/features/menu/components/mascot-moment";
 import { PriceTag } from "@/components/price-tag";
 import { Button } from "@/components/ui/button";
 import { CartItemRow } from "@/features/cart/components/cart-item-row";
@@ -19,11 +19,12 @@ export function CartPanelContent() {
 
   if (items.length === 0) {
     return (
-      <EmptyState
-        icon={ShoppingBag}
-        title="Seu carrinho está vazio"
-        description="Adicione itens do cardápio para montar seu pedido."
-      />
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-12">
+        <MascotMoment
+          pose="holding-burger"
+          message="Seu carrinho está vazio — adicione itens do cardápio para montar seu pedido."
+        />
+      </div>
     );
   }
 
