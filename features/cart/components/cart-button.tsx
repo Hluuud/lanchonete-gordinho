@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 
 import { PriceTag } from "@/components/price-tag";
@@ -15,6 +15,7 @@ import { useCart } from "@/features/cart/use-cart";
 export function CartButton() {
   const { totalQuantity, subtotalCents, setOpen } = useCart();
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
 
   if (pathname.startsWith("/checkout")) return null;
 
@@ -26,7 +27,7 @@ export function CartButton() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 96, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 28 }}
-          className="fixed inset-x-4 bottom-4 z-40 sm:inset-x-auto sm:right-6 sm:bottom-6 lg:hidden"
+          className="fixed inset-x-4 bottom-4 z-40 sm:inset-x-auto sm:right-6 sm:bottom-6"
         >
           <button
             type="button"
@@ -36,9 +37,15 @@ export function CartButton() {
             <span className="flex items-center gap-2 font-semibold">
               <span className="relative flex items-center">
                 <ShoppingBag className="size-5" aria-hidden />
-                <span className="absolute -top-2 -right-2 flex size-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                <motion.span
+                  key={totalQuantity}
+                  initial={prefersReducedMotion ? false : { scale: 1.4 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                  className="absolute -top-2 -right-2 flex size-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground"
+                >
                   {totalQuantity}
-                </span>
+                </motion.span>
               </span>
               Ver carrinho
             </span>
