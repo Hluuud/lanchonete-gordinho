@@ -2,6 +2,7 @@ import { OfflineBanner } from "@/components/offline-banner";
 import { CartButton } from "@/features/cart/components/cart-button";
 import { CartPanel } from "@/features/cart/components/cart-panel";
 import { CartProvider } from "@/features/cart/cart-context";
+import { WhatsappFab } from "@/features/menu/components/whatsapp-fab";
 
 /**
  * Layout da loja pública. O carrinho é escopado aqui — não existe em
@@ -17,6 +18,7 @@ export default function StoreLayout({
       <OfflineBanner />
       {children}
       <CartButton />
+      <WhatsappFab />
       <CartPanel />
     </CartProvider>
   );
