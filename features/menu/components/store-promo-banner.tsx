@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/features/menu/components/reveal";
@@ -29,9 +29,13 @@ export function StorePromoBanner() {
       className="scroll-mt-32 bg-surface-dark px-4 py-12 text-surface-dark-foreground lg:scroll-mt-20 lg:px-8 lg:py-16"
     >
       <Reveal className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <Sparkles className="size-7" aria-hidden />
-        </span>
+        <Image
+          src="/brand/mascote-pose-pointing-up.png"
+          alt="Gordinho apontando para as promoções"
+          width={140}
+          height={175}
+          className="h-auto w-28 object-contain"
+        />
         <h2
           id="titulo-promocoes"
           className="font-display text-3xl leading-none tracking-tight text-balance uppercase sm:text-4xl"
