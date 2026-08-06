@@ -36,7 +36,7 @@
      ~2.2:1 no creme (falha AA). Tom mais escuro da paleta do mascote
      (#D96318, ADR 0013) para uso exclusivo como cor de texto/ícone sobre
      superfícies claras — nunca usar em .dark ou .theme-admin. */
-  --primary-text: oklch(0.64 0.167 47);
+  --primary-text: oklch(0.55 0.167 47);
 
   /* Secundária: neutro quente */
   --secondary: oklch(0.93 0.014 80);
