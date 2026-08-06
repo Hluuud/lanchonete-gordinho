@@ -54,7 +54,7 @@ export function StoreAbout() {
           <p className="text-base text-muted-foreground lg:text-lg">
             {ABOUT_STORY}
           </p>
-          <p className="text-sm font-semibold text-primary">
+          <p className="text-sm font-semibold text-primary-text">
             Há anos servindo Analândia com o mesmo capricho.
           </p>
         </div>
@@ -186,7 +186,7 @@ export function StoreAbout() {
                   className="absolute top-1.5 -left-[1.75rem] size-3 rounded-full bg-primary"
                   aria-hidden
                 />
-                <p className="text-sm font-bold text-primary">{entry.year}</p>
+                <p className="text-sm font-bold text-primary-text">{entry.year}</p>
                 <p className="font-semibold">{entry.title}</p>
                 <p className="text-sm text-muted-foreground">
                   {entry.description}

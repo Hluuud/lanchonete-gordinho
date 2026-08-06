@@ -12,7 +12,7 @@ export type StoreNavTone = "dark" | "light";
 
 const TONE_IDLE: Record<StoreNavTone, string> = {
   dark: "text-surface-dark-muted hover:bg-white/8 hover:text-surface-dark-foreground",
-  light: "text-foreground hover:bg-primary/10 hover:text-primary",
+  light: "text-foreground hover:bg-primary/10 hover:text-primary-text",
 };
 
 const TONE_HEADING: Record<StoreNavTone, string> = {

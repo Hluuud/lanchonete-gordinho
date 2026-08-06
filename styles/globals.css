@@ -32,6 +32,12 @@
   --primary: oklch(0.73 0.161 59);
   --primary-foreground: oklch(0.24 0.03 65);
 
+  /* Texto laranja sobre fundo claro: `--primary` como foreground só atinge
+     ~2.2:1 no creme (falha AA). Tom mais escuro da paleta do mascote
+     (#D96318, ADR 0013) para uso exclusivo como cor de texto/ícone sobre
+     superfícies claras — nunca usar em .dark ou .theme-admin. */
+  --primary-text: oklch(0.64 0.167 47);
+
   /* Secundária: neutro quente */
   --secondary: oklch(0.93 0.014 80);
   --secondary-foreground: oklch(0.26 0.015 60);
@@ -165,6 +171,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-text: var(--primary-text);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);

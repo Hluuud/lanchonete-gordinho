@@ -25,7 +25,7 @@ export function SearchResults({ results, query, onClear }: SearchResultsProps) {
           <button
             type="button"
             onClick={onClear}
-            className="text-sm font-semibold text-primary hover:underline"
+            className="text-sm font-semibold text-primary-text hover:underline"
           >
             Limpar busca e filtros
           </button>

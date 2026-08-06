@@ -68,7 +68,7 @@ export function CategoryNav({ sections }: { sections: StoreSection[] }) {
                   "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
                   isActive
                     ? "border-primary bg-primary text-primary-foreground"
-                    : "border-input text-foreground hover:border-primary hover:bg-primary/10 hover:text-primary",
+                    : "border-input text-foreground hover:border-primary hover:bg-primary/10 hover:text-primary-text",
                 )}
               >
                 <CategoryIcon slug={section.slug} className="size-4" />

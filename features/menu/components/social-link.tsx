@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const TONE_CLASS: Record<StoreNavTone, string> = {
   dark: "text-surface-dark-muted hover:bg-white/10 hover:text-surface-dark-foreground",
-  light: "text-muted-foreground hover:bg-primary/10 hover:text-primary",
+  light: "text-muted-foreground hover:bg-primary/10 hover:text-primary-text",
 };
 
 /**

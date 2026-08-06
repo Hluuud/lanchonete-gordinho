@@ -64,7 +64,7 @@ export function StoreContactSection() {
         <div className="flex flex-col gap-4">
           <div className="flex items-start gap-3 rounded-2xl border bg-card p-5">
             <MapPin
-              className="mt-0.5 size-5 shrink-0 text-primary"
+              className="mt-0.5 size-5 shrink-0 text-primary-text"
               aria-hidden
             />
             <div>
@@ -75,14 +75,14 @@ export function StoreContactSection() {
 
           <div className="flex items-start gap-3 rounded-2xl border bg-card p-5">
             <Phone
-              className="mt-0.5 size-5 shrink-0 text-primary"
+              className="mt-0.5 size-5 shrink-0 text-primary-text"
               aria-hidden
             />
             <div>
               <p className="text-sm font-semibold">Telefone</p>
               <a
                 href={PHONE_TEL_LINK}
-                className="text-sm text-muted-foreground hover:text-primary"
+                className="text-sm text-muted-foreground hover:text-primary-text"
               >
                 {PHONE_DISPLAY}
               </a>
@@ -91,7 +91,7 @@ export function StoreContactSection() {
 
           <div className="flex items-start gap-3 rounded-2xl border bg-card p-5">
             <Clock
-              className="mt-0.5 size-5 shrink-0 text-primary"
+              className="mt-0.5 size-5 shrink-0 text-primary-text"
               aria-hidden
             />
             <div className="min-w-0 flex-1">
