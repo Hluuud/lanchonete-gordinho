@@ -11,6 +11,7 @@ import {
   WHY_US,
 } from "@/features/menu/about-content";
 import { Reveal } from "@/features/menu/components/reveal";
+import { MascotMoment } from "@/features/menu/components/mascot-moment";
 import { GALLERY_ITEMS } from "@/features/menu/gallery";
 
 /** Primeira foto de cada categoria na galeria, se houver — senão o placeholder gráfico de sempre. */
@@ -45,6 +46,11 @@ export function StoreAbout() {
               Sobre a Lanchonete do Gordinho
             </h2>
           </div>
+          <MascotMoment
+            pose="welcoming"
+            message="Quem conta a nossa história é o Gordinho."
+            className="items-start text-left"
+          />
           <p className="text-base text-muted-foreground lg:text-lg">
             {ABOUT_STORY}
           </p>
