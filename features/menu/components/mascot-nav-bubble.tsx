@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 
 import { StoreMobileNav } from "@/features/menu/components/store-mobile-nav";
-import { scrollToSection } from "@/features/menu/scroll-to-section";
 import type { StoreSection } from "@/features/menu/virtual-sections";
 
 /**
