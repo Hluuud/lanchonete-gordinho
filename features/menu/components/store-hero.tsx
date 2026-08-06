@@ -82,6 +82,7 @@ export function StoreHero({
           pose="resting"
           message="Estamos fechados agora, mas o cardápio já está aberto — deixe seu pedido pronto para quando reabrirmos."
           className="items-start text-left"
+          tone="dark"
         />
       )}
 
