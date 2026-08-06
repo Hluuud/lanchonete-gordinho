@@ -31,7 +31,7 @@ export function StoreCombos({ menu }: { menu: Menu }) {
     <section
       id="combos"
       aria-labelledby="titulo-combos"
-      className="scroll-mt-32 bg-secondary/60 px-4 py-12 lg:scroll-mt-20 lg:px-8 lg:py-16"
+      className="scroll-mt-16 bg-secondary/60 px-4 py-12 lg:scroll-mt-20 lg:px-8 lg:py-16"
     >
       <div className="mx-auto w-full max-w-6xl">
         <Reveal>

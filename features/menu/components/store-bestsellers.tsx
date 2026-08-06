@@ -26,7 +26,7 @@ export function StoreBestsellers({ menu }: { menu: Menu }) {
     <section
       id="mais-vendidos"
       aria-labelledby="titulo-mais-vendidos"
-      className="scroll-mt-32 px-4 py-12 lg:scroll-mt-20 lg:px-8 lg:py-16"
+      className="scroll-mt-16 px-4 py-12 lg:scroll-mt-20 lg:px-8 lg:py-16"
     >
       <div className="mx-auto w-full max-w-6xl">
         <Reveal>

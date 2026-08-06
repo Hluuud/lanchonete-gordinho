@@ -28,8 +28,9 @@ export function MenuSection({ section }: { section: StoreSection }) {
       id={anchor}
       aria-labelledby={`titulo-${section.slug}`}
       // scroll-mt deve ficar ≤ linha de detecção do ScrollSpy (sidebar: 84px;
-      // CategoryNav mobile: 130px) para a seção clicada ativar no destino.
-      className="scroll-mt-32 lg:scroll-mt-20"
+      // CategoryNav mobile: 64px, altura da própria nav sem topbar) para a
+      // seção clicada ativar no destino.
+      className="scroll-mt-16 lg:scroll-mt-20"
     >
       <Reveal className="mb-6 border-b pb-4">
         <div className="flex items-center gap-3">

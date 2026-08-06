@@ -26,7 +26,7 @@ export function StorePromoBanner() {
     <section
       id="promocoes"
       aria-labelledby="titulo-promocoes"
-      className="scroll-mt-32 bg-surface-dark px-4 py-12 text-surface-dark-foreground lg:scroll-mt-20 lg:px-8 lg:py-16"
+      className="scroll-mt-16 bg-surface-dark px-4 py-12 text-surface-dark-foreground lg:scroll-mt-20 lg:px-8 lg:py-16"
     >
       <Reveal className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
         <Image

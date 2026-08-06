@@ -22,11 +22,12 @@ export function CategoryNav({ sections }: { sections: StoreSection[] }) {
 
   const activeId = useScrollSpy(
     sections.map((section) => sectionAnchorId(section.slug)),
-    // `bottom` da nav sticky = topbar + altura da própria nav; nunca abaixo
-    // de 130px para cobrir o `scroll-mt-32` (128px) das seções no mobile.
+    // `bottom` da nav sticky (sem topbar acima dela) = só a altura desta
+    // própria nav (~64px); usa a medida em runtime, com 64 como piso/
+    // fallback para o primeiro render (antes do ref existir).
     {
       topOffsetPx: () =>
-        Math.max(navRef.current?.getBoundingClientRect().bottom ?? 128, 130),
+        Math.max(navRef.current?.getBoundingClientRect().bottom ?? 64, 64),
     },
   );
   const activeSlug = activeId?.replace("categoria-", "");
@@ -46,11 +47,14 @@ export function CategoryNav({ sections }: { sections: StoreSection[] }) {
     <nav
       ref={navRef}
       aria-label="Seções do cardápio"
-      className="sticky top-16 z-20 -mx-4 border-b bg-background/85 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/65 lg:hidden"
+      className="sticky top-0 z-20 -mx-4 border-b bg-background/85 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/65 lg:hidden"
     >
       <ul
         ref={listRef}
-        className="flex [scrollbar-width:none] gap-2 overflow-x-auto py-3 [&::-webkit-scrollbar]:hidden"
+        // pl-16 soma aos 16px de `px-4` da nav (~80px do canto da tela) para o
+        // primeiro chip nunca ficar atrás da bolha do mascote (fixed, 56px de
+        // largura a partir de 16px da borda — só existe abaixo de `lg`).
+        className="flex [scrollbar-width:none] gap-2 overflow-x-auto py-3 pl-16 [&::-webkit-scrollbar]:hidden"
       >
         {sections.map((section) => {
           const isActive = section.slug === activeSlug;
