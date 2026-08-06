@@ -5,6 +5,20 @@ Todo item aqui deve ter origem rastreável (sprint que o gerou) — ver
 `CHANGELOG.md` para o que já foi entregue e `docs/adr/` para decisões
 arquiteturais associadas.
 
+## Sprint 8.1 — Refinamento da Experiência do Cliente
+
+- ☐ **Combos não entram na navegação simplificada (Task 9, Fase B).**
+  `grep -n "isCombo\|combo" types/domain.ts features/menu/store-info.ts`
+  não encontra nenhum campo de produto que marque "é combo" —
+  `StoreCombos` monta sugestões a partir de produtos reais
+  (`combo-suggestions.ts`), não de um badge/categoria filtrável. Seguindo a
+  regra de honestidade documentada em `virtual-sections.ts`, não foi criada
+  uma seção virtual "Combos" nested sob "Cardápio" (inventaria um filtro que
+  não existe). Combos só entra na navegação da Fase B quando existir dado
+  real de combo (ex.: um campo/categoria que marque o produto como parte de
+  um combo, ou a liberação das tabelas `combos`/`combo_slots` já
+  rastreada no Sprint 7).
+
 ## Sprint 8 — Branding, Experiência Visual e Mídia
 
 Fases 0-9 estão entregues — ver `CHANGELOG.md` e `docs/frontend.md`. O que

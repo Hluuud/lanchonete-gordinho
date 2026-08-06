@@ -2,14 +2,13 @@ import type { Menu, Product } from "@/types/domain";
 
 /**
  * Seções do cardápio na experiência de autoatendimento: as "virtuais"
- * (derivadas dos badges existentes — nunca dados fabricados) seguidas das
- * categorias reais do banco.
+ * (derivadas dos badges/preço existentes — nunca dados fabricados) seguidas
+ * das categorias reais do banco.
  *
- * "Mais Vendidos" e "Promoções" não entram aqui: desde a Sprint 7 eles têm
- * seções próprias na página, fora do bloco do cardápio (ver
- * `selectBestsellers`/`selectPromotions` abaixo). Combos seguem de fora até
- * serem vendáveis — exibir seção vazia ou inventar dados quebraria a
- * confiança do cliente.
+ * "Mais Vendidos" tem seção própria na página, fora do bloco do cardápio
+ * (ver `selectBestsellers` abaixo) — não é uma seção virtual daqui porque
+ * não é uma categoria de produtos, é um recorte de "melhores vendas" que já
+ * tem sua própria vitrine (Sprint 7).
  */
 export type StoreSection = {
   /** Chave única para React e âncoras. */
@@ -33,6 +32,11 @@ const VIRTUAL_SECTION_DEFS: {
   matches: (product: Product) => boolean;
 }[] = [
   {
+    slug: "promocoes-cardapio",
+    title: "Promoções",
+    matches: (product) => isOnPromotion(product),
+  },
+  {
     slug: "destaques",
     title: "Destaques da Casa",
     matches: (product) => product.badges.isFeatured,
@@ -47,7 +51,8 @@ const VIRTUAL_SECTION_DEFS: {
 /**
  * Monta as seções exibidas na loja: virtuais não-vazias primeiro, depois as
  * categorias reais na ordem do banco. Slugs virtuais assumem que nenhuma
- * categoria real usa "destaques"/"novidades" (colisão geraria âncora dupla).
+ * categoria real usa "promocoes-cardapio"/"destaques"/"novidades" (colisão
+ * geraria âncora dupla).
  */
 export function buildStoreSections(menu: Menu): StoreSection[] {
   const allProducts = menu.categories.flatMap((category) => category.products);
