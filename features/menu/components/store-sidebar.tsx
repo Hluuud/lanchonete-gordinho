@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { CategoryIcon } from "@/features/menu/category-icon";
 import { StoreContactFooter } from "@/features/menu/components/store-contact-footer";
 import { StoreNavLink } from "@/features/menu/components/store-nav-link";
-import { SLOGAN } from "@/features/menu/contact-info";
 import { STORE_NAV_ANCHORS, STORE_NAV_ITEMS } from "@/features/menu/nav";
 import { scrollToSection } from "@/features/menu/scroll-to-section";
 import { useScrollSpy } from "@/features/menu/use-scroll-spy";
@@ -48,15 +47,14 @@ export function StoreSidebar({
   return (
     <aside className="sticky top-0 hidden h-dvh flex-col border-r border-surface-dark-border bg-surface-dark text-surface-dark-foreground lg:flex">
       <div className="flex flex-col gap-4 px-5 pt-6 pb-4">
-        <div className="flex items-center gap-3">
-          <BrandLogo size="lg" priority />
-          <div className="min-w-0">
-            <p className="font-display text-xl leading-tight tracking-wide uppercase">
-              {tenantName}
-            </p>
-            <p className="truncate text-xs text-surface-dark-muted">{SLOGAN}</p>
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={() => scrollToSection("home")}
+          aria-label={`${tenantName} — voltar para a Home`}
+          className="flex w-fit items-center rounded-full transition-transform hover:scale-105"
+        >
+          <BrandLogo variant="mascote" size="xl" priority />
+        </button>
 
         <Button
           type="button"
