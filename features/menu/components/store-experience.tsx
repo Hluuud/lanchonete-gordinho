@@ -13,7 +13,6 @@ import { StoreSidebar } from "@/features/menu/components/store-sidebar";
 import { StoreHero } from "@/features/menu/components/store-hero";
 import { StorePromoBanner } from "@/features/menu/components/store-promo-banner";
 import { StoreHighlights } from "@/features/menu/components/store-highlights";
-import { StoreTopbar } from "@/features/menu/components/store-topbar";
 import { StoreAbout } from "@/features/menu/components/store-about";
 import { StoreContactSection } from "@/features/menu/components/store-contact-section";
 import { StoreTestimonials } from "@/features/menu/components/store-testimonials";
@@ -96,15 +95,6 @@ export function StoreExperience({ menu }: { menu: Menu }) {
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <StoreTopbar
-          tenantName={menu.tenant.name}
-          avgPrepMinutes={avgPrepMinutes}
-          sections={sections}
-          isFiltering={isFiltering}
-          query={rawQuery}
-          onQueryChange={setRawQuery}
-        />
-
         <StoreHero avgPrepMinutes={avgPrepMinutes} />
 
         <StoreHighlights />
