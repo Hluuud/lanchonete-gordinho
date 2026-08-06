@@ -75,7 +75,7 @@ export function BrandLogo({
       width={px}
       height={px}
       priority={priority}
-      className={cn("rounded-full", className)}
+      className={cn("object-contain", className)}
     />
   );
 }
